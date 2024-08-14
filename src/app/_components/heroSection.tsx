@@ -18,8 +18,7 @@ import {
 } from "@/components/shadcn/ui/command";
 import { FaCheck } from "react-icons/fa";
 import { cn } from "@/lib/utils";
-import Image from "next/image";
-import { MdOutlineDeleteOutline, MdTranslate } from "react-icons/md";
+import {  MdTranslate } from "react-icons/md";
 import axios from "axios";
 import { UploadApiResponse } from "cloudinary";
 import { CldImage } from "next-cloudinary";
@@ -77,6 +76,9 @@ export default function HeroSection() {
         console.error(error);
       }
     }
+  };
+  const handleTranslation = async () => {
+    await axios.post("/api/project/translation", images);
   };
   return (
     <section className="flex flex-col gap-2 md:gap-4 xl:gap-6 items-center py-6 md:py-8 xl:py-10">
@@ -180,7 +182,10 @@ export default function HeroSection() {
                     </button>
                   </div>
                   <div className="flex justify-around items-center">
-                    <button className="bg-color1 text-white rounded-lg p-1">
+                    <button
+                      onClick={handleTranslation}
+                      className="bg-color1 text-white rounded-lg p-1"
+                    >
                       <MdTranslate />
                     </button>
                   </div>
