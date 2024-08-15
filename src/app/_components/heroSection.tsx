@@ -37,10 +37,10 @@ export default function HeroSection() {
   const handlImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
-      const newImages = Array.from(files).map((file) => ({
-        file,
-        preview: URL.createObjectURL(file),
-      }));
+      // const newImages = Array.from(files).map((file) => ({
+      //   file,
+      //   preview: URL.createObjectURL(file),
+      // }));
 
       const formData = new FormData();
       for (let i = 0; i < files.length; i++) {

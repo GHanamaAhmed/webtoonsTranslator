@@ -17,7 +17,6 @@ export async function POST(req: NextRequest) {
     const uploadPromises = images.map(async (image) => {
       const arrayBuffer = await image.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
-
       return new Promise((resolve, reject) => {
         cloudinary.v2.uploader
           .upload_stream(
@@ -26,7 +25,7 @@ export async function POST(req: NextRequest) {
               folder: process.env.CLOUDINARY_FOLDER,
               use_filename: true,
               timestamp,
-              unique_filename: false,
+              unique_filename: true,
             },
             (error, result) => {
               if (error) {

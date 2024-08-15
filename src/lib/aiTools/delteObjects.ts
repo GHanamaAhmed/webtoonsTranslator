@@ -1,34 +1,5 @@
-import { createCanvas, loadImage } from "@napi-rs/canvas";
+import { createCanvas, loadImage } from "canvas";
 import { google } from "@google-cloud/vision/build/protos/protos";
-import fs from "fs";
-import axios from "axios";
-import cloudinary from "cloudinary";
-
-// Configure Cloudinary
-cloudinary.v2.config({
-  cloud_name: "dxezr7zro",
-  api_key: "336945911762287",
-  api_secret: "GLxK7N4MWHYEwb59bDMzqYaQGP8",
-});
-
-// Function to upload image to Cloudinary
-export async function uploadToCloudinary(
-  filePath: string,
-  fileName: string
-): Promise<string> {
-  try {
-    const result = await cloudinary.v2.uploader.upload(filePath, {
-      public_id: fileName,
-      folder: "mangaTranslator/ObjectDeleted",
-      upload_preset: "jby2eqse",
-    });
-    return result.secure_url; // Return the URL of the uploaded image
-  } catch (error) {
-    console.error("Error uploading to Cloudinary:", error);
-    throw error;
-  }
-}
-
 // Function to create a mask image with sizeMultiplier
 export async function createMaskImage(
   buffer: Buffer,
@@ -38,6 +9,7 @@ export async function createMaskImage(
   const image = await loadImage(buffer);
   const canvas = createCanvas(image.width, image.height);
   const ctx = canvas.getContext("2d");
+  console.log(iAnnotateImageResponse.fullTextAnnotation);
 
   ctx.fillStyle = "black";
   ctx.fillRect(0, 0, image.width, image.height);
