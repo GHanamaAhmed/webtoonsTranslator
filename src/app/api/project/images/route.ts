@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import cloudinary, { UploadApiResponse } from "cloudinary";
 
 import { NextResponse } from "next/server";
+import sharp from "sharp";
 
 cloudinary.v2.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
@@ -16,7 +17,7 @@ export async function POST(req: NextRequest) {
     const timestamp = Date.now();
     const uploadPromises = images.map(async (image) => {
       const arrayBuffer = await image.arrayBuffer();
-      const buffer = Buffer.from(arrayBuffer);
+      const buffer = await sharp(Buffer.from(arrayBuffer)).webp().toBuffer();
       return new Promise((resolve, reject) => {
         cloudinary.v2.uploader
           .upload_stream(

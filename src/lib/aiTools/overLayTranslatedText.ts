@@ -115,8 +115,8 @@ export async function overlayTranslatedText(
 
     // Set up text styles using the registered font
     ctx.fillStyle = "black";
-    ctx.textAlign = "left"; // Align text horizontally
-    ctx.textBaseline = "top"; // Align text vertically
+    ctx.textAlign = "center"; // Align text horizontally
+    ctx.textBaseline = "middle"; // Align text vertically
 
     for (const block of translatedBlocks) {
       if (block.boundingBox) {

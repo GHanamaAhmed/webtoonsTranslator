@@ -18,7 +18,7 @@ import {
 } from "@/components/shadcn/ui/command";
 import { FaCheck } from "react-icons/fa";
 import { cn } from "@/lib/utils";
-import {  MdTranslate } from "react-icons/md";
+import { MdTranslate } from "react-icons/md";
 import axios from "axios";
 import { UploadApiResponse } from "cloudinary";
 import { CldImage } from "next-cloudinary";
@@ -78,7 +78,12 @@ export default function HeroSection() {
     }
   };
   const handleTranslation = async () => {
-    await axios.post("/api/project/translation", images);
+    await axios.post("/api/project/translation", images, {
+      headers: {
+        "Content-Type": "application/json",
+        "model-type": "magicApiObjectRemover",
+      },
+    });
   };
   return (
     <section className="flex flex-col gap-2 md:gap-4 xl:gap-6 items-center py-6 md:py-8 xl:py-10">

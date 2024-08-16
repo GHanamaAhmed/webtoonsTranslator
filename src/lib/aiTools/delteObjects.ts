@@ -9,7 +9,6 @@ export async function createMaskImage(
   const image = await loadImage(buffer);
   const canvas = createCanvas(image.width, image.height);
   const ctx = canvas.getContext("2d");
-  console.log(iAnnotateImageResponse.fullTextAnnotation);
 
   ctx.fillStyle = "black";
   ctx.fillRect(0, 0, image.width, image.height);
@@ -20,7 +19,6 @@ export async function createMaskImage(
     iAnnotateImageResponse.fullTextAnnotation || {};
   fullTextAnnotation.pages?.forEach((page) => {
     page.blocks?.forEach((block, index) => {
-      if (index === 0) return;
       const vertices = block.boundingBox?.vertices;
       if (vertices && vertices.length === 4) {
         const x1 = vertices[0].x || 0;
