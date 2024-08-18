@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/header";
+import Image from "next/image";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -20,7 +21,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={poppins.className}>
+      <body className={`${poppins.className} bg-darkBackground`}>
+        {/* <Image
+          src={"/images/geek-lead-webtoon-Nov-2023.webp"}
+          className=""
+          fill
+          alt=""
+        /> */}
         <Header />
         {children}
       </body>

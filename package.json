@@ -12,13 +12,6 @@
     "@google-cloud/translate": "^8.4.0",
     "@google-cloud/vertexai": "^1.4.1",
     "@google-cloud/vision": "^4.3.0",
-    "@napi-rs/canvas": "^0.1.53",
-    "@napi-rs/canvas-linux-x64-gnu": "^0.1.53",
-    "@radix-ui/react-dialog": "^1.1.1",
-    "@radix-ui/react-dropdown-menu": "^2.1.1",
-    "@radix-ui/react-popover": "^1.1.1",
-    "@radix-ui/react-slot": "^1.1.0",
-    "@uniformdev/canvas-next": "^19.178.0",
     "axios": "^1.7.3",
     "canvas": "^2.11.2",
     "class-variance-authority": "^0.7.0",
@@ -29,13 +22,11 @@
     "lucide-react": "^0.427.0",
     "next": "14.2.5",
     "next-cloudinary": "^6.10.0",
-    "node-canvas-webgl": "^0.3.0",
     "react": "^18",
     "react-dom": "^18",
     "react-icons": "^5.2.1",
     "sharp": "^0.33.4",
-    "tailwind-merge": "^2.5.2",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwind-merge": "^2.5.2"
   },
   "devDependencies": {
     "@types/node": "^20",
