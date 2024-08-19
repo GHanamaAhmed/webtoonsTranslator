@@ -41,7 +41,7 @@ export default function PowerdByAI() {
         </p>
         <p className="text-center md:w-10/12 text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl">
           Webtoon Translator offers fast and accurate translations for webtoons
-          and manga with our AI-driven tool. Whether you're translating entire
+          and manga with our AI-driven tool. Whether youre translating entire
           series or individual chapters, it captures every nuance with
           precision. Start translating effortlessly today and experience our
           superior technology.
@@ -49,7 +49,7 @@ export default function PowerdByAI() {
         <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-4 md:gap-6 xl:gap-8">
           <div
             ref={containerRef}
-            className="relative overflow-hidden w-full mx-auto max-w-[269px] xl:max-w-[400px] 2xl:max-w-[500px] aspect-[269/366]"
+            className="relative rounded-2xl overflow-hidden w-full mx-auto max-w-[269px] xl:max-w-[400px] 2xl:max-w-[500px]"
             onMouseMove={handleMouseMove}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
@@ -68,24 +68,30 @@ export default function PowerdByAI() {
               className="absolute h-full w-1.5 bg-lightBackground shadow-md z-10"
               style={{ left: `${lineX}px` }}
             />
-            <div className="absolute inset-0 flex">
+            <div className="relative inset-0 flex">
               <Image
-                className="object-cover"
+                className=""
                 src={"/images/x_ja.png"}
                 alt="Japanese"
-                layout="fill"
                 objectFit="cover"
+                width={2000}
+                height={2000}
                 style={{
+                  width: "100%",
+                  height: "auto",
                   clipPath: `inset(0 0 0 ${lineX}px)`,
                 }}
               />
               <Image
-                className="object-cover"
+                className="absolute"
                 src={"/images/x_er.png"}
                 alt="English"
-                layout="fill"
+                width={2000}
+                height={2000}
                 objectFit="cover"
                 style={{
+                  width: "100%",
+                  height: "auto",
                   clipPath: `inset(0 ${
                     containerRef.current
                       ? containerRef.current.offsetWidth - lineX
