@@ -22,6 +22,11 @@
   font-style: normal;
 }
 
+@font-face {
+  font-family: "Archivo";
+  src: url("/fonts/archivo/Archivo Black.ttf") format("ttf");
+}
+
 * {
   font-family: "Graphik", sans-serif;
 }

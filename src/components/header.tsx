@@ -5,7 +5,7 @@ export default function Header() {
   return (
     <header className="z-10 w-full absolute flex justify-around items-center py-2 md:py-4 xl:py-6">
       <div className="relative w-32 h-10 md:w-40 md:h-12 xl:w-48 xl:h-14">
-        <Image src={"/logo dark.svg"} alt="" fill />
+        <Image src={"/logo-no-background.svg"} alt="" fill />
       </div>
       <div className="hidden md:flex justify-between items-center gap-4 xl:gap-6 text-text">
         <div>Home</div>

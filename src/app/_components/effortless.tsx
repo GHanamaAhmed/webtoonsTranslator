@@ -35,11 +35,11 @@ export default function Effortless() {
               </div>
             </div>
           </div>
-          <div className="col-span-2 h-52 md:h-auto grid grid-rows-2 gap-4 md:gap-6 xl:gap-8 p-4 text-white">
-            <div className="overflow-hidden flex flex-col gap-4 md:gap-6 xl:gap-8">
+          <div className="col-span-2  md:h-auto grid grid-rows-2 gap-4 md:gap-6 xl:gap-8 p-4 text-white">
+            <div className="flex flex-col gap-4 md:gap-6 xl:gap-8">
               <div className="flex justify-between items-center">
                 <p className="md:w-10/12 text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl">
-                  Author: Eiichiro Oda
+                  <span className="font-medium">Author:</span> Eiichiro Oda
                 </p>
                 <div className="flex justify-between items-center gap-2">
                   <div className="h-2 w-2 rounded-full bg-white opacity-50"></div>
@@ -47,13 +47,17 @@ export default function Effortless() {
                   <div className="h-2 w-2 rounded-full bg-white opacity-50"></div>
                 </div>
               </div>
-              <p className="md:w-10/12 text-ellipsis text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl">
+              <p className="hidden md:block text-wrap text-clip overflow- text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl">
                 One Piece follows the adventures of young pirate Monkey D.
                 Luffy, who sets out on a journey to find the legendary treasure
                 One Piece and become the Pirate King. Alongside his diverse
                 crew, Luffy faces countless challenges, battles various enemies,
                 and explores unknown islands and secrets, steadily moving closer
                 to his dream.
+              </p>
+              <p className="md:hidden text-wrap text-clip overflow- text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl">
+                One Piece follows the adventures of young pirate Monkey D.
+                Luffy, who sets out on a journey ...
               </p>
             </div>
             <div className="flex items-center gap-2 md:gap-4 xl:gap-6 2xl:gap-8">

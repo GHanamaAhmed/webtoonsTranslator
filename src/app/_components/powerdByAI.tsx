@@ -46,7 +46,7 @@ export default function PowerdByAI() {
           precision. Start translating effortlessly today and experience our
           superior technology.
         </p>
-        <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-4 md:gap-6 xl:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-5 md:gap-7 xl:gap-9">
           <div
             ref={containerRef}
             className="relative rounded-2xl overflow-hidden w-full mx-auto max-w-[269px] xl:max-w-[400px] 2xl:max-w-[500px]"
