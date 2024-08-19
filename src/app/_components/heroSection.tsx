@@ -15,10 +15,10 @@ export default function HeroSection() {
       <div className="background-image" />
       <div className="relative z-20 w-full md:w-10/12 flex flex-col items-center gap-7 md:gap-10 xl:gap-14 text-text py-20 md:py-24 lg:py-32 xl:py-36 2xl:py-40 px-5">
         <div className="text-center">
-          <p className="text-title md:text-title-md lg:text-title-lg xl:text-title-lg 2xl:text-title-2xl font-medium">
+          <p className="text-title md:text-title-md lg:text-title-lg xl:text-title-lg 2xl:text-title-2xl font-extrabold">
             Webtoon Translator
           </p>
-          <p className="text-title md:text-title-md lg:text-title-lg xl:text-title-lg 2xl:text-title-2xl font-medium">
+          <p className="text-title md:text-title-md lg:text-title-lg xl:text-title-lg 2xl:text-title-2xl font-extrabold">
             Quick and Accurate Comic Translations
           </p>
         </div>
