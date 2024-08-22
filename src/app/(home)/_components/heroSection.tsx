@@ -11,9 +11,9 @@ const Languages = [
 ];
 export default function HeroSection() {
   return (
-    <main className="relative flex justify-center items-center bg-repeat bg-gradient-to-b from-secondary to-primary">
+    <main className="relative flex justify-center items-center bg-gradient-to-b from-Secondary to-Primary">
       <div className="background-image" />
-      <div className="relative z-20 w-full md:w-10/12 flex flex-col items-center gap-7 md:gap-10 xl:gap-14 text-text py-20 md:py-24 lg:py-32 xl:py-36 2xl:py-40 px-5">
+      <div className="relative z-20 w-full md:w-10/12 flex flex-col items-center gap-7 md:gap-10 xl:gap-14 text-Text py-20 md:py-24 lg:py-32 xl:py-36 2xl:py-40 px-5">
         <div className="text-center">
           <p className="text-title md:text-title-md lg:text-title-lg xl:text-title-lg 2xl:text-title-2xl font-extrabold">
             Webtoon Translator
@@ -29,10 +29,10 @@ export default function HeroSection() {
           stays true to the original artwork.
         </p>
         <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4 lg:gap-6 xl:gap-8 2xl:gap-10">
-          <button className="bg-primary py-3 px-5 text-text shadow-sm">
+          <button className="bg-Primary py-3 px-5 text-Text shadow-sm">
             Try For Free
           </button>
-          <button className="border border-lightBackground py-3 px-5 text-text ">
+          <button className="border border-LightBackground py-3 px-5 text-Text ">
             Learn More
           </button>
         </div>

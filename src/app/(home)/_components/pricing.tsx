@@ -12,7 +12,7 @@ interface PricingPlanProps {
 export default function Pricing() {
   return (
     <section className="flex justify-center items-center">
-      <div className="w-full md:w-10/12 flex flex-col items-center gap-4 md:gap-6 xl:gap-8 text-text py-10 md:py-14 lg:py-16 xl:py-20 2xl:py-24 px-5">
+      <div className="w-full md:w-10/12 flex flex-col items-center gap-4 md:gap-6 xl:gap-8 text-Text py-10 md:py-14 lg:py-16 xl:py-20 2xl:py-24 px-5">
         <p className="text-center text-header md:text-header-md lg:text-header-lg xl:text-header-lg 2xl:text-header-2xl font-extrabold">
           High-Quality Translations for Raw Manga{" "}
         </p>
@@ -81,10 +81,10 @@ const PricingPlan: React.FC<PricingPlanProps> = ({
 }) => {
   return (
     <div
-      className={`relative flex flex-col gap-2 md:gap-3 xl:gap-4 py-5 md:py-9 text-white lg:py-12 xl:py-14 px-3 md:px-5 xl:px-12 rounded-2xl ${
+      className={`relative flex flex-col gap-2 md:gap-3 xl:gap-4 py-5 md:py-9 text-Text lg:py-12 xl:py-14 px-3 md:px-5 xl:px-12 rounded-2xl ${
         isBest
-          ? "bg-gradient-to-br from-secondary to-primary"
-          : "bg-quaternary "
+          ? "bg-gradient-to-br from-Secondary to-Primary"
+          : "bg-Quaternary "
       }`}
     >
       <p className="items-center flex gap-1 font-medium text-header md:text-header-md lg:text-header-lg xl:text-header-lg 2xl:text-header-2xl">
@@ -105,16 +105,16 @@ const PricingPlan: React.FC<PricingPlanProps> = ({
             key={index}
             className="flex items-center gap-3 md:gap-4 xl:gap-5"
           >
-            <span className="rounded-full flex justify-center items-center p-1 xl:p-2 bg-text bg-opacity-10">
-              <FaCheck className="size-2 md:size-3 xl:size-5 fill-text" />
+            <span className="rounded-full flex justify-center items-center p-1 xl:p-2 bg-LightBackground bg-opacity-10">
+              <FaCheck className="size-2 md:size-3 xl:size-5 fill-Text" />
             </span>
-            <p className="text-text text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl">
+            <p className="text-Text text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl">
               {feature}
             </p>
           </div>
         ))}
       </div>
-      <button className="py-2 px-5 text-text bg-primary rounded-full text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl">
+      <button className="py-2 px-5 text-Text bg-Primary rounded-full text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl">
         Choose plan
       </button>
     </div>

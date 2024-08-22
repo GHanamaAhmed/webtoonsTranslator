@@ -42,7 +42,7 @@ const ImageReveal: React.FC<ImageRevealProps> = ({
       onMouseLeave={handleMouseLeave}
     >
       <div
-        className="bg-lightBackground p-2 absolute top-1/2 z-20 rounded-full"
+        className="bg-LightBackground p-2 absolute top-1/2 z-20 rounded-full"
         style={{
           left: axis === "horizontal" ? `calc(${lineX}px - 14px)` : "50%",
           top: axis === "vertical" ? `calc(${lineX}px - 14px)` : "50%",
@@ -53,7 +53,7 @@ const ImageReveal: React.FC<ImageRevealProps> = ({
         <RiExpandLeftRightLine color="black" className="w-5 h-5" />
       </div>
       <div
-        className="absolute h-full w-1.5 bg-lightBackground shadow-md z-10"
+        className="absolute h-full w-1.5 bg- shadow-md z-10"
         style={{
           left: axis === "horizontal" ? `${lineX}px` : "0",
           top: axis === "vertical" ? `${lineX}px` : "0",

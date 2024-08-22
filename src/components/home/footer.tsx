@@ -4,7 +4,7 @@ import React from "react";
 export default function Footer() {
   return (
     <section className="flex justify-center items-center bg-[#1E1E1E]">
-      <div className="w-full md:w-10/12 flex flex-col md:flex-row md:justify-between  gap-4 md:gap-6 xl:gap-8 text-text py-10 md:py-14 lg:py-16 xl:py-20 2xl:py-24 px-5">
+      <div className="w-full md:w-10/12 flex flex-col md:flex-row md:justify-between  gap-4 md:gap-6 xl:gap-8 text-Text py-10 md:py-14 lg:py-16 xl:py-20 2xl:py-24 px-5">
         <div className="flex flex-col gap-2 md:gap-3 xl:gap-4">
           <div className="relative w-32 h-10 md:w-40 md:h-12 xl:w-48 xl:h-14">
             <Image src={"/logo-no-background.svg"} alt="" fill />

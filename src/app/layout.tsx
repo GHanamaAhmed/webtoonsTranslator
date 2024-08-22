@@ -1,14 +1,5 @@
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
 import "./globals.css";
-import Header from "@/components/header";
-import Image from "next/image";
-import Footer from "@/components/footer";
-
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -20,19 +11,5 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en">
-      <body className={`${poppins.className} bg-darkBackground`}>
-        {/* <Image
-          src={"/images/geek-lead-webtoon-Nov-2023.webp"}
-          className=""
-          fill
-          alt=""
-        /> */}
-        <Header />
-        {children}
-        <Footer />
-      </body>
-    </html>
-  );
+  return <html lang="en" className="dark">{children}</html>;
 }

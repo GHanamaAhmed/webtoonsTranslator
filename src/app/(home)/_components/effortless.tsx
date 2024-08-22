@@ -1,11 +1,11 @@
-import ImageReveal from "@/components/imageReveal";
+import ImageReveal from "@/components/home/imageReveal";
 import Image from "next/image";
 import React from "react";
 
 export default function Effortless() {
   return (
-    <section className="flex justify-center items-center bg-[#1E1E1E]">
-      <div className=" w-full md:w-10/12 flex flex-col items-center gap-4 md:gap-6 xl:gap-8 text-text py-10 md:py-14 lg:py-16 xl:py-20 2xl:py-24 px-5">
+    <section className="flex justify-center items-center bg-DarkBackground2">
+      <div className=" w-full md:w-10/12 flex flex-col items-center gap-4 md:gap-6 xl:gap-8 text-Text py-10 md:py-14 lg:py-16 xl:py-20 2xl:py-24 px-5">
         <p className="text-center text-header md:text-header-md lg:text-header-lg xl:text-header-lg 2xl:text-header-2xl font-extrabold">
           Effortless Translation of Vertical Text and Images
         </p>
@@ -35,16 +35,16 @@ export default function Effortless() {
               </div>
             </div>
           </div>
-          <div className="col-span-2  md:h-auto grid grid-rows-2 gap-4 md:gap-6 xl:gap-8 p-4 text-white">
+          <div className="col-span-2  md:h-auto grid grid-rows-2 gap-4 md:gap-6 xl:gap-8 p-4 text-Text">
             <div className="flex flex-col gap-4 md:gap-6 xl:gap-8">
               <div className="flex justify-between items-center">
                 <p className="md:w-10/12 text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl">
                   <span className="font-medium">Author:</span> Eiichiro Oda
                 </p>
                 <div className="flex justify-between items-center gap-2">
-                  <div className="h-2 w-2 rounded-full bg-white opacity-50"></div>
-                  <div className="h-2 w-2 rounded-full bg-white opacity-50"></div>
-                  <div className="h-2 w-2 rounded-full bg-white opacity-50"></div>
+                  <div className="h-2 w-2 rounded-full bg-LightBackground opacity-50"></div>
+                  <div className="h-2 w-2 rounded-full bg-LightBackground opacity-50"></div>
+                  <div className="h-2 w-2 rounded-full bg-LightBackground opacity-50"></div>
                 </div>
               </div>
               <p className="hidden md:block text-wrap text-clip overflow- text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl">
@@ -91,7 +91,7 @@ export default function Effortless() {
             </div>
           </div>
         </div>
-        <div className=" p-2 w-full border-primary border-2 rounded-3xl">
+        <div className=" p-2 w-full border-Primary border-2 rounded-3xl">
           <div className="rounded-3xl overflow-hidden">
             <ImageReveal
               imageLeftOrTop="/images/1-jp.png"

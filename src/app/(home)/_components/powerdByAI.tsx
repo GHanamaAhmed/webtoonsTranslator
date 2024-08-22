@@ -35,7 +35,7 @@ export default function PowerdByAI() {
   }, []);
   return (
     <section className="flex justify-center items-center">
-      <div className="w-full md:w-10/12 flex flex-col items-center gap-4 md:gap-6 xl:gap-8 text-text py-10 md:py-14 lg:py-16 xl:py-20 2xl:py-24 px-5">
+      <div className="w-full md:w-10/12 flex flex-col items-center gap-4 md:gap-6 xl:gap-8 text-Text py-10 md:py-14 lg:py-16 xl:py-20 2xl:py-24 px-5">
         <p className="text-center text-header md:text-header-md lg:text-header-lg xl:text-header-lg 2xl:text-header-2xl font-extrabold">
           Powered by AI, Seamless and Efficient
         </p>
@@ -59,13 +59,13 @@ export default function PowerdByAI() {
             }}
           >
             <div
-              className="bg-lightBackground p-2 absolute top-1/2 z-20 rounded-full"
+              className="bg-LightBackground p-2 absolute top-1/2 z-20 rounded-full"
               style={{ left: `calc(${lineX}px - 14px)` }}
             >
               <RiExpandLeftRightLine color="black" className="w-5 h-5" />
             </div>
             <div
-              className="absolute h-full w-1.5 bg-lightBackground shadow-md z-10"
+              className="absolute h-full w-1.5 bg-LightBackground shadow-md z-10"
               style={{ left: `${lineX}px` }}
             />
             <div className="relative inset-0 flex">
@@ -104,12 +104,12 @@ export default function PowerdByAI() {
           <div className="flex flex-col items-center gap-7 md:gap-10 xl:gap-12">
             <div className="w-8/12 flex flex-col gap-1 md:gap-2 xl:gap-3">
               <div className="flex gap-1 md:gap-2 xl:gap-3">
-                <FaRobot className="fill-secondary w-8 h-8" />
-                <p className="font-medium text-text text-subheader xl:text-subheader-lg 2xl:text-subheader-2xl">
+                <FaRobot className="fill-Secondary w-8 h-8" />
+                <p className="font-medium text-Text text-subheader xl:text-subheader-lg 2xl:text-subheader-2xl">
                   Precision Tailored for Webtoons and Manga{" "}
                 </p>
               </div>
-              <p className="text-text text-paragraph  xl:text-paragraph-lg 2xl:text-paragraph-2xl">
+              <p className="text-Text text-paragraph  xl:text-paragraph-lg 2xl:text-paragraph-2xl">
                 Our AI understands the unique language and cultural references
                 found in webtoons and manga, delivering translations that stay
                 true to the original content.
@@ -117,24 +117,24 @@ export default function PowerdByAI() {
             </div>
             <div className="w-8/12 flex flex-col gap-1 md:gap-2 xl:gap-3">
               <div className="flex gap-1 md:gap-2 xl:gap-3">
-                <FaRocket className="fill-secondary w-8 h-8" />
-                <p className="font-medium text-text text-subheader xl:text-subheader-lg 2xl:text-subheader-2xl">
+                <FaRocket className="fill-Secondary w-8 h-8" />
+                <p className="font-medium text-Text text-subheader xl:text-subheader-lg 2xl:text-subheader-2xl">
                   Speed and Efficiency:{" "}
                 </p>
               </div>
-              <p className="text-text text-paragraph  xl:text-paragraph-lg 2xl:text-paragraph-2xl">
+              <p className="text-Text text-paragraph  xl:text-paragraph-lg 2xl:text-paragraph-2xl">
                 Translate entire chapters or series swiftly without compromising
                 accuracy, saving you time and effort.
               </p>
             </div>
             <div className="w-8/12 flex flex-col gap-1 md:gap-2 xl:gap-3">
               <div className="flex gap-1 md:gap-2 xl:gap-3">
-                <MdTouchApp className="fill-secondary w-8 h-8" />
-                <p className="font-medium text-text text-subheader xl:text-subheader-lg 2xl:text-subheader-2xl">
+                <MdTouchApp className="fill-Secondary w-8 h-8" />
+                <p className="font-medium text-Text text-subheader xl:text-subheader-lg 2xl:text-subheader-2xl">
                   User-Friendly Interface{" "}
                 </p>
               </div>
-              <p className="text-text text-paragraph  xl:text-paragraph-lg 2xl:text-paragraph-2xl">
+              <p className="text-Text text-paragraph  xl:text-paragraph-lg 2xl:text-paragraph-2xl">
                 Our intuitive platform makes it easy for translators of all
                 levels to produce high-quality translations with minimal effort,
                 and allows them to edit translations as needed.

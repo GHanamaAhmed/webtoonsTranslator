@@ -3,7 +3,6 @@ import cloudinary, { UploadApiResponse } from "cloudinary";
 
 import { NextResponse } from "next/server";
 import sharp from "sharp";
-
 cloudinary.v2.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
   api_key: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
@@ -33,7 +32,6 @@ export async function POST(req: NextRequest) {
                 console.error("Cloudinary upload error:", error);
                 reject(error);
               } else {
-                console.log("Cloudinary upload result:", result);
                 resolve(result);
               }
             }
