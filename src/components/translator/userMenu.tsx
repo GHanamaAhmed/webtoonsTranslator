@@ -1,3 +1,4 @@
+"use client";
 import {
   Cloud,
   CreditCard,
@@ -35,7 +36,9 @@ import React from "react";
 export function UserMenu({ children }: { children: React.ReactNode }) {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
+      <DropdownMenuTrigger className="cursor-pointer" asChild>
+        {children}
+      </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />

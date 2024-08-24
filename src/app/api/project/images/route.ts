@@ -3,6 +3,7 @@ import cloudinary, { UploadApiResponse } from "cloudinary";
 
 import { NextResponse } from "next/server";
 import sharp from "sharp";
+import { pusherServer } from "@/lib/pusher";
 cloudinary.v2.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
   api_key: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
@@ -14,7 +15,7 @@ export async function POST(req: NextRequest) {
     const formData = await req.formData();
     const images = formData.getAll("images") as File[];
     const timestamp = Date.now();
-    const uploadPromises = images.map(async (image) => {
+    const uploadPromises = images.map(async (image, index) => {
       const arrayBuffer = await image.arrayBuffer();
       const buffer = await sharp(Buffer.from(arrayBuffer)).webp().toBuffer();
       return new Promise((resolve, reject) => {
@@ -27,7 +28,11 @@ export async function POST(req: NextRequest) {
               timestamp,
               unique_filename: true,
             },
-            (error, result) => {
+            async (error, result) => {
+              await pusherServer.trigger("images", "upload", {
+                image: result,
+                index: index,
+              });
               if (error) {
                 console.error("Cloudinary upload error:", error);
                 reject(error);

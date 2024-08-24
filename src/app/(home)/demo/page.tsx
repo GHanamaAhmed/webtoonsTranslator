@@ -7,11 +7,33 @@ import { MdDelete } from "react-icons/md";
 import axios from "axios";
 import { UploadApiResponse } from "cloudinary";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import PusherClient from "pusher-js";
+
 export default function Page() {
   const [uploadingImages, setUploadingImages] = useState<number>(0);
   const [images, setImages] = useState<string[]>([]);
   const queryClient = useQueryClient();
+  useEffect(() => {
+    const pusherClient = new PusherClient(process.env.PUSHER_KEY!, {
+      cluster: process.env.PUSHER_CLUSTER!,
+      userAuthentication: {
+        customHandler: async ({ socketId }, cb) => {
+          const { data } = await axios.post("/api/pusher/user-auth", {
+            socketId,
+          });
+          cb(null, data);
+        },
+      },
+    });
 
+    const privateChannel = pusherClient.subscribe("private-images");
+    privateChannel.bind("upload", function (data) {
+      console.log(data);
+    });
+    return () => {
+      privateChannel.unsubscribe();
+    };
+  }, []);
   const uploadImagesMutation = useMutation({
     mutationFn: async (files: FileList) => {
       const formData = new FormData();
