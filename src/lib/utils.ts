@@ -1,14 +1,10 @@
-import { type ClassValue, clsx } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
 
-import jsPDF from "jspdf"
+import jsPDF from "jspdf";
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
-
-
-
-
 
 const adjectives = [
   "Happy",
@@ -41,7 +37,6 @@ const animals = [
   "Panda",
   "Crocodile",
 ];
-
 
 export function generateRandomName(): string {
   const randomAdjective =
@@ -124,3 +119,54 @@ export const exportToPdf = () => {
   // download the pdf
   doc.save("canvas.pdf");
 };
+
+export async function convertFilesToPng(oldFiles: FileList) {
+  const files = await Promise.all(
+    Array.from(oldFiles).map(async (file) => {
+      const img = await createImageBitmap(file);
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx?.drawImage(img, 0, 0);
+
+      return new Promise((resolve, reject) => {
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const newFile = new File([blob], file.name, { type: "image/png" });
+            resolve(newFile);
+          } else {
+            reject(new Error("Failed to convert canvas to Blob"));
+          }
+        }, "image/png");
+      });
+    })
+  );
+  return files;
+}
+export async function convertFilesToWebp(oldFiles: FileList) {
+  const files = await Promise.all(
+    Array.from(oldFiles).map(async (file) => {
+      const img = await createImageBitmap(file);
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx?.drawImage(img, 0, 0);
+
+      return new Promise((resolve, reject) => {
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const newFile = new File([blob], file.name.replace(/\.\w+$/, ".webp"), { type: "image/webp" });
+            resolve(newFile);
+          } else {
+            reject(new Error("Failed to convert canvas to Blob"));
+          }
+        }, "image/webp"); // Convert to WebP
+      });
+    })
+  );
+  return files;
+}
