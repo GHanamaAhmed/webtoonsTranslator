@@ -145,8 +145,8 @@ export async function convertFilesToPng(oldFiles: FileList) {
   );
   return files;
 }
-export async function convertFilesToWebp(oldFiles: FileList) {
-  const files = await Promise.all(
+export async function convertFilesToWebp(oldFiles: FileList): Promise<File[]> {
+  const files: File[] = await Promise.all(
     Array.from(oldFiles).map(async (file) => {
       const img = await createImageBitmap(file);
       const canvas = document.createElement("canvas");
@@ -159,7 +159,11 @@ export async function convertFilesToWebp(oldFiles: FileList) {
       return new Promise((resolve, reject) => {
         canvas.toBlob((blob) => {
           if (blob) {
-            const newFile = new File([blob], file.name.replace(/\.\w+$/, ".webp"), { type: "image/webp" });
+            const newFile = new File(
+              [blob],
+              file.name.replace(/\.\w+$/, ".webp"),
+              { type: "image/webp" }
+            );
             resolve(newFile);
           } else {
             reject(new Error("Failed to convert canvas to Blob"));
@@ -169,4 +173,13 @@ export async function convertFilesToWebp(oldFiles: FileList) {
     })
   );
   return files;
+}
+
+// Function to chunk an array into smaller arrays of a specified size
+export function chunkArray(array: Buffer[], size: number = 16) {
+  const result = [];
+  for (let i = 0; i < array.length; i += size) {
+    result.push(array.slice(i, i + size));
+  }
+  return result;
 }

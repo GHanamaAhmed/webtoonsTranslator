@@ -15,7 +15,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`bg-DarkBackground`}>
+      <body className={`bg-DarkBackground relative`}>
         <QueryProvider>
           <Header />
           {children}
