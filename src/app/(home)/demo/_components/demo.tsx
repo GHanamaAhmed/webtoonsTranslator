@@ -17,7 +17,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { google } from "@google-cloud/translate/build/protos/protos";
-import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { ImagesCarousel } from "./carousel";
 
@@ -32,31 +31,86 @@ export default function Demo({
   const [images, setImages] = useState<
     {
       src: string;
+      tsrc: string;
+      translated: boolean;
       isPending: boolean;
-      isError: boolean;
+      isError: string;
     }[]
   >([]);
   const [startIndex, setStartIndex] = useState(0);
   const [targerLanguage, setTargerLanguage] = useState("");
   const [openModal, setOpenModal] = useState(0);
-  const handleOpenModal = () => {
+  const [index, setIndex] = useState(0);
+  const [direction, setDirection] = useState<"horizontal" | "vertical">(
+    "vertical"
+  );
+  const handleOpenModal = (i: number) => {
     setOpenModal(openModal + 1);
+    setIndex(i);
   };
   const translate = async (ids: string[]) => {
-    await axios.post(
-      "/api/project/translation",
-      {
-        ids,
-        targetLanguage: targerLanguage,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          "model-type": "lama",
+    setImages((prev) => {
+      return prev.map((image, index) => {
+        const exsist = ids.find((e) => e == image.src);
+        if (exsist) {
+          return {
+            ...image,
+            isPending: true,
+          };
+        }
+        return image;
+      });
+    });
+    try {
+      const {
+        data,
+      }: {
+        data: UploadApiResponse[];
+      } = await axios.post(
+        "/api/project/translation",
+        {
+          ids,
+          targetLanguage: "ar",
         },
-      }
-    );
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "model-type": "lama",
+          },
+        }
+      );
+      setImages((prev) => {
+        return prev.map((image) => {
+          const index = ids.findIndex((e) => e == image.src);
+          if (index > -1) {
+            return {
+              ...image,
+              isPending: false,
+              tsrc: data[index].secure_url,
+            };
+          }
+          return image;
+        });
+      });
+    } catch (error) {
+      console.error(error);
+      setImages((prev) => {
+        return prev.map((image, index) => {
+          const exsist = ids.find((e) => e == image.src);
+          if (exsist) {
+            return {
+              ...image,
+              isPending: false,
+              isError: "server error",
+            };
+          }
+          return image;
+        });
+      });
+    }
   };
+  console.log(images);
+
   const handleAddImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     const oldFiles = e.currentTarget.files;
@@ -65,7 +119,13 @@ export default function Demo({
       files.forEach((file, index) => {
         setImages((prevImages) => [
           ...prevImages,
-          { src: "", isPending: true, isError: false },
+          {
+            src: "",
+            isPending: true,
+            isError: "",
+            translated: false,
+            tsrc: "",
+          },
         ]);
         // Use the ChunkedUpload component
         // Note: You might need to update this part to actually render and use ChunkedUpload component correctly in your setup
@@ -82,7 +142,7 @@ export default function Demo({
           onUploadError: (error) => {
             setImages((prevImages) => {
               const newImages = [...prevImages];
-              newImages[index + startIndex].isError = true;
+              newImages[index + startIndex].isError = "Error loading image";
               newImages[index + startIndex].isPending = false;
               return newImages;
             });
@@ -93,12 +153,21 @@ export default function Demo({
     }
   };
   const handleRemoveImage = (src: string | undefined) => {
-    setImages((prev) => prev.filter((image) => image.src !== src));
+    setImages((prev) => {
+      const newImages = prev.filter((image) => image.src !== src);
+      setStartIndex(newImages.length);
+      return newImages;
+    });
   };
   return (
     <main className="relative">
       {" "}
-      <ImagesCarousel isOpen={openModal} images={images} />
+      <ImagesCarousel
+        index={index}
+        direction={direction}
+        isOpen={openModal}
+        images={images}
+      />
       <div className="relative flex justify-center items-center">
         <div className="h-full absolute w-full opacity-10 bg-gradient-to-b to-Quaternary from-Primary"></div>
         <div className="background-image" />
@@ -182,13 +251,13 @@ export default function Demo({
                           </div>
                         ) : image.isError ? (
                           <div className="flex justify-center items-center h-full bg-red-500 bg-opacity-10 text-center text-red-500">
-                            <p>Error loading image</p>
+                            <p>{image.isError}</p>
                           </div>
                         ) : (
                           <CldImage
-                            onClick={handleOpenModal}
+                            onClick={() => handleOpenModal(index)}
                             className="object-cover"
-                            src={image.src!}
+                            src={image.translated ? image.tsrc : image.src}
                             fill
                             alt={"image-" + index}
                           />
@@ -203,7 +272,24 @@ export default function Demo({
                           <button onClick={() => translate([image.src!])}>
                             <SvgIcon className="w-8 h-8 stroke fill-white" />
                           </button>
-                          <GoArrowSwitch className="w-5 h-5" />
+                          {image.tsrc != "" && (
+                            <GoArrowSwitch
+                              onClick={() =>
+                                setImages((prev) =>
+                                  prev.map((prevImage) => {
+                                    if (prevImage == image) {
+                                      return {
+                                        ...prevImage,
+                                        translated: !prevImage.translated,
+                                      };
+                                    }
+                                    return prevImage;
+                                  })
+                                )
+                              }
+                              className="w-5 h-5"
+                            />
+                          )}
                         </div>
                       )}
                     </div>

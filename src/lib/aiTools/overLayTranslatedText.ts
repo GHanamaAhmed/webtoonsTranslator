@@ -86,14 +86,27 @@ function drawText(
   x: number,
   y: number,
   maxWidth: number,
-  maxHeight: number
+  maxHeight: number,
+  textAlign: CanvasTextAlign
 ) {
   const fontSize = getOptimalFontSize(ctx, text, maxWidth, maxHeight);
   const lineHeight = fontSize * 1.2; // Line height multiplier
   const lines = wrapText(ctx, text, maxWidth, fontSize);
 
+  ctx.textAlign = textAlign; // Set text alignment
+  ctx.font = `${fontSize}px "${fontName}"`;
+
   lines.forEach((line, index) => {
-    ctx.fillText(line, x, y + index * lineHeight);
+    let drawX = x;
+
+    // Adjust x position based on text alignment
+    if (textAlign === "right") {
+      drawX += maxWidth; // Start from the right side of the bounding box
+    } else if (textAlign === "center") {
+      drawX += maxWidth / 2; // Center text within the bounding box
+    }
+
+    ctx.fillText(line, drawX, y + index * lineHeight);
   });
 }
 
@@ -102,7 +115,8 @@ export async function overlayTranslatedText(
   translatedBlocks: Array<{
     text: string;
     boundingBox: google.cloud.vision.v1.IBoundingPoly | null;
-  }>
+  }>,
+  textAlign: CanvasTextAlign
 ) {
   try {
     // Load the base image
@@ -115,7 +129,7 @@ export async function overlayTranslatedText(
 
     // Set up text styles using the registered font
     ctx.fillStyle = "black";
-    ctx.textAlign = "center"; // Align text horizontally
+    ctx.textAlign = textAlign; // Align text horizontally
     ctx.textBaseline = "middle"; // Align text vertically
 
     for (const block of translatedBlocks) {
@@ -128,12 +142,10 @@ export async function overlayTranslatedText(
             const y = topLeft.y || 0;
             const boxWidth = (bottomRight.x || 0) - x;
             const boxHeight = (bottomRight.y || 0) - y;
-
             if (boxWidth > 0 && boxHeight > 0) {
-              console.log(`Placing text "${block.text}" at (${x}, ${y})`);
-
-              // Draw the wrapped text with dynamic font size
-              drawText(ctx, block.text, x, y, boxWidth, boxHeight);
+              // Determine text alignment based on language or other criteria
+              const textAlign = "right"; // Example for Arabic; set dynamically as needed
+              drawText(ctx, block.text, x, y, boxWidth, boxHeight, textAlign);
             } else {
               console.warn(
                 `Invalid dimensions for text "${

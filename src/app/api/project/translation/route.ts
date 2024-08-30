@@ -54,10 +54,11 @@ export async function POST(req: NextRequest) {
       targetLanguage: string;
     } = await req.json();
     const ids = body.ids;
+    console.log(ids);
     const targetLanguage = body.targetLanguage;
-    const urls = (await cloudinary.v2.api.resources_by_ids(ids)).resources.map(
-      (image) => image.secure_url
-    );
+    const urls = ids.map((id) => cloudinary.v2.url(id));
+    console.log(urls);
+
     // Fetch the images from the URLs
     const buffers = await Promise.all(
       urls.map(async (url) =>
@@ -127,10 +128,10 @@ export async function POST(req: NextRequest) {
     const uploadedMasks = await Promise.all(uploadPromises1);
 
     const modelType = req.headers.get("model-type") || "lama";
-    let deletedTextBuffers: Buffer[];
+    let deletedText: string[];
     if (modelType === "lama") {
       const { data }: { data: string[] } = await axios.post(
-        "http://localhost:5000",
+        "http://localhost:5000/predict",
         {
           model_path: "big-lama",
           urls: ids.map((id, i) => ({
@@ -139,67 +140,10 @@ export async function POST(req: NextRequest) {
           })),
         }
       );
-      deletedTextBuffers = await Promise.all(
-        data.map(async (url) => {
-          return await fetch(url || "").then(async (res) =>
-            Buffer.from(await res.arrayBuffer())
-          );
-        })
-      );
-    } else if (modelType === "magicApiObjectRemover") {
-      // Magic API: Handles without local folders
-      const deletedTextURL = await Promise.all(
-        urls.map(async (url, index) => {
-          return await magicApiObjectRemover(
-            url,
-            uploadedMasks[index].secure_url
-          );
-        })
-      );
-      deletedTextBuffers = await Promise.all(
-        deletedTextURL.map(async (url) => {
-          return await fetch(url || "").then(async (res) =>
-            Buffer.from(await res.arrayBuffer())
-          );
-        })
-      );
+      deletedText = data;
     } else {
       throw new Error("Unsupported model type");
     }
-    // Convert final images to WebP and upload to Cloudinary
-    const uploadPromises2 = deletedTextBuffers.map((buffer) => {
-      return new Promise<UploadApiResponse>((resolve, reject) => {
-        sharp(buffer)
-          .webp()
-          .toBuffer()
-          .then((webpBuffer) => {
-            cloudinary.v2.uploader
-              .upload_stream(
-                {
-                  resource_type: "image",
-                  folder: process.env.CLOUDINARY_DELETED_TEXT_FOLDER,
-                  use_filename: true,
-                  timestamp: Date.now(),
-                  unique_filename: true,
-                },
-                (error, result) => {
-                  if (error) {
-                    console.error("Cloudinary upload error:", error);
-                    reject(error);
-                  } else {
-                    resolve(result as UploadApiResponse);
-                  }
-                }
-              )
-              .end(webpBuffer);
-          })
-          .catch(reject);
-      });
-    });
-    const deletedBuffersUploaded: UploadApiResponse[] = await Promise.all(
-      uploadPromises2
-    );
-
     // Continue with translation and overlay as before
     const fullTextAnnotations = iAnnotateImageResponse.map((res) => {
       return res.fullTextAnnotation;
@@ -227,7 +171,8 @@ export async function POST(req: NextRequest) {
       // Check if adding the current blocks exceeds the character limit
       if (currentCharacterCount + blockCharacterCount > characterLimit) {
         // If it does, translate the accumulated blocks
-        await characterLimiter.schedule(async () => {
+        await characterLimiter.schedule(() => Promise.resolve());
+        requestLimiter.schedule(async () => {
           const response = await translateText(
             currentTextBatch,
             targetLanguage
@@ -260,14 +205,10 @@ export async function POST(req: NextRequest) {
       });
     }
     const translatedBuffers = await Promise.all(
-      deletedBuffersUploaded.map(async (uploadResult, index) => {
+      deletedText.map(async (url, index) => {
         return await overlayTranslatedText(
           await sharp(
-            Buffer.from(
-              await fetch(uploadResult.secure_url).then((res) =>
-                res.arrayBuffer()
-              )
-            )
+            Buffer.from(await fetch(url).then((res) => res.arrayBuffer()))
           )
             .png()
             .toBuffer(),
@@ -276,7 +217,8 @@ export async function POST(req: NextRequest) {
               text: translation.translatedText || "",
               boundingBox: blocksText[index][i].boundingBox,
             };
-          }) || []
+          }) || [],
+          targetLanguage == "ar" ? "right" : "left"
         );
       })
     );
@@ -310,7 +252,6 @@ export async function POST(req: NextRequest) {
           .catch(reject);
       });
     });
-
     const translatedBuffersUploaded: UploadApiResponse[] = await Promise.all(
       uploadPromises3
     );
