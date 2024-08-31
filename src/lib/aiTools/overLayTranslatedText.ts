@@ -115,8 +115,7 @@ export async function overlayTranslatedText(
   translatedBlocks: Array<{
     text: string;
     boundingBox: google.cloud.vision.v1.IBoundingPoly | null;
-  }>,
-  textAlign: CanvasTextAlign
+  }>
 ) {
   try {
     // Load the base image
@@ -129,7 +128,7 @@ export async function overlayTranslatedText(
 
     // Set up text styles using the registered font
     ctx.fillStyle = "black";
-    ctx.textAlign = textAlign; // Align text horizontally
+    ctx.textAlign = "center"; // Align text horizontally
     ctx.textBaseline = "middle"; // Align text vertically
 
     for (const block of translatedBlocks) {
@@ -144,7 +143,7 @@ export async function overlayTranslatedText(
             const boxHeight = (bottomRight.y || 0) - y;
             if (boxWidth > 0 && boxHeight > 0) {
               // Determine text alignment based on language or other criteria
-              const textAlign = "right"; // Example for Arabic; set dynamically as needed
+              const textAlign = "center";
               drawText(ctx, block.text, x, y, boxWidth, boxHeight, textAlign);
             } else {
               console.warn(

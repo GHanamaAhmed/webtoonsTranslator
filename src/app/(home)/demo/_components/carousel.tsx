@@ -1,16 +1,22 @@
 "use client";
-import { useClickOutsideForImages } from "@/hooks/useClickOutside";
 import * as React from "react";
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
 // Import Swiper styles
 import "swiper/css";
 import { usePathname, useRouter } from "next/navigation";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { IoMdSettings } from "react-icons/io";
 
 export function ImagesCarousel({
   images,
   isOpen,
-  direction = "vertical",
   index = 0,
 }: {
   images: {
@@ -21,31 +27,16 @@ export function ImagesCarousel({
     isError: string;
   }[];
   isOpen: number;
-  direction?: "horizontal" | "vertical";
   index?: number;
 }) {
-  const imageRefs = React.useRef<(HTMLImageElement | null)[]>([]);
   const [open, setOpen] = React.useState(false);
   // Next.js App Router hooks
   const router = useRouter();
   const pathname = usePathname();
   const [translated, setTranslated] = React.useState(false);
-  // Create an array of refs for each image
-  const imageRefObjects = React.useMemo(
-    () =>
-      images.map(
-        (_, index) =>
-          ({
-            current: imageRefs.current[index],
-          } as React.RefObject<HTMLElement>)
-      ),
-    [images]
+  const [direction, setDirection] = React.useState<"horizontal" | "vertical">(
+    "vertical"
   );
-
-  useClickOutsideForImages(imageRefObjects, open, () => {
-    setOpen(false);
-  });
-
   React.useEffect(() => {
     if (isOpen) {
       const isTranslatedOpen = images[index].translated;
@@ -94,10 +85,42 @@ export function ImagesCarousel({
   }, [index]);
   return (
     <div
+      onClick={() => {
+        setOpen(false);
+      }}
       className={`absolute h-screen w-full flex items-center justify-center z-50 bg-black bg-opacity-80 ${
         open ? "" : "hidden"
       }`}
     >
+      <span className="absolute top-5 right-5  z-50">
+        {" "}
+        <DropdownMenu>
+          <DropdownMenuTrigger>
+            {" "}
+            <IoMdSettings className="size-6 xl:size-8" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuLabel>Direction</DropdownMenuLabel>
+            <DropdownMenuItem
+              onClick={(e) => {
+                e.stopPropagation();
+                setDirection("horizontal");
+              }}
+            >
+              Horizontal
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={(e) => {
+                e.stopPropagation();
+                setDirection("vertical");
+              }}
+            >
+              Vertical
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </span>
+
       {direction === "horizontal" ? (
         <Swiper
           centeredSlides={true}
@@ -117,15 +140,15 @@ export function ImagesCarousel({
             >
               <img
                 id={index + ""}
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
                 src={translated ? image.tsrc : image.src}
                 alt={`Translated Image ${index}`}
                 className="object-contain"
                 style={{
                   maxWidth: "100%",
                   maxHeight: "100vh",
-                }}
-                ref={(el) => {
-                  imageRefs.current[index] = el;
                 }}
               />
             </SwiperSlide>
@@ -137,14 +160,14 @@ export function ImagesCarousel({
             <img
               id={"image" + index}
               key={index}
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
               src={translated ? image.tsrc : image.src}
               alt={`Translated Image ${index}`}
               className="object-contain"
               style={{
                 maxWidth: "100%",
-              }}
-              ref={(el) => {
-                imageRefs.current[index] = el;
               }}
             />
           ))}

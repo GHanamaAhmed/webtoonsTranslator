@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
     const pngBuffers = await Promise.all(
       buffers.map(async (buffer) => sharp(buffer).png().toBuffer())
     );
-    const pngBuffersChunk = chunkArray(pngBuffers, 16);
+    const pngBuffersChunk = chunkArray<Buffer>(pngBuffers, 16);
     const iAnnotateImageResponse: googleVison.cloud.vision.v1.IAnnotateImageResponse[] =
       [];
     // Process each batch sequentially (you can adjust this to run concurrently if needed)
@@ -217,8 +217,7 @@ export async function POST(req: NextRequest) {
               text: translation.translatedText || "",
               boundingBox: blocksText[index][i].boundingBox,
             };
-          }) || [],
-          targetLanguage == "ar" ? "right" : "left"
+          }) || []
         );
       })
     );

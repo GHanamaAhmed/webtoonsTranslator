@@ -1,12 +1,12 @@
 "use client";
-import React, { useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { CldImage } from "next-cloudinary";
 import { MdDelete } from "react-icons/md";
 import { UploadApiErrorResponse, UploadApiResponse } from "cloudinary";
 import ChunkedUpload from "@/hooks/chunkedUpload";
 import { GoArrowSwitch } from "react-icons/go";
 import sharp from "sharp";
-import { convertFilesToPng, convertFilesToWebp } from "@/lib/utils";
+import { chunkArray, convertFilesToPng, convertFilesToWebp } from "@/lib/utils";
 import {
   Select,
   SelectContent,
@@ -19,6 +19,7 @@ import {
 import { google } from "@google-cloud/translate/build/protos/protos";
 import axios from "axios";
 import { ImagesCarousel } from "./carousel";
+import { DialogContext } from "@/components/alertDialog";
 
 export default function Demo({
   supportedLanguages,
@@ -41,57 +42,78 @@ export default function Demo({
   const [targerLanguage, setTargerLanguage] = useState("");
   const [openModal, setOpenModal] = useState(0);
   const [index, setIndex] = useState(0);
-  const [direction, setDirection] = useState<"horizontal" | "vertical">(
-    "vertical"
-  );
+  const dialog = useContext(DialogContext);
   const handleOpenModal = (i: number) => {
     setOpenModal(openModal + 1);
     setIndex(i);
   };
   const translate = async (ids: string[]) => {
-    setImages((prev) => {
-      return prev.map((image, index) => {
-        const exsist = ids.find((e) => e == image.src);
-        if (exsist) {
-          return {
-            ...image,
-            isPending: true,
-          };
-        }
-        return image;
-      });
-    });
     try {
-      const {
-        data,
-      }: {
-        data: UploadApiResponse[];
-      } = await axios.post(
-        "/api/project/translation",
-        {
-          ids,
-          targetLanguage: "ar",
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "model-type": "lama",
-          },
-        }
-      );
       setImages((prev) => {
-        return prev.map((image) => {
-          const index = ids.findIndex((e) => e == image.src);
-          if (index > -1) {
+        return prev.map((image, index) => {
+          const exsist = ids.find((e) => e == image.src);
+          if (exsist) {
             return {
               ...image,
-              isPending: false,
-              tsrc: data[index].secure_url,
+              isPending: true,
             };
           }
           return image;
         });
       });
+      const idChunks = chunkArray<string>(ids, 2); // Split ids into chunks of 2
+      const allResponses = [];
+      for (const chunk of idChunks) {
+        try {
+          const {
+            data,
+          }: {
+            data: UploadApiResponse[];
+          } = await axios.post(
+            "/api/project/translation",
+            {
+              ids: chunk, // Only send two IDs at a time
+              targerLanguage,
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+                "model-type": "lama",
+              },
+            }
+          );
+          allResponses.push(...data);
+          setImages((prev) => {
+            return prev.map((image) => {
+              const index = chunk.findIndex((e) => e == image.src);
+              if (index > -1) {
+                return {
+                  ...image,
+                  isPending: false,
+                  tsrc: data[index].secure_url,
+                  translated: true,
+                };
+              }
+              return image;
+            });
+          });
+        } catch (error) {
+          console.error("Error processing chunk:", chunk, error);
+          setImages((prev) => {
+            return prev.map((image, index) => {
+              const exsist = chunk.find((e) => e == image.src);
+              if (exsist) {
+                return {
+                  ...image,
+                  isPending: false,
+                  isError: "server error",
+                };
+              }
+              return image;
+            });
+          });
+        }
+      }
     } catch (error) {
       console.error(error);
       setImages((prev) => {
@@ -109,8 +131,6 @@ export default function Demo({
       });
     }
   };
-  console.log(images);
-
   const handleAddImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     const oldFiles = e.currentTarget.files;
@@ -159,12 +179,21 @@ export default function Demo({
       return newImages;
     });
   };
+  const handleRest = () => {
+    if (images.length == 0) return;
+    dialog.open({
+      message: "Are you sure you want to reset?",
+      onOK: () => {
+        setImages([]);
+        setStartIndex(0);
+      },
+    });
+  };
   return (
     <main className="relative">
       {" "}
       <ImagesCarousel
         index={index}
-        direction={direction}
         isOpen={openModal}
         images={images}
       />
@@ -325,10 +354,26 @@ export default function Demo({
               />
             </div>
             <div className="flex items-center gap-2 md:gap-3 xl:gap-4">
-              <button className="bg-Primary py-3 px-5 text-Text shadow-sm rounded-lg">
+              <button
+                onClick={() => translate(images.map((image) => image.src))}
+                className={
+                  "bg-Primary py-3 px-5 text-Text shadow-sm rounded-lg " +
+                  (images.length == 0 ? "" : "hover:bg-opacity-70")
+                }
+                disabled={images.length == 0}
+              >
                 Translate
               </button>
-              <button className="border border-LightBackground py-3 px-5 text-Text rounded-lg ">
+              <button
+                onClick={handleRest}
+                disabled={images.length == 0}
+                className={
+                  "border border-LightBackground py-3 px-5 text-Text rounded-lg " +
+                  (images.length == 0
+                    ? ""
+                    : "hover:bg-LightBackground hover:text-DarkBackground")
+                }
+              >
                 Reset
               </button>
             </div>

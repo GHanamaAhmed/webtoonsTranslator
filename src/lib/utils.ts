@@ -176,7 +176,7 @@ export async function convertFilesToWebp(oldFiles: FileList): Promise<File[]> {
 }
 
 // Function to chunk an array into smaller arrays of a specified size
-export function chunkArray(array: Buffer[], size: number = 16) {
+export function chunkArray<T>(array: T[], size: number = 16) {
   const result = [];
   for (let i = 0; i < array.length; i += size) {
     result.push(array.slice(i, i + size));
