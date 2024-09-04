@@ -188,16 +188,83 @@ export function chunkArray<T>(array: T[], size: number = 16) {
   return result;
 }
 
-export async function withMiddleware(
-  request: NextRequest,
-  middlewares: Middleware[],
-  handler: (request: NextRequest) => Promise<NextResponse>
-): Promise<NextResponse> {
-  for (const middleware of middlewares) {
-    const response = await middleware(request);
-    if (response) {
-      return response;
-    }
+// Utility function to handle request body parsing
+async function parseRequestBody(req: NextRequest): Promise<any> {
+  try {
+    return await req.json();
+  } catch (err) {
+    // Return undefined if parsing fails (e.g., no body in the request)
+    return undefined;
   }
-  return handler(request);
+}
+
+// `withMiddleware` function
+export async function withMiddleware(
+  req: NextRequest,
+  middlewares: Array<
+    (
+      req: NextRequest,
+      next: () => Promise<NextResponse | undefined>
+    ) => Promise<NextResponse | undefined>
+  >,
+  handler: (req: NextRequest) => Promise<NextResponse>
+): Promise<NextResponse | undefined> {
+  let i = 0;
+
+  // Parse the request body before proceeding
+  const parsedBody = await parseRequestBody(req);
+
+  // Create a modified request object with parsed body
+  const modifiedReq = new Request(req.url, {
+    method: req.method,
+    headers: req.headers,
+    body: req.method === "GET" || req.method === "HEAD" ? null : parsedBody,
+  }) as NextRequest;
+
+  (modifiedReq as any).json = async () => parsedBody;
+
+  const next = async (): Promise<NextResponse | undefined> => {
+    if (i < middlewares.length) {
+      return middlewares[i++](modifiedReq, next);
+    }
+    return handler(modifiedReq);
+  };
+
+  return next();
+}
+
+export function getErrorMessage(error: any) {
+  if (error.response) {
+    const statusCode = error.response.status;
+    switch (statusCode) {
+      case 400:
+        return "Bad Request";
+      case 401:
+        return "Unauthorized";
+      case 403:
+        return "Forbidden";
+      case 404:
+        return "Not Found";
+      case 500:
+        return "Internal Server Error";
+      case 502:
+        return "Bad Gateway";
+      case 503:
+        return "Service Unavailable";
+      case 504:
+        return "Gateway Timeout";
+      default:
+        return `HTTP Error: ${statusCode}`;
+    }
+  } else if (error.request) {
+    return "Network Error";
+  } else if (error.name === "TypeError") {
+    return "Type Error";
+  } else if (error.name === "SyntaxError") {
+    return "Syntax Error";
+  } else if (error.name === "ReferenceError") {
+    return "Reference Error";
+  } else {
+    return "Unknown Error";
+  }
 }

@@ -5,7 +5,7 @@ import { listSupportedLanguages } from "@/lib/aiTools/translate";
 import { db } from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { options } from "@/app/api/auth/[...nextauth]/options";
-
+const freeTimes = 30;
 export default async function Page() {
   // const supportedLanguages = await listSupportedLanguages();
   const supportedLanguages = [{}];
@@ -53,10 +53,10 @@ export default async function Page() {
       },
     });
     const maxUsage =
-      user?.subscriptions.reduce(
+      (user?.subscriptions.reduce(
         (acc, curr) => acc + (curr.maxUsage || 0),
         0
-      ) || 0;
+      ) || 0) + freeTimes;
     const usages =
       user?.projects.reduce(
         (acc, curr) =>

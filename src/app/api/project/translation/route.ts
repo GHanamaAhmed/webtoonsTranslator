@@ -3,10 +3,7 @@ import cloudinary, {
   UploadApiErrorResponse,
   UploadApiResponse,
 } from "cloudinary";
-import {
-  combineBlocks,
-  imageAnnotatorClient,
-} from "@/lib/utilsServer";
+import { combineBlocks, imageAnnotatorClient } from "@/lib/utilsServer";
 import { createMaskImage } from "@/lib/aiTools/delteObjects";
 import sharp from "sharp";
 import { translateText } from "@/lib/aiTools/translate";
@@ -50,13 +47,10 @@ async function handlePost(req: NextRequest) {
     const body: {
       ids: string[];
       targetLanguage: string;
-    } = await req.json();
+    } = await req?.json();
     const ids = body.ids;
-    console.log(ids);
     const targetLanguage = body.targetLanguage;
     const urls = ids.map((id) => cloudinary.v2.url(id));
-    console.log(urls);
-
     // Fetch the images from the URLs
     const buffers = await Promise.all(
       urls.map(async (url) =>

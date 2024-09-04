@@ -10,7 +10,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
 import React, { createContext } from "react";
 type DialogProps = {
   children: React.ReactNode;
@@ -60,9 +59,8 @@ export function AlertDialogProvider({ children }: DialogProps) {
   };
   return (
     <>
-      {" "}
       <AlertDialog open={open} onOpenChange={handleChange}>
-        <AlertDialogContent>
+        <AlertDialogContent >
           <AlertDialogHeader>
             <AlertDialogTitle>{title}</AlertDialogTitle>
             <AlertDialogDescription>{message}</AlertDialogDescription>

@@ -63,12 +63,8 @@ export const options: NextAuthOptions = {
       session.user.name = (user as User).name!;
       return session;
     },
-    redirect(params) {
-      return params.baseUrl;
-    },
   },
   pages: {
-    newUser: "/demo",
     signIn: "/auth/signin",
   },
 };

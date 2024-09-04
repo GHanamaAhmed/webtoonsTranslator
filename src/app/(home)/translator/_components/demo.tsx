@@ -5,8 +5,12 @@ import { MdDelete } from "react-icons/md";
 import { UploadApiErrorResponse, UploadApiResponse } from "cloudinary";
 import ChunkedUpload from "@/hooks/chunkedUpload";
 import { GoArrowSwitch } from "react-icons/go";
-import sharp from "sharp";
-import { chunkArray, convertFilesToPng, convertFilesToWebp } from "@/lib/utils";
+import {
+  chunkArray,
+  convertFilesToPng,
+  convertFilesToWebp,
+  getErrorMessage,
+} from "@/lib/utils";
 import {
   Select,
   SelectContent,
@@ -22,6 +26,9 @@ import { ImagesCarousel } from "./carousel";
 import { DialogContext } from "@/components/alertDialog";
 import { useSession } from "next-auth/react";
 import AuthButton from "@/components/auth/authButton";
+import { useToast } from "@/hooks/use-toast";
+import { ToastAction } from "@/components/ui/toast";
+import { useRouter } from "next/navigation";
 
 export default function Demo({
   supportedLanguages,
@@ -46,13 +53,51 @@ export default function Demo({
   const [targerLanguage, setTargerLanguage] = useState("");
   const [openModal, setOpenModal] = useState(0);
   const [index, setIndex] = useState(0);
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const dialog = useContext(DialogContext);
+  const [restTimes, setResTimes] = useState(times);
+  const { toast } = useToast();
+  const router = useRouter();
   const handleOpenModal = (i: number) => {
     setOpenModal(openModal + 1);
     setIndex(i);
   };
   const translate = async (ids: string[]) => {
+    if (status == "unauthenticated") return;
+    if (!restTimes)
+      return toast({
+        title: "Insufficient Translation Points",
+        description:
+          "Please purchase additional translation points to continue.",
+        action: (
+          <ToastAction
+            altText="View Pricing"
+            onClick={() => {
+              router.push("/#pricing", { scroll: true });
+            }}
+          >
+            View Pricing
+          </ToastAction>
+        ),
+      });
+
+    if (restTimes < ids.length)
+      return toast({
+        title: "Insufficient Translation Points",
+        description:
+          "Please purchase additional translation points or reduce the number of images to continue.",
+        action: (
+          <ToastAction
+            altText="View Pricing"
+            onClick={() => {
+              router.push("/#pricing", { scroll: true });
+            }}
+          >
+            View Pricing
+          </ToastAction>
+        ),
+      });
+
     try {
       setImages((prev) => {
         return prev.map((image, index) => {
@@ -88,6 +133,7 @@ export default function Demo({
             }
           );
           allResponses.push(...data);
+          setResTimes((prev) => prev - data.length);
           setImages((prev) => {
             return prev.map((image) => {
               const index = chunk.findIndex((e) => e == image.src);
@@ -111,7 +157,7 @@ export default function Demo({
                 return {
                   ...image,
                   isPending: false,
-                  isError: "server error",
+                  isError: getErrorMessage(error),
                 };
               }
               return image;
@@ -128,7 +174,7 @@ export default function Demo({
             return {
               ...image,
               isPending: false,
-              isError: "server error",
+              isError: getErrorMessage(error),
             };
           }
           return image;
@@ -234,7 +280,7 @@ export default function Demo({
             <div className="relative flex items-center justify-center w-full min-h-64 border-2 border-Primary border-dashed rounded-lg cursor-pointer hover:bg-Primary hover:bg-opacity-45">
               {session?.user ? (
                 <span className="absolute font-bold -top-5 right-0 text-Text text-paragraph-md">
-                  Times: {times}
+                  Times: {restTimes}
                 </span>
               ) : (
                 <></>
@@ -370,6 +416,7 @@ export default function Demo({
                     "bg-Primary py-3 px-5 text-Text shadow-sm rounded-lg " +
                     (images.length == 0 ? "" : "hover:bg-opacity-70")
                   }
+                  disabled={images.length == 0 && session != null}
                 >
                   Translate
                 </button>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import LiveblocksSuspense from "./advance-translator/_components/liveblocksSuspense";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { AuthThemeProvider } from "../(auth)/_components/authThemeProvider";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -13,9 +14,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <LiveblocksSuspense>
-      {" "}
-      <TooltipProvider>{children}</TooltipProvider>
-    </LiveblocksSuspense>
+    <div className="dark">
+      <LiveblocksSuspense>
+        {" "}
+        <TooltipProvider>{children}</TooltipProvider>
+      </LiveblocksSuspense>
+    </div>
   );
 }
