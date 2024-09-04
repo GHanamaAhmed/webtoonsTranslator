@@ -7,7 +7,7 @@ export default function layout({
   return (
     <AuthThemeProvider
       attribute="class"
-      defaultTheme="system"
+      defaultTheme="light"
       enableSystem
       disableTransitionOnChange
     >

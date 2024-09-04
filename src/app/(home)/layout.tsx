@@ -14,7 +14,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="className={`bg-DarkBackground relative`}">
+    <div className="bg-DarkBackground relative">
       <QueryProvider>
         <Header />
         {children}

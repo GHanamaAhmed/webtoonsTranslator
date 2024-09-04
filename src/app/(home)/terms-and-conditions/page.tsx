@@ -58,14 +58,14 @@ export default function TermsAndConditions() {
         </h2>
         <p className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-xl 2xl:text-paragraph-2xl mb-4">
           You may be able to submit, post, or upload content to our website,
-          including translations, comments, and reviews ("User-Generated
-          Content"). By submitting User-Generated Content, you grant Webtoon
-          Translator a non-exclusive, worldwide, royalty-free, and transferable
-          license to use, reproduce, distribute, display, and perform your
-          User-Generated Content in connection with our services. You represent
-          and warrant that you have all rights necessary to grant this license
-          and that your User-Generated Content does not infringe on any
-          third-party rights.
+          including translations, comments, and reviews (&quot;User-Generated
+          Content&quot;). By submitting User-Generated Content, you grant
+          Webtoon Translator a non-exclusive, worldwide, royalty-free, and
+          transferable license to use, reproduce, distribute, display, and
+          perform your User-Generated Content in connection with our services.
+          You represent and warrant that you have all rights necessary to grant
+          this license and that your User-Generated Content does not infringe on
+          any third-party rights.
         </p>
 
         <h2 className="text-header md:text-header-md lg:text-header-lg xl:text-header-xl 2xl:text-header-2xl mb-4 font-bold">
@@ -107,12 +107,13 @@ export default function TermsAndConditions() {
           6. Disclaimer of Warranties
         </h2>
         <p className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-xl 2xl:text-paragraph-2xl mb-4">
-          Webtoon Translator provides its services "as is" and "as available"
-          without any warranties, express or implied. We do not guarantee that
-          our services will be uninterrupted, error-free, or free of viruses or
-          other harmful components. We disclaim all warranties, including
-          warranties of merchantability, fitness for a particular purpose, and
-          non-infringement, to the fullest extent permitted by law.
+          Webtoon Translator provides its services &quot;as is&quot; and
+          &quot;as available&quot; without any warranties, express or implied.
+          We do not guarantee that our services will be uninterrupted,
+          error-free, or free of viruses or other harmful components. We
+          disclaim all warranties, including warranties of merchantability,
+          fitness for a particular purpose, and non-infringement, to the fullest
+          extent permitted by law.
         </p>
 
         <h2 className="text-header md:text-header-md lg:text-header-lg xl:text-header-xl 2xl:text-header-2xl mb-4 font-bold">
@@ -133,44 +134,39 @@ export default function TermsAndConditions() {
           incurred as a result of your use of any content posted, emailed,
           transmitted, or otherwise made available via the services, whether
           based on warranty, contract, tort (including negligence), or any other
-          legal theory, whether or not Webtoon Translator has been informed of
-          the possibility of such damage.{" "}
-        </p>
-        <h2 className="text-header md:text-header-md lg:text-header-lg xl:text-header-xl 2xl:text-header-2xl mb-4 font-bold">
-          8. Changes to These Terms
-        </h2>
-        <p className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-xl 2xl:text-paragraph-2xl mb-4">
-          We may update these Terms and Conditions from time to time. We will
-          notify you of any changes by posting the new Terms and Conditions on
-          our website. Your continued use of our services after any such changes
-          constitutes your acceptance of the new Terms and Conditions. You are
-          advised to review these Terms and Conditions periodically for any
-          changes.
+          legal theory, and whether or not Webtoon Translator has been advised
+          of the possibility of such damages.
         </p>
 
         <h2 className="text-header md:text-header-md lg:text-header-lg xl:text-header-xl 2xl:text-header-2xl mb-4 font-bold">
-          9. Governing Law
+          8. Governing Law
         </h2>
         <p className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-xl 2xl:text-paragraph-2xl mb-4">
-          These Terms and Conditions are governed by and construed in accordance
-          with the laws of [Your Jurisdiction], without regard to its conflict
-          of law principles. Any legal action or proceeding arising under these
-          Terms and Conditions will be brought exclusively in the courts located
-          in [Your Jurisdiction].
+          These Terms and Conditions shall be governed by and construed in
+          accordance with the laws of [Insert Jurisdiction], without regard to
+          its conflict of law principles. Any disputes arising out of or related
+          to these Terms and Conditions or your use of our services shall be
+          resolved exclusively in the courts located in [Insert Jurisdiction].
+        </p>
+
+        <h2 className="text-header md:text-header-md lg:text-header-lg xl:text-header-xl 2xl:text-header-2xl mb-4 font-bold">
+          9. Changes to These Terms and Conditions
+        </h2>
+        <p className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-xl 2xl:text-paragraph-2xl mb-4">
+          We may update these Terms and Conditions from time to time at our sole
+          discretion. Any changes will be effective immediately upon posting the
+          revised Terms and Conditions on our website. Your continued use of our
+          website and services following the posting of changes constitutes your
+          acceptance of those changes. We encourage you to review these Terms
+          and Conditions periodically.
         </p>
 
         <h2 className="text-header md:text-header-md lg:text-header-lg xl:text-header-xl 2xl:text-header-2xl mb-4 font-bold">
           10. Contact Us
         </h2>
-        <p className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-xl 2xl:text-paragraph-2xl mb-4">
-          If you have any questions or concerns about these Terms and
-          Conditions, please contact us at:
-        </p>
-        <p className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-xl 2xl:text-paragraph-2xl mb-4">
-          Email: support@webtoontranslator.com
-        </p>
         <p className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-xl 2xl:text-paragraph-2xl">
-          Address: [Your Address]
+          If you have any questions or concerns about these Terms and
+          Conditions, please contact us at [Insert Contact Information].
         </p>
       </div>
     </section>

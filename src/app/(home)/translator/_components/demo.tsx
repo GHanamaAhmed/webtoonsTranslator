@@ -21,6 +21,7 @@ import axios from "axios";
 import { ImagesCarousel } from "./carousel";
 import { DialogContext } from "@/components/alertDialog";
 import { useSession } from "next-auth/react";
+import AuthButton from "@/components/auth/authButton";
 
 export default function Demo({
   supportedLanguages,
@@ -231,9 +232,13 @@ export default function Demo({
               </SelectContent>
             </Select>
             <div className="relative flex items-center justify-center w-full min-h-64 border-2 border-Primary border-dashed rounded-lg cursor-pointer hover:bg-Primary hover:bg-opacity-45">
-              <span className="absolute font-bold -top-5 right-0 text-Text text-paragraph-md">
-                {session?.user ? `Times: ${times}` : `signin`}
-              </span>
+              {session?.user ? (
+                <span className="absolute font-bold -top-5 right-0 text-Text text-paragraph-md">
+                  Times: {times}
+                </span>
+              ) : (
+                <></>
+              )}
               {!images.length ? (
                 <label
                   htmlFor="dropzone-file"
@@ -357,16 +362,19 @@ export default function Demo({
               />
             </div>
             <div className="flex items-center gap-2 md:gap-3 xl:gap-4">
-              <button
-                onClick={() => translate(images.map((image) => image.src))}
-                className={
-                  "bg-Primary py-3 px-5 text-Text shadow-sm rounded-lg " +
-                  (images.length == 0 ? "" : "hover:bg-opacity-70")
-                }
-                disabled={images.length == 0}
-              >
-                Translate
-              </button>
+              <AuthButton>
+                {" "}
+                <button
+                  onClick={() => translate(images.map((image) => image.src))}
+                  className={
+                    "bg-Primary py-3 px-5 text-Text shadow-sm rounded-lg " +
+                    (images.length == 0 ? "" : "hover:bg-opacity-70")
+                  }
+                >
+                  Translate
+                </button>
+              </AuthButton>
+
               <button
                 onClick={handleRest}
                 disabled={images.length == 0}

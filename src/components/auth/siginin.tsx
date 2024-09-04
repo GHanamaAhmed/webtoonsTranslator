@@ -12,10 +12,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { signIn } from "next-auth/react";
+import { twMerge } from "tailwind-merge";
 
-export  function Siginin() {
+export function Siginin({ className }: { className?: string }) {
   return (
-    <Card className="mx-auto max-w-sm z-20">
+    <Card className={twMerge("mx-auto max-w-sm z-20", className)}>
       <CardHeader>
         <CardTitle className="text-2xl">Login</CardTitle>
         <CardDescription>

@@ -142,7 +142,7 @@ export default function page() {
         </p>
 
         <h2 className="text-header md:text-header-md lg:text-header-lg xl:text-header-xl 2xl:text-header-2xl mb-4 font-bold">
-          6. Children's Privacy
+          6. Children&apos;s Privacy
         </h2>
         <p className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-xl 2xl:text-paragraph-2xl mb-6">
           Our website is not intended for use by children under the age of 13.
