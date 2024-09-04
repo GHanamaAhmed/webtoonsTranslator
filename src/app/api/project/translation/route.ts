@@ -6,19 +6,17 @@ import cloudinary, {
 import {
   combineBlocks,
   imageAnnotatorClient,
-  lamaLocal,
-  magicApiObjectRemover,
 } from "@/lib/utilsServer";
 import { createMaskImage } from "@/lib/aiTools/delteObjects";
-import fs from "fs";
 import sharp from "sharp";
 import { translateText } from "@/lib/aiTools/translate";
 import { overlayTranslatedText } from "@/lib/aiTools/overLayTranslatedText";
 import Bottleneck from "bottleneck";
-import { chunkArray } from "@/lib/utils";
+import { chunkArray, withMiddleware } from "@/lib/utils";
 import axios from "axios";
 import { google as googleTranslate } from "@google-cloud/translate/build/protos/protos";
 import { google as googleVison } from "@google-cloud/vision/build/protos/protos";
+import { translationMiddleware } from "@/middlewares/transaltionMiddleware";
 const baseDir = process.env.BASE_DIR;
 const modelPath = process.env.MODEL_PATH;
 const scriptPath = process.env.SCRIPT_PATH;
@@ -47,7 +45,7 @@ const visionLimiter = new Bottleneck({
   maxConcurrent: 10, // Number of concurrent requests
 });
 
-export async function POST(req: NextRequest) {
+async function handlePost(req: NextRequest) {
   try {
     const body: {
       ids: string[];
@@ -267,3 +265,5 @@ export async function POST(req: NextRequest) {
     });
   }
 }
+export const POST = (req: NextRequest) =>
+  withMiddleware(req, [translationMiddleware], handlePost);

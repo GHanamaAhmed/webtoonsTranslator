@@ -3,13 +3,15 @@ import cloudinary, { UploadApiResponse } from "cloudinary";
 
 import { NextResponse } from "next/server";
 import sharp from "sharp";
+import { withMiddleware } from "@/lib/utils";
+import { translationMiddleware } from "@/middlewares/transaltionMiddleware";
 cloudinary.v2.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
   api_key: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-export async function POST(req: NextRequest) {
+async function handlePost(req: NextRequest) {
   try {
     const formData = await req.formData();
     const images = formData.getAll("images") as File[];
@@ -55,7 +57,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function DELETE(req: NextRequest) {
+async function handleDelete(req: NextRequest) {
   try {
     const ids: string[] = await req.json();
     await new Promise((resolve, reject) => {
@@ -77,3 +79,9 @@ export async function DELETE(req: NextRequest) {
     });
   }
 }
+
+export const POST = async (req: NextRequest) =>
+  withMiddleware(req, [translationMiddleware], handlePost);
+
+export const DELETE = async (req: NextRequest) =>
+  withMiddleware(req, [], handleDelete);

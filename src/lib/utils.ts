@@ -1,6 +1,10 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
+import { NextRequest, NextResponse } from "next/server";
+
+type Middleware = (request: NextRequest) => Promise<NextResponse | undefined>;
+
 import jsPDF from "jspdf";
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -182,4 +186,18 @@ export function chunkArray<T>(array: T[], size: number = 16) {
     result.push(array.slice(i, i + size));
   }
   return result;
+}
+
+export async function withMiddleware(
+  request: NextRequest,
+  middlewares: Middleware[],
+  handler: (request: NextRequest) => Promise<NextResponse>
+): Promise<NextResponse> {
+  for (const middleware of middlewares) {
+    const response = await middleware(request);
+    if (response) {
+      return response;
+    }
+  }
+  return handler(request);
 }

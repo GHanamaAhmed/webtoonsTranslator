@@ -102,7 +102,7 @@ model Subscription {
     endDate   DateTime // When the subscription ends
     maxUsage  Int? // Maximum number of translations allowed (optional)
     uses      Int? // Number of translations used
-    active Boolean @default(true)
+    active    Boolean  @default(true)
 
     user User @relation(fields: [userId], references: [id], onDelete: Cascade)
     plan Plan @relation(fields: [planId], references: [id], onDelete: Cascade)
@@ -148,6 +148,8 @@ model Page {
     updatedAt DateTime @updatedAt
 
     chapter Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+
+    translatedBlock TranslatedBlock[]
 }
 
 model TextBlock {
@@ -165,11 +167,32 @@ model TextBlock {
 
     page     Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
     language Language @relation(fields: [languageId], references: [id], onDelete: Cascade)
+
+    translatedBlock TranslatedBlock?
+    EditedBlock     EditedBlock?
+}
+
+model TranslatedBlock {
+    id           String    @id @default(auto()) @map("_id") @db.ObjectId
+    pageId       String    @db.ObjectId
+    text         String // Extracted text in this block
+    font         String // Detected or default font
+    textColor    String // Detected text color
+    outlineColor String // Detected outline color
+    x            Int // X-coordinate of the block in the image
+    y            Int // Y-coordinate of the block in the image
+    width        Int // Width of the text block
+    height       Int // Height of the text block
+    languageId   String    @db.ObjectId // Reference to the language-specific default
+    textBlockId  String    @unique @db.ObjectId // Reference to the original text block
+    page         Page      @relation(fields: [pageId], references: [id], onDelete: Cascade)
+    language     Language  @relation(fields: [languageId], references: [id], onDelete: Cascade)
+    textBlock    TextBlock @relation(fields: [textBlockId], references: [id], onDelete: Cascade)
 }
 
 model EditedBlock {
-    id           String @id @default(auto()) @map("_id") @db.ObjectId
-    pageId       String @db.ObjectId
+    id           String    @id @default(auto()) @map("_id") @db.ObjectId
+    pageId       String    @db.ObjectId
     text         String // Edited text in this block
     font         String // Edited font
     textColor    String // Edited text color
@@ -178,10 +201,11 @@ model EditedBlock {
     y            Int // Y-coordinate of the block in the image
     width        Int // Width of the text block
     height       Int // Height of the text block
-    languageId   String @db.ObjectId // Reference to the language-specific default
-
-    page     Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
-    language Language @relation(fields: [languageId], references: [id], onDelete: Cascade)
+    languageId   String    @db.ObjectId // Reference to the language-specific default
+    textBlockId  String    @unique @db.ObjectId // Reference to the original text block
+    page         Page      @relation(fields: [pageId], references: [id], onDelete: Cascade)
+    language     Language  @relation(fields: [languageId], references: [id], onDelete: Cascade)
+    textBlock    TextBlock @relation(fields: [textBlockId], references: [id], onDelete: Cascade)
 }
 
 model Language {
@@ -197,4 +221,6 @@ model Language {
 
     textBlocks   TextBlock[] // Relation to text blocks using this language
     editedBlocks EditedBlock[] // Relation to edited blocks using this language
+
+    translatedBlock TranslatedBlock[]
 }

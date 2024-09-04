@@ -11,7 +11,7 @@ const Languages = [
 ];
 export default function HeroSection() {
   return (
-    <main className="relative flex justify-center items-center bg-gradient-to-b from-Secondary to-Primary">
+    <main id="herosection" className="relative flex justify-center items-center bg-gradient-to-b from-Secondary to-Primary">
       <div className="background-image" />
       <div className="relative z-20 w-full md:w-10/12 flex flex-col items-center gap-7 md:gap-10 xl:gap-14 text-Text py-20 md:py-24 lg:py-32 xl:py-36 2xl:py-40 px-5">
         <div className="text-center">

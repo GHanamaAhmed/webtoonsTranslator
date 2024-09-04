@@ -21,6 +21,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/(translator)/translator", "src/app/(home)"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/(translator)/advance-translator", "src/app/(home)", "src/app/(auth)/auth", "src/app/@modal"],
   "exclude": ["node_modules"]
 }

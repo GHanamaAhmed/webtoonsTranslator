@@ -11,15 +11,21 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({
   children,
-}: Readonly<{
+  modal,
+}: {
   children: React.ReactNode;
-}>) {
+  modal?: React.ReactNode;
+}) {
   const session = await getServerSession(options);
   return (
     <html lang="en" className="dark">
-      <SessionProvider session={session}>
-        <AlertDialogProvider>{children}</AlertDialogProvider>
-      </SessionProvider>
+      <body>
+        <SessionProvider session={session}>
+          <AlertDialogProvider>
+            {children} {modal}
+          </AlertDialogProvider>
+        </SessionProvider>
+      </body>
     </html>
   );
 }

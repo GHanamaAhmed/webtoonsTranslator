@@ -11,18 +11,6 @@ import { User } from "@prisma/client";
 export const options: NextAuthOptions = {
   adapter: PrismaAdapter(db) as Adapter,
   providers: [
-    GithubProvider({
-      clientId: process.env.GITHUB_CLIENT_ID as string,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
-      profile(profile: GithubProfile) {
-        return {
-          id: profile.id.toString(),
-          name: profile.name || profile.login,
-          email: profile.email,
-          image: profile.avatar_url,
-        };
-      },
-    }),
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
@@ -58,16 +46,16 @@ export const options: NextAuthOptions = {
     //     return user;
     //   },
     // }),
-    EmailProvider({
-      server: {
-        host: "smtp.gmail.com",
-        auth: {
-          user: process.env.USER_NODE_MAILER,
-          pass: process.env.PASS_NODE_MAILER,
-        },
-      },
-      from: process.env.USER_NODE_MAILER,
-    }),
+    // EmailProvider({
+    //   from: process.env.USER_NODE_MAILER,
+    //   sendVerificationRequest({
+    //     identifier: email,
+    //     url,
+    //     provider: { from },
+    //   }) {
+
+    //   },
+    // }),
   ],
   callbacks: {
     async session({ session, user }) {
@@ -79,11 +67,8 @@ export const options: NextAuthOptions = {
       return params.baseUrl;
     },
   },
-  // logger: {
-  //   error: console.error,
-  //   warn: console.warn,
-  //   info: console.log,
-  //   debug: console.log,
-  // },
-  // debug: true,
+  pages: {
+    newUser: "/demo",
+    signIn: "/auth/signin",
+  },
 };

@@ -32,6 +32,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import React from "react";
+import { signOut } from "next-auth/react";
 
 export function UserMenu({ children }: { children: React.ReactNode }) {
   return (
@@ -41,7 +42,7 @@ export function UserMenu({ children }: { children: React.ReactNode }) {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
-        <DropdownMenuSeparator />
+        {/* <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem>
             <User className="mr-2 h-4 w-4" />
@@ -58,13 +59,13 @@ export function UserMenu({ children }: { children: React.ReactNode }) {
             <span>Settings</span>
             <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
           </DropdownMenuItem>
-          {/* <DropdownMenuItem>
+          <DropdownMenuItem>
             <Keyboard className="mr-2 h-4 w-4" />
             <span>Keyboard shortcuts</span>
             <DropdownMenuShortcut>⌘K</DropdownMenuShortcut>
-          </DropdownMenuItem> */}
-        </DropdownMenuGroup>
-        <DropdownMenuSeparator />
+          </DropdownMenuItem>
+        </DropdownMenuGroup> */}
+        {/* <DropdownMenuSeparator /> */}
         {/* <DropdownMenuGroup>
           <DropdownMenuItem>
             <Users className="mr-2 h-4 w-4" />
@@ -113,7 +114,7 @@ export function UserMenu({ children }: { children: React.ReactNode }) {
           <span>API</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator /> */}
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={() => signOut()}>
           <LogOut className="mr-2 h-4 w-4" />
           <span>Log out</span>
           <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>

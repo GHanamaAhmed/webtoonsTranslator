@@ -1,14 +1,18 @@
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 
 export default function Footer() {
   return (
-    <section className="flex justify-center items-center bg-[#1E1E1E]">
+    <section className="flex justify-center items-center bg-DarkBackground">
       <div className="w-full md:w-10/12 flex flex-col md:flex-row md:justify-between  gap-4 md:gap-6 xl:gap-8 text-Text py-10 md:py-14 lg:py-16 xl:py-20 2xl:py-24 px-5">
         <div className="flex flex-col gap-2 md:gap-3 xl:gap-4">
-          <div className="relative w-32 h-10 md:w-40 md:h-12 xl:w-48 xl:h-14">
+          <Link
+            href={"/"}
+            className="relative w-32 h-10 md:w-40 md:h-12 xl:w-48 xl:h-14"
+          >
             <Image src={"/logo-no-background.svg"} alt="" fill />
-          </div>
+          </Link>
           <p className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl">
             © 2021 Webtoon Translator. All rights reserved.
           </p>
@@ -18,15 +22,24 @@ export default function Footer() {
             Navigation
           </p>
           <div className=" flex flex-col gap-2 md:gap-3 xl:gap-4">
-            <p className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl">
+            <Link
+              href={"/"}
+              className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl"
+            >
               Home
-            </p>
-            <p className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl">
+            </Link>
+            <Link
+              href={"/#pricing"}
+              className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl"
+            >
               Pricing
-            </p>
-            <p className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl">
+            </Link>
+            <Link
+              href={"/#FAQ"}
+              className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl"
+            >
               FAQ
-            </p>
+            </Link>
           </div>
         </div>
         <div className=" flex flex-col gap-4 md:gap-6 xl:gap-8">
@@ -34,12 +47,18 @@ export default function Footer() {
             Term
           </p>
           <div className=" flex flex-col gap-2 md:gap-3 xl:gap-4">
-            <p className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl">
+            <Link
+              href={"/privacy-policy"}
+              className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl"
+            >
               Policies
-            </p>
-            <p className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl">
+            </Link>
+            <Link
+              href={"/terms-and-condtions"}
+              className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl"
+            >
               Terms and condtions
-            </p>
+            </Link>
           </div>
         </div>
       </div>

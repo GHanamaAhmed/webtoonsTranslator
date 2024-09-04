@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import LiveblocksSuspense from "./translator/_components/liveblocksSuspense";
+import LiveblocksSuspense from "./advance-translator/_components/liveblocksSuspense";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 export const metadata: Metadata = {
@@ -13,11 +13,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <body>
-      <LiveblocksSuspense>
-        {" "}
-        <TooltipProvider>{children}</TooltipProvider>
-      </LiveblocksSuspense>
-    </body>
+    <LiveblocksSuspense>
+      {" "}
+      <TooltipProvider>{children}</TooltipProvider>
+    </LiveblocksSuspense>
   );
 }

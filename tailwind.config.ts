@@ -27,19 +27,16 @@ const config = {
         "title-lg": ["52px", { lineHeight: "60px" }],
         "title-xl": ["56px", { lineHeight: "64px" }],
         "title-2xl": ["60px", { lineHeight: "68px" }],
-
         header: ["24px", { lineHeight: "32px" }],
         "header-md": ["28px", { lineHeight: "36px" }],
         "header-lg": ["32px", { lineHeight: "40px" }],
         "header-xl": ["36px", { lineHeight: "44px" }],
         "header-2xl": ["40px", { lineHeight: "48px" }],
-
         subheader: ["18px", { lineHeight: "26px" }],
         "subheader-md": ["20px", { lineHeight: "28px" }],
         "subheader-lg": ["22px", { lineHeight: "30px" }],
         "subheader-xl": ["24px", { lineHeight: "32px" }],
         "subheader-2xl": ["26px", { lineHeight: "34px" }],
-
         paragraph: ["12px", { lineHeight: "18px" }],
         "paragraph-md": ["14px", { lineHeight: "20px" }],
         "paragraph-lg": ["16px", { lineHeight: "24px" }],
@@ -97,12 +94,20 @@ const config = {
       },
       keyframes: {
         "accordion-down": {
-          from: { height: "0" },
-          to: { height: "var(--radix-accordion-content-height)" },
+          from: {
+            height: "0",
+          },
+          to: {
+            height: "var(--radix-accordion-content-height)",
+          },
         },
         "accordion-up": {
-          from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: "0" },
+          from: {
+            height: "var(--radix-accordion-content-height)",
+          },
+          to: {
+            height: "0",
+          },
         },
       },
       animation: {

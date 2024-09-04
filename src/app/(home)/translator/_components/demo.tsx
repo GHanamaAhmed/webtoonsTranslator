@@ -20,14 +20,17 @@ import { google } from "@google-cloud/translate/build/protos/protos";
 import axios from "axios";
 import { ImagesCarousel } from "./carousel";
 import { DialogContext } from "@/components/alertDialog";
+import { useSession } from "next-auth/react";
 
 export default function Demo({
   supportedLanguages,
+  times,
 }: {
   supportedLanguages:
     | google.cloud.translation.v3.ISupportedLanguage[]
     | null
     | undefined;
+  times: number;
 }) {
   const [images, setImages] = useState<
     {
@@ -42,6 +45,7 @@ export default function Demo({
   const [targerLanguage, setTargerLanguage] = useState("");
   const [openModal, setOpenModal] = useState(0);
   const [index, setIndex] = useState(0);
+  const { data: session } = useSession();
   const dialog = useContext(DialogContext);
   const handleOpenModal = (i: number) => {
     setOpenModal(openModal + 1);
@@ -192,11 +196,7 @@ export default function Demo({
   return (
     <main className="relative">
       {" "}
-      <ImagesCarousel
-        index={index}
-        isOpen={openModal}
-        images={images}
-      />
+      <ImagesCarousel index={index} isOpen={openModal} images={images} />
       <div className="relative flex justify-center items-center">
         <div className="h-full absolute w-full opacity-10 bg-gradient-to-b to-Quaternary from-Primary"></div>
         <div className="background-image" />
@@ -230,7 +230,10 @@ export default function Demo({
                 ))}
               </SelectContent>
             </Select>
-            <div className="flex items-center justify-center w-full min-h-64 border-2 border-Primary border-dashed rounded-lg cursor-pointer hover:bg-Primary hover:bg-opacity-45">
+            <div className="relative flex items-center justify-center w-full min-h-64 border-2 border-Primary border-dashed rounded-lg cursor-pointer hover:bg-Primary hover:bg-opacity-45">
+              <span className="absolute font-bold -top-5 right-0 text-Text text-paragraph-md">
+                {session?.user ? `Times: ${times}` : `signin`}
+              </span>
               {!images.length ? (
                 <label
                   htmlFor="dropzone-file"

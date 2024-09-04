@@ -11,7 +11,7 @@ interface PricingPlanProps {
 
 export default function Pricing() {
   return (
-    <section className="flex justify-center items-center">
+    <section id="pricing" className="flex justify-center items-center">
       <div className="w-full md:w-10/12 flex flex-col items-center gap-4 md:gap-6 xl:gap-8 text-Text py-10 md:py-14 lg:py-16 xl:py-20 2xl:py-24 px-5">
         <p className="text-center text-header md:text-header-md lg:text-header-lg xl:text-header-lg 2xl:text-header-2xl font-extrabold">
           High-Quality Translations for Raw Manga{" "}

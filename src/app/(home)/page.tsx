@@ -1,8 +1,8 @@
-import Image from "next/image";
 import HeroSection from "./_components/heroSection";
 import PowerdByAI from "./_components/powerdByAI";
 import Effortless from "./_components/effortless";
 import Pricing from "./_components/pricing";
+import FAQ from "./_components/faq";
 
 export default function Home() {
   return (
@@ -11,6 +11,7 @@ export default function Home() {
       <PowerdByAI />
       <Effortless />
       <Pricing />
+      <FAQ />
     </main>
   );
 }

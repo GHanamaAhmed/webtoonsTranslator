@@ -10,18 +10,16 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en">
-      <body className={`bg-DarkBackground relative`}>
-        <QueryProvider>
-          <Header />
-          {children}
-          <Footer />
-        </QueryProvider>
-      </body>
-    </html>
+    <div className="className={`bg-DarkBackground relative`}">
+      <QueryProvider>
+        <Header />
+        {children}
+        <Footer />
+      </QueryProvider>
+    </div>
   );
 }

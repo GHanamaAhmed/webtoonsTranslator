@@ -1,26 +1,30 @@
-import { options } from "@/app/api/auth/[...nextauth]/options";
-import { getServerSession } from "next-auth";
+"use client";
 import Image from "next/image";
 import React from "react";
 import { UserMenu } from "../translator/userMenu";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 
-export default async function Header() {
-  const session = await getServerSession(options);
+export default function Header() {
+  const { data: session } = useSession();
   return (
-    <header className="z-10 w-full absolute flex justify-around items-center py-2 md:py-4 xl:py-6">
-      <div className="relative w-32 h-10 md:w-40 md:h-12 xl:w-48 xl:h-14">
+    <header className="w-full absolute flex justify-around items-center py-2 md:py-4 xl:py-6 z-40">
+      <Link
+        href={"/"}
+        className="relative w-32 h-10 md:w-40 md:h-12 xl:w-48 xl:h-14"
+      >
         <Image src={"/logo-no-background.svg"} alt="" fill />
-      </div>
+      </Link>
       <div className="hidden md:flex justify-between items-center gap-4 xl:gap-6 text-Text">
-        <div>Home</div>
-        <div>Translation</div>
-        <div>Pricing</div>
-        <div>Blog</div>
+        <Link href={"/translator"}>Translation</Link>
+        <Link href={"/#pricing"}>Pricing</Link>
+        <Link href={"/#FAQ"}>FAQ</Link>
+        {/* <Link href={"/terms-and-conditions"}>Terms And Conditions</Link> */}
+        <Link href={"/privacy-policy"}>Privacy Policy</Link>
       </div>
       <div className="flex justify-between items-center gap-2 md:gap-4 xl:gap-6">
-        {session ? (
+        {session?.user ? (
           <UserMenu>
             <Avatar>
               <AvatarImage
@@ -34,7 +38,7 @@ export default async function Header() {
           </UserMenu>
         ) : (
           <Link
-            href={"/api/auth/signin"}
+            href={"/auth/signin"}
             className="py-1 px-3 md:py-2 md:px-4 border-[0.5px] border-LightBackground text-Text"
           >
             Login
