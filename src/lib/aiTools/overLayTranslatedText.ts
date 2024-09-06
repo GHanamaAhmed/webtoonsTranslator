@@ -7,7 +7,7 @@ import {
   registerFont,
   CanvasRenderingContext2D as CanvasCtx,
 } from "canvas";
-
+import fonts from "@fontsource/open-sans/metadata.json";
 // Register the custom font
 const fontPath = path.join(
   process.cwd(),

@@ -6,6 +6,7 @@ import { SessionProvider } from "@/components/sessionPrvider";
 import { AlertDialogProvider } from "@/components/alertDialog";
 import { AuthThemeProvider } from "./(auth)/_components/authThemeProvider";
 import { Toaster } from "@/components/ui/toaster";
+import QueryProvider from "@/components/queryProvider";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -23,13 +24,15 @@ export default async function RootLayout({
   return (
     <html lang="en" className="dark">
       <body>
-        <SessionProvider session={session}>
-          <AlertDialogProvider>
-            {modal}
-            {children}
-          </AlertDialogProvider>
-          <Toaster />
-        </SessionProvider>
+        <QueryProvider>
+          <SessionProvider session={session}>
+            <AlertDialogProvider>
+              {modal}
+              {children}
+            </AlertDialogProvider>
+            <Toaster />
+          </SessionProvider>
+        </QueryProvider>
       </body>
     </html>
   );

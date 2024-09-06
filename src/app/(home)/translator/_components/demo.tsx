@@ -1,5 +1,5 @@
 "use client";
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { CldImage } from "next-cloudinary";
 import { MdDelete } from "react-icons/md";
 import { UploadApiErrorResponse, UploadApiResponse } from "cloudinary";
@@ -29,7 +29,19 @@ import AuthButton from "@/components/auth/authButton";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import { useRouter } from "next/navigation";
-
+import { useMutation, useQuery } from "@tanstack/react-query";
+const fetchProjectData = async () => {
+  const { data }: { data: { projectId: string } } = await axios.get(
+    "/api/project"
+  );
+  return data;
+};
+const fetchChapterData = async (projectId: string) => {
+  const { data }: { data: { chapterId: string } } = await axios.get(
+    "/api/project/chapter?projectId=" + projectId
+  );
+  return data;
+};
 export default function Demo({
   supportedLanguages,
   times,
@@ -56,8 +68,25 @@ export default function Demo({
   const { data: session, status } = useSession();
   const dialog = useContext(DialogContext);
   const [restTimes, setResTimes] = useState(times);
+  const [projectId, setProjectId] = useState<string | null>(null);
+  const [chapterId, setChapterId] = useState<string | null>(null);
   const { toast } = useToast();
   const router = useRouter();
+  // Mutation to fetch project data
+  const {
+    mutate: getProjectData,
+    data: projectData,
+    isSuccess: isProjectDataSuccess,
+  } = useMutation({
+    mutationKey: ["projectData"],
+    mutationFn: fetchProjectData,
+    onSuccess({ projectId }) {
+      setProjectId(projectId || null);
+    },
+  });
+  useEffect(() => {
+    getProjectData();
+  }, [getProjectData]);
   const handleOpenModal = (i: number) => {
     setOpenModal(openModal + 1);
     setIndex(i);
@@ -80,7 +109,6 @@ export default function Demo({
           </ToastAction>
         ),
       });
-
     if (restTimes < ids.length)
       return toast({
         title: "Insufficient Translation Points",
@@ -97,7 +125,6 @@ export default function Demo({
           </ToastAction>
         ),
       });
-
     try {
       setImages((prev) => {
         return prev.map((image, index) => {
@@ -111,6 +138,18 @@ export default function Demo({
           return image;
         });
       });
+      let newChapeterID;
+      let newProjectId;
+      if (!projectId) {
+        newProjectId = await fetchProjectData().then((res) => res.projectId);
+        setProjectId(newProjectId);
+      }
+      if (!chapterId) {
+        newChapeterID = await fetchChapterData(projectId!).then(
+          (res) => res.chapterId
+        );
+        setChapterId(chapterId);
+      }
       const idChunks = chunkArray<string>(ids, 2); // Split ids into chunks of 2
       const allResponses = [];
       for (const chunk of idChunks) {
@@ -124,6 +163,8 @@ export default function Demo({
             {
               ids: chunk, // Only send two IDs at a time
               targerLanguage,
+              chapterId: chapterId || newChapeterID,
+              projectId: projectId || newProjectId,
             },
             {
               headers: {

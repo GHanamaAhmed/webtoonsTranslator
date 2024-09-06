@@ -124,7 +124,7 @@ model Project {
 
 model Chapter {
     id        String @id @default(auto()) @map("_id") @db.ObjectId
-    title     String // Title of the chapter
+    name     String // Title of the chapter
     projectId String @db.ObjectId
     pages     Page[] // Relation to pages in this chapter
 

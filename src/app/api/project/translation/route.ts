@@ -14,6 +14,7 @@ import axios from "axios";
 import { google as googleTranslate } from "@google-cloud/translate/build/protos/protos";
 import { google as googleVison } from "@google-cloud/vision/build/protos/protos";
 import { translationMiddleware } from "@/middlewares/transaltionMiddleware";
+import { db } from "@/lib/db";
 const baseDir = process.env.BASE_DIR;
 const modelPath = process.env.MODEL_PATH;
 const scriptPath = process.env.SCRIPT_PATH;
@@ -47,6 +48,8 @@ async function handlePost(req: NextRequest) {
     const body: {
       ids: string[];
       targetLanguage: string;
+      chapterId: string;
+      projectId: string;
     } = await req?.json();
     const ids = body.ids;
     const targetLanguage = body.targetLanguage;
@@ -57,7 +60,6 @@ async function handlePost(req: NextRequest) {
         fetch(url).then(async (res) => Buffer.from(await res.arrayBuffer()))
       )
     );
-
     // Convert WebP images to PNG for processing
     const pngBuffers = await Promise.all(
       buffers.map(async (buffer) => sharp(buffer).png().toBuffer())
@@ -246,6 +248,34 @@ async function handlePost(req: NextRequest) {
     const translatedBuffersUploaded: UploadApiResponse[] = await Promise.all(
       uploadPromises3
     );
+    // const pages = Promise.all(
+    //   Array.from({ length: ids.length }).map((_, index) => {
+    //     return db.page.create({
+    //       data: {
+    //         chapterId: body.chapterId,
+    //         originalImageUrl: ids[index],
+    //         deletedTextImageUrl: deletedText[index],
+    //         textBlocks: {
+    //           create:
+    //             blocksText[index]?.map((block, i) => {
+    //               return {
+    //                 text: block.text || "",
+    //                 x: block.boundingBox?.vertices?.[0].x,
+    //                 y: block.boundingBox?.vertices?.[0].y,
+    //                 width:
+    //                   block.boundingBox?.vertices?.[1].x! -
+    //                   block.boundingBox?.vertices?.[0].x!,
+    //                 height:
+    //                   block.boundingBox?.vertices?.[2].y! -
+    //                   block.boundingBox?.vertices?.[0].y!,
+
+    //               };
+    //             }) || [],
+    //         },
+    //       },
+    //     });
+    //   })
+    // );
     return new NextResponse(JSON.stringify(translatedBuffersUploaded), {
       status: 200,
       headers: {
