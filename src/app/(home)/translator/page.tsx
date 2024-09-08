@@ -7,8 +7,8 @@ import { getServerSession } from "next-auth";
 import { options } from "@/app/api/auth/[...nextauth]/options";
 const freeTimes = 30;
 export default async function Page() {
-  // const supportedLanguages = await listSupportedLanguages();
-  const supportedLanguages = [{}];
+  const supportedLanguages = await listSupportedLanguages();
+  
   const session = await getServerSession(options);
   let restTimes = 0;
   if (session) {

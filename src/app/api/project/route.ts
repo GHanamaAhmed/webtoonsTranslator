@@ -3,8 +3,8 @@ import { withMiddleware } from "@/lib/utils";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { options } from "../auth/[...nextauth]/options";
-export const GET = (req: NextRequest) =>
-  withMiddleware(req, [], async (req: NextRequest) => {
+export const GET = async (req: NextRequest) =>
+  await withMiddleware(req, [], async (req: NextRequest) => {
     try {
       const session = await getServerSession(options);
       let project = await db.project.findFirst({

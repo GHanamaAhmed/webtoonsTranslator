@@ -187,3 +187,31 @@ export const shortcuts = [
     shortcut: "⌘ + Y",
   },
 ];
+
+export const defaultFonts = [
+  {
+    fileName: "NotoSans-VariableFont_wdth,wght.ttf",
+    lngCode: "",
+    fontName: "NotoSans",
+  },
+  {
+    fileName: "NotoSansArabic-VariableFont_wdth,wght.ttf",
+    lngCode: "ar",
+    fontName: "NotoSansArabic",
+  },
+  {
+    fileName: "NotoSansJP-VariableFont_wght.ttf",
+    lngCode: "jp",
+    fontName: "NotoSansJP",
+  },
+  {
+    fileName: "NotoSansKR-VariableFont_wght.ttf",
+    lngCode: "kr",
+    fontName: "NotoSansKR",
+  },
+  {
+    fileName: "NotoSansSC-VariableFont_wght.ttf",
+    lngCode: "sc",
+    fontName: "NotoSansSC",
+  },
+];

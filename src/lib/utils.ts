@@ -6,6 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 type Middleware = (request: NextRequest) => Promise<NextResponse | undefined>;
 
 import jsPDF from "jspdf";
+import { defaultFonts } from "@/constants";
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -268,3 +269,11 @@ export function getErrorMessage(error: any) {
     return "Unknown Error";
   }
 }
+
+export const getDefaultFontFamilyFromCode = (code: string) => {
+  const font = defaultFonts.find((e) => e.lngCode == code);
+  if (!font) {
+    return defaultFonts.find((e) => e.lngCode == "")?.fontName;
+  }
+  return font.fontName;
+};

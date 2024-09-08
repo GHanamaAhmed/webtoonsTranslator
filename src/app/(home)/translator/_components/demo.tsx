@@ -62,7 +62,7 @@ export default function Demo({
     }[]
   >([]);
   const [startIndex, setStartIndex] = useState(0);
-  const [targerLanguage, setTargerLanguage] = useState("");
+  const [targerLanguageCode, setTargerLanguageCode] = useState("en");
   const [openModal, setOpenModal] = useState(0);
   const [index, setIndex] = useState(0);
   const { data: session, status } = useSession();
@@ -144,11 +144,12 @@ export default function Demo({
         newProjectId = await fetchProjectData().then((res) => res.projectId);
         setProjectId(newProjectId);
       }
+
       if (!chapterId) {
         newChapeterID = await fetchChapterData(projectId!).then(
           (res) => res.chapterId
         );
-        setChapterId(chapterId);
+        setChapterId(newChapeterID);
       }
       const idChunks = chunkArray<string>(ids, 2); // Split ids into chunks of 2
       const allResponses = [];
@@ -159,10 +160,10 @@ export default function Demo({
           }: {
             data: UploadApiResponse[];
           } = await axios.post(
-            "/api/project/translation",
+            "/api/project/translator",
             {
               ids: chunk, // Only send two IDs at a time
-              targerLanguage,
+              targerLanguageCode,
               chapterId: chapterId || newChapeterID,
               projectId: projectId || newProjectId,
             },
@@ -184,6 +185,7 @@ export default function Demo({
                   isPending: false,
                   tsrc: data[index].secure_url,
                   translated: true,
+                  isError: "",
                 };
               }
               return image;
@@ -304,7 +306,7 @@ export default function Demo({
           <div className="flex flex-col w-full gap-2 md:gap-3 xl:gap-4">
             <Select
               onValueChange={(e) => {
-                setTargerLanguage(e);
+                setTargerLanguageCode(e);
               }}
             >
               <SelectTrigger className="w-[180px]">
