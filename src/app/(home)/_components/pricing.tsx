@@ -1,8 +1,7 @@
 import { db } from "@/lib/db";
 import React from "react";
-import PricingPlan from "./pricingPlanCard";
-
-export default async function Pricing() {
+import Pricing from "./pricingPlanCard";
+export default async function PricingSection() {
   // Onetime Plan
   // await db.plan.create({
   //   data: {
@@ -106,7 +105,7 @@ export default async function Pricing() {
   //   },
   // });
 
-    // await db.plan.deleteMany({});
+  // await db.plan.deleteMany({});
   const plans = await db.plan.findMany({
     where: {
       active: true,
@@ -128,19 +127,8 @@ export default async function Pricing() {
           basic plan, or subscribe for more credits. Support our service to help
           us improve.
         </p>
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 2xl:grid-cols-4 gap-2 md:gap-4 xl:gap-6">
-          {plans.map((plan, index) => (
-            <PricingPlan
-              key={index}
-              id={plan.id}
-              pricings={plan.pricing}
-              duration={plan.duration || ""}
-              title={plan.name}
-              description={plan.description}
-              features={plan.features}
-              isBest={plan.duration === "three-month"} // Example logic for highlighting the best plan
-            />
-          ))}
+        <div className="">
+          <Pricing plans={plans} />
         </div>
       </div>
     </section>
