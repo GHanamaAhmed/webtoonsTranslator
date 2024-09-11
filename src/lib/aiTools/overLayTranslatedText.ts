@@ -25,10 +25,11 @@ function getOptimalFontSize(
   text: string,
   fontName: string,
   maxWidth: number,
-  maxHeight: number
+  maxHeight: number,
+  padding: number = 1
 ): number {
   // Larger range of font sizes
-  const fontSizes = [40, 32, 28, 24, 20, 16, 12, 8, 6]; // Start from larger font sizes
+  const fontSizes = [64, 58, 52, 48, 40, 32, 28, 24, 20, 16, 12, 8, 6]; // Start from larger font sizes
 
   for (let i = 0; i < fontSizes.length; i++) {
     const fontSize = fontSizes[i];
@@ -37,9 +38,14 @@ function getOptimalFontSize(
     // Wrap the text to fit within maxWidth
     const lines = wrapText(ctx, text, fontName, maxWidth, fontSize);
     const lineHeight = fontSize * 1.2; // Adjust line height
-
+    const longLineWidth = ctx.measureText(
+      lines.reduce((a, b) => (a.length > b.length ? a : b), "")
+    ).width;
     // Calculate total height of all lines and compare with maxHeight
-    if (lines.length * lineHeight <= maxHeight) {
+    if (
+      lines.length * lineHeight <= maxHeight &&
+      longLineWidth <= maxWidth * 1.4
+    ) {
       return fontSize; // Return the largest size that fits
     }
   }
@@ -614,7 +620,8 @@ export async function mergeNearbyBlocksForJapanese(
           blocks[i].text,
           fontName,
           boxWidth,
-          boxHeight
+          boxHeight,
+          1.5
         );
         if (
           !otherBlock.boundingBox ||

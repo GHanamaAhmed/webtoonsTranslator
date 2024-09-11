@@ -11,7 +11,7 @@ export async function translationMiddleware(
 
   const { ids }: { ids: string[] } = await req.json();
 
-  const freeTimes = 50; // Free translations offered to users
+  const freeTimes = 100; // Free translations offered to users
   let restTimes = 0;
 
   if (!session?.user) {

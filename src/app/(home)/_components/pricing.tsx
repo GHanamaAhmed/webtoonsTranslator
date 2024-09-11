@@ -3,7 +3,8 @@ import React from "react";
 import PricingPlan from "./pricingPlanCard";
 
 export default async function Pricing() {
-  // const onetimePlan = await db.plan.create({
+  // Onetime Plan
+  // await db.plan.create({
   //   data: {
   //     name: "Onetime",
   //     description:
@@ -15,21 +16,23 @@ export default async function Pricing() {
   //       "Model",
   //       "No Limit Duration",
   //       "Better Translations",
-  //       "2500 credits one-time purchase",
+  //       "One-time purchase",
   //     ],
   //     pricing: {
   //       create: [
-  //         { pricePerUnit: 0.03, maxUsage: 50 },
-  //         { pricePerUnit: 0.015, maxUsage: 800 },
-  //         { pricePerUnit: 0.012, maxUsage: 1600 },
-  //         { pricePerUnit: 0.009, maxUsage: 3000 },
-  //         { pricePerUnit: 0.006, maxUsage: 6000 },
+  //         { pricePerUnit: 0.0198, maxUsage: 50 },
+  //         { pricePerUnit: 0.01, maxUsage: 500 },
+  //         { pricePerUnit: 0.00909090909, maxUsage: 1100 },
+  //         { pricePerUnit: 0.008, maxUsage: 3000 },
+  //         { pricePerUnit: 0.0075, maxUsage: 8000 },
+  //          { pricePerUnit: 0.007, maxUsage: 16000 },
   //       ],
   //     },
   //   },
   // });
 
-  // const weeklyPlan = await db.plan.create({
+  // // Weekly Plan
+  // await db.plan.create({
   //   data: {
   //     name: "Weekly",
   //     description:
@@ -39,23 +42,22 @@ export default async function Pricing() {
   //     features: [
   //       "Priority",
   //       "Model",
-  //       "No Limit Duration",
   //       "Better Translations",
   //       "Weekly credits package",
   //     ],
   //     pricing: {
   //       create: [
-  //         { pricePerUnit: 0.02, maxUsage: 50 },
-  //         { pricePerUnit: 0.01, maxUsage: 800 },
-  //         { pricePerUnit: 0.008, maxUsage: 1600 },
-  //         { pricePerUnit: 0.006, maxUsage: 3000 },
-  //         { pricePerUnit: 0.004, maxUsage: 6000 },
+  //         { pricePerUnit: 0.01, maxUsage: 300 },
+  //         { pricePerUnit: 0.009, maxUsage: 600 },
+  //         { pricePerUnit: 0.008, maxUsage: 1200 },
+  //         { pricePerUnit: 0.007, maxUsage: 2500 },
   //       ],
   //     },
   //   },
   // });
 
-  // const monthlyPlan = await db.plan.create({
+  // // Monthly Plan
+  // await db.plan.create({
   //   data: {
   //     name: "Monthly",
   //     description:
@@ -65,22 +67,46 @@ export default async function Pricing() {
   //     features: [
   //       "Priority",
   //       "Model",
-  //       "No Limit Duration",
   //       "Better Translations",
   //       "Monthly credits package",
   //     ],
   //     pricing: {
   //       create: [
-  //         { pricePerUnit: 0.01, maxUsage: 50 },
-  //         { pricePerUnit: 0.005, maxUsage: 800 },
-  //         { pricePerUnit: 0.004, maxUsage: 1600 },
-  //         { pricePerUnit: 0.003, maxUsage: 3000 },
-  //         { pricePerUnit: 0.002, maxUsage: 6000 },
+  //         { pricePerUnit: 0.009, maxUsage: 1500 },
+  //         { pricePerUnit: 0.008, maxUsage: 3000 },
+  //         { pricePerUnit: 0.0075, maxUsage: 5000 },
+  //         { pricePerUnit: 0.007, maxUsage: 8000 },
   //       ],
   //     },
   //   },
   // });
-  // await db.plan.deleteMany({});
+
+  // // Three Month Plan
+  // await db.plan.create({
+  //   data: {
+  //     name: "Three Month",
+  //     description:
+  //       "A three-month subscription plan with extended access and premium features.",
+  //     duration: "three-month",
+  //     type: "recurring",
+  //     features: [
+  //       "Priority",
+  //       "Model",
+  //       "Better Translations",
+  //       "Three-month credits package",
+  //     ],
+  //     pricing: {
+  //       create: [
+  //         { pricePerUnit: 0.0075, maxUsage: 6000 },
+  //         { pricePerUnit: 0.007, maxUsage: 9000 },
+  //         { pricePerUnit: 0.0065, maxUsage: 12000 },
+  //         { pricePerUnit: 0.006, maxUsage: 20000 },
+  //       ],
+  //     },
+  //   },
+  // });
+
+    // await db.plan.deleteMany({});
   const plans = await db.plan.findMany({
     where: {
       active: true,
@@ -91,7 +117,7 @@ export default async function Pricing() {
   });
   return (
     <section id="pricing" className="flex justify-center items-center">
-      <div className="w-full md:w-10/12 flex flex-col items-center gap-4 md:gap-6 xl:gap-8 text-Text py-10 md:py-14 lg:py-16 xl:py-20 2xl:py-24 px-5">
+      <div className="w-full flex flex-col items-center gap-4 md:gap-6 xl:gap-8 text-Text py-10 md:py-14 lg:py-16 xl:py-20 2xl:py-24 px-5">
         <p className="text-center text-header md:text-header-md lg:text-header-lg xl:text-header-lg 2xl:text-header-2xl font-extrabold">
           Flexible Pricing Plans for Every Translator
         </p>
@@ -102,7 +128,7 @@ export default async function Pricing() {
           basic plan, or subscribe for more credits. Support our service to help
           us improve.
         </p>
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2 md:gap-4 xl:gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 2xl:grid-cols-4 gap-2 md:gap-4 xl:gap-6">
           {plans.map((plan, index) => (
             <PricingPlan
               key={index}
@@ -112,7 +138,7 @@ export default async function Pricing() {
               title={plan.name}
               description={plan.description}
               features={plan.features}
-              isBest={plan.duration === "month"} // Example logic for highlighting the best plan
+              isBest={plan.duration === "three-month"} // Example logic for highlighting the best plan
             />
           ))}
         </div>

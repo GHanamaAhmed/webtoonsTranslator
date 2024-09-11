@@ -46,13 +46,14 @@ async function handleStripePayment(req: NextRequest) {
       (selectedPricing.pricePerUnit * selectedPricing.maxUsage).toFixed(2)
     );
     const unitAmountCents = unitAmount * 100; // Multiply by 100 to get the price in cents
+    console.log(unitAmountCents);
 
     // Define payment mode (one-time or subscription)
     const paymentMode = plan.type == "one-time" ? "payment" : "subscription"; // Assume `plan.isOneTime` exists in the database
 
     // Create a Stripe checkout session
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
+      payment_method_types: ["card", "paypal"],
       line_items: [
         {
           price_data: {
@@ -64,11 +65,10 @@ async function handleStripePayment(req: NextRequest) {
             recurring:
               plan.type == "recurring"
                 ? {
-                    interval: plan.duration as
-                      | "month"
-                      | "day"
-                      | "year"
-                      | "week",
+                    interval:
+                      plan.duration == "three-month"
+                        ? "month"
+                        : (plan.duration as "month" | "day" | "year" | "week"),
                   } // Recurring for subscriptions
                 : undefined, // No recurring for one-time payments
           },
@@ -76,9 +76,10 @@ async function handleStripePayment(req: NextRequest) {
         },
       ],
       mode: paymentMode, // Use "payment" for one-time, "subscription" for recurring
-      success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/translator?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/translator`,
       cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/`,
     });
+    console.log(session);
 
     // Return the session ID for frontend to redirect
     return new NextResponse(JSON.stringify({ sessionId: session.id }), {

@@ -7,7 +7,7 @@ import { Slider } from "@/components/ui/slider";
 import { Prisma } from "@prisma/client";
 import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
 
-const stripePromise = loadStripe(`${process.env.NEXT_PUBLIC_STRIPE_API_KEY}`);
+const stripePromise = loadStripe(`${process.env.STRIPE_API_KEY}`);
 
 interface PricingPlanProps {
   id: string;
@@ -29,17 +29,8 @@ const PricingPlan: React.FC<PricingPlanProps> = ({
   isBest = false,
 }) => {
   const [loading, setLoading] = useState(false);
-  const [currentPricing, setCurrentPricing] = useState<
-    Prisma.PricingGetPayload<Prisma.PricingFindUniqueArgs> | undefined
-  >(pricings[0]);
-  const [maxUsage, setMaxUsage] = useState(pricings[0].maxUsage);
-
-  useEffect(() => {
-    if (pricings && pricings.length > 0) {
-      setCurrentPricing(pricings[0]);
-    }
-  }, [pricings]);
-
+  const allPricings = pricings.sort((a, b) => a.maxUsage - b.maxUsage);
+  const [currentPricingIndex, setCurrentPricingIndex] = useState<number>(0);
   const handleCheckout = async () => {
     setLoading(true);
 
@@ -47,7 +38,7 @@ const PricingPlan: React.FC<PricingPlanProps> = ({
 
     const res = await axios.post("/api/payments/stripe", {
       planId: id,
-      pricingId: currentPricing?.id, // Include currentUsage in the request
+      pricingId: allPricings[currentPricingIndex].id, // Include currentUsage in the request
     });
 
     const { sessionId } = res.data;
@@ -65,27 +56,22 @@ const PricingPlan: React.FC<PricingPlanProps> = ({
   };
 
   // Helper function to update the pricing based on maxUsage
-  const updatePricing = (newMaxUsage: number) => {
-    setMaxUsage(newMaxUsage);
-    setCurrentPricing(
-      pricings.find(
-        (p, i) =>
-          (i === 0 && newMaxUsage <= p.maxUsage) ||
-          (newMaxUsage <= p.maxUsage && newMaxUsage >= pricings[i - 1].maxUsage)
-      ) as Prisma.PricingGetPayload<Prisma.PricingFindUniqueArgs>
-    );
+  const updatePricingIndex = (index: number) => {
+    setCurrentPricingIndex(index);
   };
-
   return (
     <div
-      className={`relative flex flex-col gap-2 md:gap-3 xl:gap-4 py-5 md:py-9 text-Text lg:py-12 xl:py-14 px-3 md:px-5 xl:px-12 rounded-2xl ${
+      className={`relative flex flex-col gap-2 md:gap-3 xl:gap-4 py-5 md:py-9 text-Text lg:py-12 xl:py-14 px-3 md:px-5 xl:px-7 rounded-2xl ${
         isBest ? "bg-gradient-to-br from-Secondary to-Primary" : "bg-Quaternary"
       }`}
     >
-      {currentPricing ? (
+      {currentPricingIndex >= 0 ? (
         <>
           <p className="items-center flex gap-1 font-medium text-header md:text-header-md lg:text-header-lg xl:text-header-lg 2xl:text-header-2xl">
-            {(currentPricing.pricePerUnit * currentPricing.maxUsage).toFixed(2)}{" "}
+            {(
+              allPricings[currentPricingIndex].pricePerUnit *
+              allPricings[currentPricingIndex].maxUsage
+            ).toFixed(2)}{" "}
             /{" "}
             <span className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl">
               {duration}
@@ -117,28 +103,29 @@ const PricingPlan: React.FC<PricingPlanProps> = ({
               htmlFor="usage-range"
               className="block text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl"
             >
-              Max Usage: {maxUsage}
+              Max Usage: {allPricings[currentPricingIndex].maxUsage} /{" "}
+              {allPricings[currentPricingIndex].pricePerUnit.toPrecision(2)} per
+              transaltion
             </label>
             <div className="flex items-center w-full gap-4">
               {/* Minus button */}
               <button
                 className="p-2"
                 onClick={() => {
-                  if (maxUsage > Math.min(...pricings.map((e) => e.maxUsage))) {
-                    updatePricing(maxUsage - 1); // Decrease maxUsage by 1
-                  }
+                  if (currentPricingIndex === 0) return;
+                  updatePricingIndex(currentPricingIndex - 1);
                 }}
               >
                 <AiOutlineMinus />
               </button>
               <Slider
                 id="usage-range"
-                value={[maxUsage]}
-                min={Math.min(...pricings.map((e) => e.maxUsage))} // Set min value based on your requirements
-                max={Math.max(...pricings.map((e) => e.maxUsage))} // Set max value based on your requirements
+                value={[currentPricingIndex]}
+                min={0} // Set min value based on your requirements
+                max={pricings.length - 1} // Set max value based on your requirements
                 step={1}
-                onValueChange={(value) => {
-                  updatePricing(value[0]);
+                onValueChange={(index) => {
+                  updatePricingIndex(index[0]);
                 }}
                 className="mt-2"
               />
@@ -146,9 +133,8 @@ const PricingPlan: React.FC<PricingPlanProps> = ({
               <button
                 className="p-2"
                 onClick={() => {
-                  if (maxUsage < Math.max(...pricings.map((e) => e.maxUsage))) {
-                    updatePricing(maxUsage + 1); // Increase maxUsage by 1
-                  }
+                  if (currentPricingIndex >= allPricings.length - 1) return;
+                  updatePricingIndex(currentPricingIndex + 1);
                 }}
               >
                 <AiOutlinePlus />

@@ -5,7 +5,7 @@ import { db } from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { options } from "@/app/api/auth/[...nextauth]/options";
 
-const freeTimes = 50;
+const freeTimes = 100;
 
 export default async function Page() {
   const supportedLanguages = await listSupportedLanguages();

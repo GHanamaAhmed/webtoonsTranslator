@@ -90,16 +90,44 @@ async function handlePost(req: NextRequest) {
       );
       iAnnotateImageResponse.push(...result.responses!);
     }
+    // Continue with translation and overlay as before
+    const fullTextAnnotations = iAnnotateImageResponse.map((res) => {
+      return res.fullTextAnnotation;
+    });
+
+    const combinedBlock: {
+      text: string;
+      boundingBox: googleVison.cloud.vision.v1.IBoundingPoly | null;
+    }[][] = fullTextAnnotations.map((fullTextAnnotation) => {
+      return combineBlocks(fullTextAnnotation || {});
+    });
+    const blocksText: {
+      blocksIndex?: number[];
+      text: string;
+      boundingBox: googleVison.cloud.vision.v1.IBoundingPoly | null;
+    }[][] = await Promise.all(
+      combinedBlock.map((blocks, index) => {
+        if (iAnnotateImageResponse[index].textAnnotations?.[0].locale == "ja")
+          return mergeNearbyBlocksForJapanese(
+            blocks.map((e, i) => ({ ...e, buffer: pngBuffers[index] })),
+            100,
+            defaultFonts.find(
+              (font) =>
+                font.lngCode ==
+                iAnnotateImageResponse[index].textAnnotations?.[0].locale
+            )?.fontName || ""
+          );
+        return blocks;
+      })
+    );
     // Create masks based on text detection
     const bufferMasks = await Promise.all(
       pngBuffers.map(
         async (buffer, index) =>
           await createMaskImage(
             buffer,
-            iAnnotateImageResponse[index],
-            iAnnotateImageResponse[index].textAnnotations?.[0].locale == "ja"
-              ? 1.6
-              : 1.1
+            blocksText[index].map((e) => e.boundingBox || {}),
+            1.2
           )
       )
     );
@@ -152,36 +180,7 @@ async function handlePost(req: NextRequest) {
     } else {
       throw new Error("Unsupported model type");
     }
-    // Continue with translation and overlay as before
-    const fullTextAnnotations = iAnnotateImageResponse.map((res) => {
-      return res.fullTextAnnotation;
-    });
 
-    const combinedBlock: {
-      text: string;
-      boundingBox: googleVison.cloud.vision.v1.IBoundingPoly | null;
-    }[][] = fullTextAnnotations.map((fullTextAnnotation) => {
-      return combineBlocks(fullTextAnnotation || {});
-    });
-    const blocksText: {
-      blocksIndex?: number[];
-      text: string;
-      boundingBox: googleVison.cloud.vision.v1.IBoundingPoly | null;
-    }[][] = await Promise.all(
-      combinedBlock.map((blocks, index) => {
-        if (iAnnotateImageResponse[index].textAnnotations?.[0].locale == "ja")
-          return mergeNearbyBlocksForJapanese(
-            blocks.map((e, i) => ({ ...e, buffer: pngBuffers[index] })),
-            60,
-            defaultFonts.find(
-              (font) =>
-                font.lngCode ==
-                iAnnotateImageResponse[index].textAnnotations?.[0].locale
-            )?.fontName || ""
-          );
-        return blocks;
-      })
-    );
     const translatedBlocksText: googleTranslate.cloud.translation.v3.ITranslateTextResponse[] =
       [];
     const characterLimit = 5000;
