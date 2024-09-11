@@ -30,6 +30,8 @@ import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import { useRouter } from "next/navigation";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { MdFileDownload } from "react-icons/md";
+
 const fetchProjectData = async () => {
   const { data }: { data: { projectId: string } } = await axios.get(
     "/api/project"
@@ -165,7 +167,6 @@ export default function Demo({
               ids: chunk, // Only send two IDs at a time
               targerLanguageCode,
               chapterId: chapterId || newChapeterID,
-              projectId: projectId || newProjectId,
             },
             {
               headers: {
@@ -368,6 +369,10 @@ export default function Demo({
                           image.isPending ? "row-span-6" : "row-span-5"
                         }`}
                       >
+                        {image.translated && (
+                          <MdFileDownload className="absolute right-2 top-2" />
+                        )}
+
                         {image.isPending ? (
                           <div className="flex justify-center items-center h-full">
                             <svg
@@ -377,6 +382,12 @@ export default function Demo({
                           </div>
                         ) : image.isError ? (
                           <div className="flex justify-center items-center h-full bg-red-500 bg-opacity-10 text-center text-red-500">
+                            <CldImage
+                              className="object-cover -z-10 opacity-10"
+                              src={image.translated ? image.tsrc : image.src}
+                              fill
+                              alt={"image-" + index}
+                            />
                             <p>{image.isError}</p>
                           </div>
                         ) : (

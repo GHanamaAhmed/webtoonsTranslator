@@ -26,6 +26,7 @@ import { translationMiddleware } from "@/middlewares/transaltionMiddleware";
 import { db } from "@/lib/db";
 import { defaultFonts } from "@/constants";
 import { InputJsonValue } from "@prisma/client/runtime/library";
+import { Prisma } from "@prisma/client";
 cloudinary.v2.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
   api_key: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
@@ -57,7 +58,6 @@ async function handlePost(req: NextRequest) {
       ids: string[];
       targerLanguageCode: string;
       chapterId: string;
-      projectId: string;
     } = await req?.json();
     const ids = body.ids;
     const targerLanguageCode = body.targerLanguageCode;
@@ -98,7 +98,7 @@ async function handlePost(req: NextRequest) {
             buffer,
             iAnnotateImageResponse[index],
             iAnnotateImageResponse[index].textAnnotations?.[0].locale == "ja"
-              ? 1.4
+              ? 1.6
               : 1.1
           )
       )
@@ -167,11 +167,21 @@ async function handlePost(req: NextRequest) {
       blocksIndex?: number[];
       text: string;
       boundingBox: googleVison.cloud.vision.v1.IBoundingPoly | null;
-    }[][] = combinedBlock.map((blocks, index) => {
-      if (iAnnotateImageResponse[index].textAnnotations?.[0].locale == "ja")
-        return mergeNearbyBlocksForJapanese(blocks);
-      return blocks;
-    });
+    }[][] = await Promise.all(
+      combinedBlock.map((blocks, index) => {
+        if (iAnnotateImageResponse[index].textAnnotations?.[0].locale == "ja")
+          return mergeNearbyBlocksForJapanese(
+            blocks.map((e, i) => ({ ...e, buffer: pngBuffers[index] })),
+            60,
+            defaultFonts.find(
+              (font) =>
+                font.lngCode ==
+                iAnnotateImageResponse[index].textAnnotations?.[0].locale
+            )?.fontName || ""
+          );
+        return blocks;
+      })
+    );
     const translatedBlocksText: googleTranslate.cloud.translation.v3.ITranslateTextResponse[] =
       [];
     const characterLimit = 5000;

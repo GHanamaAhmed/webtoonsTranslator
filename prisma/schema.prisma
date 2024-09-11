@@ -81,28 +81,38 @@ model Authenticator {
     @@unique([userId, credentialID])
 }
 
-model Plan {
-    id        String   @id @default(auto()) @map("_id") @db.ObjectId
-    name      String // Name of the plan (e.g., 'Daily', 'Weekly', 'Monthly', 'Yearly')
-    price     Float // Price of the plan
-    duration  String // Duration of the plan (e.g., 'day', 'week', 'month', 'year')
-    maxUsage  Int? // Maximum number of translations allowed (optional)
-    active    Boolean  @default(true)
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+model Pricing {
+    id           String @id @default(auto()) @map("_id") @db.ObjectId
+    planId       String @db.ObjectId
+    pricePerUnit Float // Price per credit
+    maxUsage     Int // Maximum number of translations
+    plan         Plan   @relation(fields: [planId], references: [id], onDelete: Cascade)
+}
 
-    Subscription Subscription[]
+model Plan {
+    id          String   @id @default(auto()) @map("_id") @db.ObjectId
+    name        String // Name of the plan
+    description String // Description of the plan
+    duration    String? // 'one-time', 'month', 'year', etc.
+    type        String // 'one-time' or 'recurring'
+    features    String[] // List of features included in the plan
+    active      Boolean  @default(true)
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+
+    subscription Subscription[]
+    pricing      Pricing[]
 }
 
 model Subscription {
-    id        String   @id @default(auto()) @map("_id") @db.ObjectId
-    userId    String   @db.ObjectId
-    planId    String   @db.ObjectId
-    startDate DateTime @default(now())
-    endDate   DateTime // When the subscription ends
-    maxUsage  Int? // Maximum number of translations allowed (optional)
+    id        String    @id @default(auto()) @map("_id") @db.ObjectId
+    userId    String    @db.ObjectId
+    planId    String    @db.ObjectId
+    startDate DateTime  @default(now())
+    endDate   DateTime? // For recurring subscriptions
+    maxUsage  Int // Maximum credits (one-time or recurring limit)
     uses      Int? // Number of translations used
-    active    Boolean  @default(true)
+    active    Boolean   @default(true)
 
     user User @relation(fields: [userId], references: [id], onDelete: Cascade)
     plan Plan @relation(fields: [planId], references: [id], onDelete: Cascade)
@@ -160,7 +170,7 @@ model TextBlock {
     textColor    String // Detected text color
     outlineColor String // Detected outline color
     boundingPoly Json[] // Array of bounding polygons 
-    language     String @db.ObjectId // Reference to the language-specific default
+    language     String
 
     page Page @relation(fields: [pageId], references: [id], onDelete: Cascade)
 
@@ -176,7 +186,7 @@ model TranslatedBlock {
     textColor    String // Detected text color
     outlineColor String // Detected outline color
     boundingPoly Json[] // Array of bounding polygons 
-    language     String    @db.ObjectId // Reference to the language-specific default
+    language     String
     textBlockId  String    @unique @db.ObjectId // Reference to the original text block
     page         Page      @relation(fields: [pageId], references: [id], onDelete: Cascade)
     textBlock    TextBlock @relation(fields: [textBlockId], references: [id], onDelete: Cascade)
@@ -190,7 +200,7 @@ model EditedBlock {
     textColor    String // Edited text color
     outlineColor String // Edited outline color
     boundingPoly Json[] // Array of bounding polygons 
-    language     String    @db.ObjectId // Reference to the language-specific default
+    language     String
     textBlockId  String    @unique @db.ObjectId // Reference to the original text block
     page         Page      @relation(fields: [pageId], references: [id], onDelete: Cascade)
     textBlock    TextBlock @relation(fields: [textBlockId], references: [id], onDelete: Cascade)

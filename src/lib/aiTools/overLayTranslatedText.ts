@@ -20,37 +20,6 @@ defaultFonts.forEach((e) => {
   );
   registerFont(fontPath, { family: e.fontName });
 });
-
-// Function to wrap text to fit within a specified width
-function wrapText(
-  ctx: CanvasCtx,
-  text: string,
-  fontName: string,
-  maxWidth: number,
-  fontSize: number
-): string[] {
-  const words = text.split(" ");
-  const lines: string[] = [];
-  let currentLine = "";
-
-  for (const word of words) {
-    const testLine = currentLine + word + " ";
-    ctx.font = `${fontSize}px "${fontName}"`;
-    const metrics = ctx.measureText(testLine);
-
-    if (metrics.width > maxWidth) {
-      lines.push(currentLine.trim());
-      currentLine = word + " ";
-    } else {
-      currentLine = testLine;
-    }
-  }
-
-  lines.push(currentLine.trim());
-  return lines;
-}
-
-// Function to determine the optimal font size
 function getOptimalFontSize(
   ctx: CanvasCtx,
   text: string,
@@ -58,11 +27,10 @@ function getOptimalFontSize(
   maxWidth: number,
   maxHeight: number
 ): number {
-  // Define threshold font sizes
-  const fontSizes = [8, 12, 16, 20, 24, 32, 40]; // Array of font sizes from small to large
+  // Larger range of font sizes
+  const fontSizes = [40, 32, 28, 24, 20, 16, 12, 8, 6]; // Start from larger font sizes
 
-  // Try each font size from largest to smallest
-  for (let i = fontSizes.length - 1; i >= 0; i--) {
+  for (let i = 0; i < fontSizes.length; i++) {
     const fontSize = fontSizes[i];
     ctx.font = `${fontSize}px "${fontName}"`;
 
@@ -70,14 +38,45 @@ function getOptimalFontSize(
     const lines = wrapText(ctx, text, fontName, maxWidth, fontSize);
     const lineHeight = fontSize * 1.2; // Adjust line height
 
-    // Check if the total height of all lines fits within maxHeight
+    // Calculate total height of all lines and compare with maxHeight
     if (lines.length * lineHeight <= maxHeight) {
-      return 16; // Return the largest size that fits
+      return fontSize; // Return the largest size that fits
     }
   }
 
   // If no sizes fit, return the smallest available font size
-  return fontSizes[0];
+  return fontSizes[fontSizes.length - 1];
+}
+
+// Function to wrap text
+function wrapText(
+  ctx: CanvasCtx,
+  text: string,
+  fontName: string,
+  maxWidth: number,
+  fontSize: number
+): string[] {
+  ctx.font = `${fontSize}px "${fontName}"`;
+  const words = text.split(" ");
+  const lines: string[] = [];
+  let currentLine = "";
+
+  words.forEach((word) => {
+    const testLine = `${currentLine}${word} `;
+    const metrics = ctx.measureText(testLine);
+    if (metrics.width > maxWidth && currentLine !== "") {
+      lines.push(currentLine);
+      currentLine = `${word} `;
+    } else {
+      currentLine = testLine;
+    }
+  });
+
+  if (currentLine !== "") {
+    lines.push(currentLine);
+  }
+
+  return lines;
 }
 
 // Function to draw text with wrapping and dynamic font size
@@ -90,33 +89,39 @@ function drawText(
   maxWidth: number,
   maxHeight: number,
   textAlign: CanvasTextAlign,
-  fillColor: string = "rgb(0, 0, 0)", // Default fill color
-  outlineColor: string = "rgb(255, 255, 255)", // Default outline color
-  outlineWidth: boolean = false // Default outline width
+  fillColor: string = "rgb(0, 0, 0)",
+  outlineColor: string = "rgb(255, 255, 255)",
+  outlineWidth: boolean = false
 ) {
   const fontSize = getOptimalFontSize(ctx, text, fontName, maxWidth, maxHeight);
-  const lineHeight = fontSize * 1.2; // Line height multiplier
+  const lineHeight = fontSize * 1.2;
   const lines = wrapText(ctx, text, fontName, maxWidth, fontSize);
 
-  // Set up styles for fill and stroke (outline)
   ctx.fillStyle = fillColor;
   ctx.strokeStyle = outlineColor;
-  const scaledOutlineWidth = Math.max(1, fontSize * 0.05); // Adjust the scale as needed
-  ctx.lineWidth = outlineWidth ? scaledOutlineWidth : 0;
+  const scaledOutlineWidth = Math.max(1, fontSize * 0.05);
+  ctx.lineWidth = 0;
 
-  ctx.textAlign = textAlign; // Set text alignment
+  ctx.textAlign = textAlign;
   ctx.font = `${fontSize}px "${fontName}"`;
+
+  // Calculate the total height of the text block
+  const totalTextHeight = lines.length * lineHeight;
+
+  // Adjust y position to center vertically
+  let drawY = y + (maxHeight - totalTextHeight) / 2;
+
   lines.forEach((line, index) => {
     let drawX = x;
 
-    // Adjust x position based on text alignment
     if (textAlign === "right") {
-      drawX += maxWidth; // Start from the right side of the bounding box
+      drawX += maxWidth;
     } else if (textAlign === "center") {
-      drawX += maxWidth / 2; // Center text within the bounding box
+      drawX += maxWidth / 2;
     }
-    ctx.strokeText(line, drawX, y + index * lineHeight); // Draw outline (stroke) first
-    ctx.fillText(line, drawX, y + index * lineHeight); // Fill the text inside
+
+    ctx.strokeText(line, drawX, drawY + index * lineHeight);
+    ctx.fillText(line, drawX, drawY + index * lineHeight);
   });
 }
 
@@ -541,34 +546,42 @@ const mergeBoundingBoxes = (
   };
 };
 
-// Function to merge nearby Japanese blocks
-export function mergeNearbyBlocksForJapanese(
+// Function to merge nearby Japanese blocks with font size adjustment
+export async function mergeNearbyBlocksForJapanese(
   blocks: Array<{
+    text: string;
+    buffer: Buffer;
+    boundingBox: google.cloud.vision.v1.IBoundingPoly | null;
+  }>,
+  baseThreshold: number,
+  fontName: string
+): Promise<
+  Array<{
+    blocksIndex: number[];
     text: string;
     boundingBox: google.cloud.vision.v1.IBoundingPoly | null;
   }>
-): Array<{
-  blocksIndex: number[];
-  text: string;
-  boundingBox: google.cloud.vision.v1.IBoundingPoly | null;
-}> {
+> {
   const mergedBlocks: Array<{
     blocksIndex: number[];
     text: string;
     boundingBox: google.cloud.vision.v1.IBoundingPoly | null;
   }> = [];
 
-  const threshold = 100; // Minimum distance to consider blocks as "nearby"
+  // Function to scale threshold based on font size
+  const getScaledThreshold = (fontSize: number): number => {
+    return baseThreshold * (fontSize / 16); // Example scaling, assuming base font size of 16px
+  };
 
   const isNearby = (
     box1: google.cloud.vision.v1.IBoundingPoly,
-    box2: google.cloud.vision.v1.IBoundingPoly
+    box2: google.cloud.vision.v1.IBoundingPoly,
+    fontSize: number
   ): boolean => {
     const distance = calculateDistance(box1, box2);
+    const threshold = getScaledThreshold(fontSize);
     return distance < threshold;
   };
-
-  // Updated mergeBoundingBoxes function as defined above
 
   const usedIndices: Set<number> = new Set();
 
@@ -586,21 +599,40 @@ export function mergeNearbyBlocksForJapanese(
       if (usedIndices.has(j)) continue;
 
       const otherBlock = blocks[j];
-      if (
-        !otherBlock.boundingBox ||
-        !isNearby(currentBlock.boundingBox, otherBlock.boundingBox)
-      )
-        continue;
-      console.log(mergedText + " near to " + otherBlock.text);
+      const [topLeft, , bottomRight] = blocks[i].boundingBox?.vertices || [];
+      if (topLeft && bottomRight) {
+        const x = topLeft.x || 0;
+        const y = topLeft.y || 0;
+        const boxWidth = (bottomRight.x || 0) - x;
+        const boxHeight = (bottomRight.y || 0) - y;
+        // Load the base image
+        const image = await loadImage(blocks[i].buffer);
+        const canvas = createCanvas(image.width, image.height);
+        const ctx = canvas.getContext("2d") as CanvasCtx;
+        const fontSize = getOptimalFontSize(
+          ctx,
+          blocks[i].text,
+          fontName,
+          boxWidth,
+          boxHeight
+        );
+        if (
+          !otherBlock.boundingBox ||
+          !isNearby(currentBlock.boundingBox, otherBlock.boundingBox, fontSize)
+        )
+          continue;
 
-      mergedText += " " + otherBlock.text;
-      mergedBlocksIndex.push(j);
-      mergedBoundingBox = mergeBoundingBoxes(
-        mergedBoundingBox,
-        otherBlock.boundingBox
-      );
+        console.log(mergedText + " near to " + otherBlock.text);
 
-      usedIndices.add(j); // Mark this block as used
+        mergedText += " " + otherBlock.text;
+        mergedBlocksIndex.push(j);
+        mergedBoundingBox = mergeBoundingBoxes(
+          mergedBoundingBox,
+          otherBlock.boundingBox
+        );
+
+        usedIndices.add(j); // Mark this block as used
+      }
     }
 
     mergedBlocks.push({

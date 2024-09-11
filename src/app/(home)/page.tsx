@@ -3,6 +3,7 @@ import PowerdByAI from "./_components/powerdByAI";
 import Effortless from "./_components/effortless";
 import Pricing from "./_components/pricing";
 import FAQ from "./_components/faq";
+import { Suspense } from "react";
 
 export default function Home() {
   return (
@@ -10,7 +11,9 @@ export default function Home() {
       <HeroSection />
       <PowerdByAI />
       <Effortless />
-      <Pricing />
+      <Suspense fallback={<></>}>
+        <Pricing />
+      </Suspense>
       <FAQ />
     </main>
   );
