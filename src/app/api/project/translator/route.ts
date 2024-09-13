@@ -3,10 +3,11 @@ import cloudinary, {
   UploadApiErrorResponse,
   UploadApiResponse,
 } from "cloudinary";
-import { combineBlocks, imageAnnotatorClient } from "@/lib/utilsServer";
+import { combineBlocks } from "@/lib/utilsServer";
+import { imageAnnotatorClient } from "@/lib/aiTools/apiClients";
 import { createMaskImage } from "@/lib/aiTools/delteObjects";
 import sharp from "sharp";
-import { translateText } from "@/lib/aiTools/translate";
+import { googleTranslateText } from "@/lib/aiTools/google/translate";
 import {
   detectTextColorAndOutline,
   mergeDetectTextColorAndOutline,
@@ -26,7 +27,7 @@ import { translationMiddleware } from "@/middlewares/transaltionMiddleware";
 import { db } from "@/lib/db";
 import { defaultFonts } from "@/constants";
 import { InputJsonValue } from "@prisma/client/runtime/library";
-import { Prisma } from "@prisma/client";
+import { Image, loadImage } from "canvas";
 cloudinary.v2.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
   api_key: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
@@ -62,15 +63,17 @@ async function handlePost(req: NextRequest) {
     const ids = body.ids;
     const targerLanguageCode = body.targerLanguageCode;
     const urls = ids.map((id) => cloudinary.v2.url(id));
-    // Fetch the images from the URLs
-    const buffers = await Promise.all(
+    const pngBuffers = await Promise.all(
       urls.map(async (url) =>
-        fetch(url).then(async (res) => Buffer.from(await res.arrayBuffer()))
+        fetch(url).then(async (res) =>
+          sharp(await res.arrayBuffer())
+            .png()
+            .toBuffer()
+        )
       )
     );
-    // Convert WebP images to PNG for processing
-    const pngBuffers = await Promise.all(
-      buffers.map(async (buffer) => sharp(buffer).png().toBuffer())
+    const canvasImages = await Promise.all(
+      pngBuffers.map((buffer) => loadImage(buffer))
     );
     const pngBuffersChunk = chunkArray<Buffer>(pngBuffers, 16);
     const iAnnotateImageResponse: googleVison.cloud.vision.v1.IAnnotateImageResponse[] =
@@ -82,7 +85,6 @@ async function handlePost(req: NextRequest) {
           image: { content: image.toString("base64") }, // Base64 encoded image
           features: [{ type: "TEXT_DETECTION" }], // Use TEXT_DETECTION for text annotation
         }));
-
       const [result] = await visionLimiter.schedule(() =>
         imageAnnotatorClient.batchAnnotateImages({
           requests: textDetectionRequests,
@@ -109,7 +111,7 @@ async function handlePost(req: NextRequest) {
       combinedBlock.map((blocks, index) => {
         if (iAnnotateImageResponse[index].textAnnotations?.[0].locale == "ja")
           return mergeNearbyBlocksForJapanese(
-            blocks.map((e, i) => ({ ...e, buffer: pngBuffers[index] })),
+            blocks.map((e, i) => ({ ...e, image: canvasImages[index] })),
             100,
             defaultFonts.find(
               (font) =>
@@ -122,10 +124,10 @@ async function handlePost(req: NextRequest) {
     );
     // Create masks based on text detection
     const bufferMasks = await Promise.all(
-      pngBuffers.map(
-        async (buffer, index) =>
+      canvasImages.map(
+        async (image, index) =>
           await createMaskImage(
-            buffer,
+            image,
             blocksText[index].map((e) => e.boundingBox || {}),
             1.2
           )
@@ -180,6 +182,14 @@ async function handlePost(req: NextRequest) {
     } else {
       throw new Error("Unsupported model type");
     }
+    let canvasDeletedTextImages = await Promise.all(
+      deletedText.map((url) =>
+        fetch(url)
+          .then(async (res) => await res.arrayBuffer())
+          .then(async (arrayBuffer) => sharp(arrayBuffer).png().toBuffer())
+          .then(async (buffer) => await loadImage(buffer))
+      )
+    );
 
     const translatedBlocksText: googleTranslate.cloud.translation.v3.ITranslateTextResponse[] =
       [];
@@ -203,7 +213,7 @@ async function handlePost(req: NextRequest) {
         // If it does, translate the accumulated blocks
         await characterLimiter.schedule(() => Promise.resolve());
         requestLimiter.schedule(async () => {
-          const response = await translateText(
+          const response = await googleTranslateText(
             currentTextBatch,
             targerLanguageCode
           );
@@ -228,7 +238,7 @@ async function handlePost(req: NextRequest) {
     // Translate any remaining blocks
     if (currentTextBatch.length > 0) {
       await characterLimiter.schedule(async () => {
-        const response = await translateText(
+        const response = await googleTranslateText(
           currentTextBatch,
           targerLanguageCode
         );
@@ -241,7 +251,7 @@ async function handlePost(req: NextRequest) {
       Array.from({ length: ids.length }).map(
         async (_, i) =>
           await detectTextColorAndOutline(
-            pngBuffers[i],
+            canvasImages[i],
             iAnnotateImageResponse[i].fullTextAnnotation || {}
           )
       )
@@ -255,13 +265,9 @@ async function handlePost(req: NextRequest) {
       return blocks;
     });
     const translatedBuffers = await Promise.all(
-      deletedText.map(async (url, index) => {
+      canvasDeletedTextImages.map(async (image, index) => {
         return await overlayTranslatedText(
-          await sharp(
-            Buffer.from(await fetch(url).then((res) => res.arrayBuffer()))
-          )
-            .png()
-            .toBuffer(),
+          image,
           getDefaultFontFamilyFromCode(targerLanguageCode.toLowerCase()) || "",
           translatedBlocksText[index].translations?.map((translation, i) => {
             return {

@@ -1,11 +1,7 @@
 import { google as googleTranslate } from "@google-cloud/translate/build/protos/protos";
-import { google as googleVison } from "@google-cloud/vision/build/protos/protos";
-
-import { translationClient } from "../utilsServer";
-import Bottleneck from "bottleneck";
+import { translationClient } from "../apiClients";
 import { cache } from "react";
-
-export async function translateText(
+export async function googleTranslateText(
   contents: string[],
   targetLanguageCode: string
 ) {
@@ -21,7 +17,7 @@ export async function translateText(
   return response;
 }
 
-export const listSupportedLanguages = cache(
+export const listGoogleSupportedLanguages = cache(
   async (displayLanguageCode: string = "en") => {
     try {
       const [response] = await translationClient.getSupportedLanguages({

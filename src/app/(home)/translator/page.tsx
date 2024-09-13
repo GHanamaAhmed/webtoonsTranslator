@@ -1,14 +1,14 @@
 import React from "react";
 import Demo from "./_components/demo";
-import { listSupportedLanguages } from "@/lib/aiTools/translate";
+import { listGoogleSupportedLanguages } from "@/lib/aiTools/google/translate";
 import { db } from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { options } from "@/app/api/auth/[...nextauth]/options";
 
-const freeTimes = 100;
+const freeTimes = 15;
 
 export default async function Page() {
-  const supportedLanguages = await listSupportedLanguages();
+  const supportedLanguages = await listGoogleSupportedLanguages();
 
   const session = await getServerSession(options);
   let restTimes = 0;
@@ -89,6 +89,8 @@ export default async function Page() {
       restTimes = maxUsage - usages;
     }
   }
+  const s = await db.subscription.findMany();
+  console.log(s);
 
   return <Demo supportedLanguages={supportedLanguages} times={restTimes} />;
 }

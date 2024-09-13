@@ -105,14 +105,14 @@ model Plan {
 }
 
 model Subscription {
-    id        String    @id @default(auto()) @map("_id") @db.ObjectId
-    userId    String    @db.ObjectId
-    planId    String    @db.ObjectId
-    startDate DateTime  @default(now())
+    id        String   @id @default(auto()) @map("_id") @db.ObjectId
+    userId    String   @db.ObjectId
+    planId    String   @db.ObjectId
+    startDate DateTime @default(now())
     endDate   DateTime? // For recurring subscriptions
     maxUsage  Int // Maximum credits (one-time or recurring limit)
-    uses      Int? // Number of translations used
-    active    Boolean   @default(true)
+    uses      Int?     @default(0) // Number of translations used
+    active    Boolean  @default(true)
 
     user User @relation(fields: [userId], references: [id], onDelete: Cascade)
     plan Plan @relation(fields: [planId], references: [id], onDelete: Cascade)

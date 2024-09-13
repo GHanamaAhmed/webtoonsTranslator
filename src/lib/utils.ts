@@ -277,3 +277,31 @@ export const getDefaultFontFamilyFromCode = (code: string) => {
   }
   return font.fontName;
 };
+
+
+
+export function calculateEndDate(periodEnd: string): Date {
+  const currentDate = new Date(); // Get the current date
+
+  switch (periodEnd) {
+    case "day":
+      currentDate.setDate(currentDate.getDate() + 1); // Add 1 day
+      break;
+    case "week":
+      currentDate.setDate(currentDate.getDate() + 7); // Add 7 days (1 week)
+      break;
+    case "month":
+      currentDate.setMonth(currentDate.getMonth() + 1); // Add 1 month
+      break;
+    case "three-month":
+      currentDate.setMonth(currentDate.getMonth() + 3); // Add 3 months
+      break;
+    case "year":
+      currentDate.setFullYear(currentDate.getFullYear() + 1); // Add 1 year
+      break;
+    default:
+      throw new Error(`Invalid period_end value: ${periodEnd}`);
+  }
+
+  return currentDate;
+}

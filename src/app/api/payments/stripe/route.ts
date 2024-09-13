@@ -1,16 +1,16 @@
 import { db } from "@/lib/db";
+import { stripe } from "@/lib/payments/stripe";
 import { withMiddleware } from "@/lib/utils";
 import { authMiddlware } from "@/middlewares/authMiddlware";
+import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
-import Stripe from "stripe";
-
-// Initialize Stripe with the secret key from your environment variables
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
-  apiVersion: "2024-06-20",
-});
-
+import { options } from "../../auth/[...nextauth]/options";
 async function handleStripePayment(req: NextRequest) {
   try {
+    const userSession = await getServerSession(options);
+    if (!userSession) {
+      return new NextResponse(null, { status: 401 });
+    }
     const { planId, pricingId } = await req.json();
 
     // Validate planId and pricingId
@@ -50,27 +50,38 @@ async function handleStripePayment(req: NextRequest) {
 
     // Define payment mode (one-time or subscription)
     const paymentMode = plan.type == "one-time" ? "payment" : "subscription"; // Assume `plan.isOneTime` exists in the database
+    const recurring =
+      plan.type == "recurring"
+        ? {
+            interval:
+              plan.duration == "three-month"
+                ? "month"
+                : (plan.duration as "month" | "day" | "year" | "week"),
+            interval_count: plan.duration == "three-month" ? 3 : 1,
+          } // Recurring for subscriptions
+        : undefined; // No recurring for one-time payments
 
     // Create a Stripe checkout session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card", "paypal"],
+      metadata: {
+        planId: plan.id,
+        priceId: selectedPricing.id,
+        userId: userSession.user.id,
+        maxUsage: selectedPricing.maxUsage.toString(),
+        type: plan.type,
+        period_end: plan.duration,
+      },
       line_items: [
         {
           price_data: {
             currency: "usd",
-            product_data: {
-              name: plan.name, // Use the actual plan name
-            },
             unit_amount: unitAmountCents, // The price in cents
-            recurring:
-              plan.type == "recurring"
-                ? {
-                    interval:
-                      plan.duration == "three-month"
-                        ? "month"
-                        : (plan.duration as "month" | "day" | "year" | "week"),
-                  } // Recurring for subscriptions
-                : undefined, // No recurring for one-time payments
+            product_data: {
+              name: plan.name,
+              description: plan.description,
+            },
+            recurring,
           },
           quantity: 1,
         },
@@ -79,8 +90,6 @@ async function handleStripePayment(req: NextRequest) {
       success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/translator`,
       cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/`,
     });
-    console.log(session);
-
     // Return the session ID for frontend to redirect
     return new NextResponse(JSON.stringify({ sessionId: session.id }), {
       status: 200,

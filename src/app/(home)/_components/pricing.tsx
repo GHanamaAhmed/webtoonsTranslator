@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
 import React from "react";
 import Pricing from "./pricingPlanCard";
+import { stripe } from "@/lib/payments/stripe";
 export default async function PricingSection() {
   // Onetime Plan
   // await db.plan.create({
@@ -20,10 +21,111 @@ export default async function PricingSection() {
   //     pricing: {
   //       create: [
   //         { pricePerUnit: 0.0198, maxUsage: 50 },
+  //       ],
+  //     },
+  //   },
+  // });
+  // await db.plan.create({
+  //   data: {
+  //     name: "Onetime",
+  //     description:
+  //       "A one-time purchase plan with lasting credits and priority support.",
+  //     duration: "one-time",
+  //     type: "one-time",
+  //     features: [
+  //       "Priority",
+  //       "Model",
+  //       "No Limit Duration",
+  //       "Better Translations",
+  //       "One-time purchase",
+  //     ],
+  //     pricing: {
+  //       create: [
   //         { pricePerUnit: 0.01, maxUsage: 500 },
+  //       ],
+  //     },
+  //   },
+  // });
+  // await db.plan.create({
+  //   data: {
+  //     name: "Onetime",
+  //     description:
+  //       "A one-time purchase plan with lasting credits and priority support.",
+  //     duration: "one-time",
+  //     type: "one-time",
+  //     features: [
+  //       "Priority",
+  //       "Model",
+  //       "No Limit Duration",
+  //       "Better Translations",
+  //       "One-time purchase",
+  //     ],
+  //     pricing: {
+  //       create: [
   //         { pricePerUnit: 0.00909090909, maxUsage: 1100 },
+  //       ],
+  //     },
+  //   },
+  // });
+
+  // await db.plan.create({
+  //   data: {
+  //     name: "Onetime",
+  //     description:
+  //       "A one-time purchase plan with lasting credits and priority support.",
+  //     duration: "one-time",
+  //     type: "one-time",
+  //     features: [
+  //       "Priority",
+  //       "Model",
+  //       "No Limit Duration",
+  //       "Better Translations",
+  //       "One-time purchase",
+  //     ],
+  //     pricing: {
+  //       create: [
   //         { pricePerUnit: 0.008, maxUsage: 3000 },
+  //       ],
+  //     },
+  //   },
+  // });
+  // await db.plan.create({
+  //   data: {
+  //     name: "Onetime",
+  //     description:
+  //       "A one-time purchase plan with lasting credits and priority support.",
+  //     duration: "one-time",
+  //     type: "one-time",
+  //     features: [
+  //       "Priority",
+  //       "Model",
+  //       "No Limit Duration",
+  //       "Better Translations",
+  //       "One-time purchase",
+  //     ],
+  //     pricing: {
+  //       create: [
   //         { pricePerUnit: 0.0075, maxUsage: 8000 },
+  //       ],
+  //     },
+  //   },
+  // });
+  // await db.plan.create({
+  //   data: {
+  //     name: "Onetime",
+  //     description:
+  //       "A one-time purchase plan with lasting credits and priority support.",
+  //     duration: "one-time",
+  //     type: "one-time",
+  //     features: [
+  //       "Priority",
+  //       "Model",
+  //       "No Limit Duration",
+  //       "Better Translations",
+  //       "One-time purchase",
+  //     ],
+  //     pricing: {
+  //       create: [
   //          { pricePerUnit: 0.007, maxUsage: 16000 },
   //       ],
   //     },
@@ -116,7 +218,7 @@ export default async function PricingSection() {
   });
   return (
     <section id="pricing" className="flex justify-center items-center">
-      <div className="w-full flex flex-col items-center gap-4 md:gap-6 xl:gap-8 text-Text py-10 md:py-14 lg:py-16 xl:py-20 2xl:py-24 px-5">
+      <div className="w-10/12 flex flex-col items-center gap-4 md:gap-6 xl:gap-8 text-Text py-10 md:py-14 lg:py-16 xl:py-20 2xl:py-24 px-5">
         <p className="text-center text-header md:text-header-md lg:text-header-lg xl:text-header-lg 2xl:text-header-2xl font-extrabold">
           Flexible Pricing Plans for Every Translator
         </p>

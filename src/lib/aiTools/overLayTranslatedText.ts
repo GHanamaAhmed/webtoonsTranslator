@@ -6,6 +6,7 @@ import {
   loadImage,
   registerFont,
   CanvasRenderingContext2D as CanvasCtx,
+  Image,
 } from "canvas";
 import { defaultFonts } from "@/constants";
 // Register the custom font
@@ -132,7 +133,7 @@ function drawText(
 }
 
 export async function overlayTranslatedText(
-  buffer: Buffer,
+  image: Image,
   fontName: string,
   translatedBlocks: Array<{
     text: string;
@@ -143,11 +144,8 @@ export async function overlayTranslatedText(
   }>
 ) {
   try {
-    // Load the base image
-    const image = await loadImage(buffer);
     const canvas = createCanvas(image.width, image.height);
     const ctx = canvas.getContext("2d") as CanvasCtx;
-
     // Draw the base image onto the canvas
     ctx.drawImage(image, 0, 0);
 
@@ -198,7 +196,7 @@ export async function overlayTranslatedText(
 }
 
 export async function detectTextColorAndOutline(
-  buffer: Buffer,
+  image: Image,
   fullTextAnnotation: google.cloud.vision.v1.ITextAnnotation
 ): Promise<
   {
@@ -215,7 +213,6 @@ export async function detectTextColorAndOutline(
     } | null;
   }[]
 > {
-  const image = await loadImage(buffer);
   const canvas = createCanvas(image.width, image.height);
   const ctx = canvas.getContext("2d") as CanvasCtx;
   ctx.drawImage(image, 0, 0);
@@ -556,7 +553,7 @@ const mergeBoundingBoxes = (
 export async function mergeNearbyBlocksForJapanese(
   blocks: Array<{
     text: string;
-    buffer: Buffer;
+    image: Image;
     boundingBox: google.cloud.vision.v1.IBoundingPoly | null;
   }>,
   baseThreshold: number,
@@ -611,9 +608,10 @@ export async function mergeNearbyBlocksForJapanese(
         const y = topLeft.y || 0;
         const boxWidth = (bottomRight.x || 0) - x;
         const boxHeight = (bottomRight.y || 0) - y;
-        // Load the base image
-        const image = await loadImage(blocks[i].buffer);
-        const canvas = createCanvas(image.width, image.height);
+        const canvas = createCanvas(
+          blocks[i].image.width,
+          blocks[i].image.height
+        );
         const ctx = canvas.getContext("2d") as CanvasCtx;
         const fontSize = getOptimalFontSize(
           ctx,

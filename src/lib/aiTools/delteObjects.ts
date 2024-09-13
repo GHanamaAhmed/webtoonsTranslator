@@ -1,12 +1,11 @@
-import { createCanvas, loadImage } from "canvas";
+import { createCanvas, Image, loadImage } from "canvas";
 import { google } from "@google-cloud/vision/build/protos/protos";
 // Function to create a mask image with sizeMultiplier
 export async function createMaskImage(
-  buffer: Buffer,
+  image: Image,
   boundingBoxs: google.cloud.vision.v1.IBoundingPoly[],
   sizeMultiplier: number // Add sizeMultiplier parameter
 ) {
-  const image = await loadImage(buffer);
   const canvas = createCanvas(image.width, image.height);
   const ctx = canvas.getContext("2d");
 
