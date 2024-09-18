@@ -9,7 +9,6 @@ const freeTimes = 15;
 
 export default async function Page() {
   const supportedLanguages = await listGoogleSupportedLanguages();
-
   const session = await getServerSession(options);
   let restTimes = 0;
 
@@ -19,78 +18,47 @@ export default async function Page() {
       select: {
         subscriptions: {
           where: {
-            active: true,
-            endDate: {
-              gt: new Date(),
+            status: "ACTIVE",
+            currentPeriodEnd: {
+              gte: new Date(),
+            },
+            usedQuantity: {
+              lt: db.subscription.fields.maxQuantity,
             },
           },
           select: {
-            maxUsage: true,
-            plan: {
-              select: {
-                type: true,
-              },
-            },
-            endDate: true,
+            maxQuantity: true,
+            usedQuantity: true,
           },
         },
-        projects: {
+        transaction: {
           where: {
-            chapters: {
-              some: {
-                pages: {
-                  some: {
-                    textBlocks: {
-                      some: {
-                        translatedBlock: {},
-                      },
-                    },
-                  },
-                },
-              },
+            status: "SUCCESS",
+            usedQuantity: {
+              lt: db.transaction.fields.maxQuantity,
             },
           },
           select: {
-            chapters: {
-              select: {
-                pages: true,
-              },
-            },
+            maxQuantity: true,
+            usedQuantity: true,
           },
         },
       },
     });
 
     if (user) {
+      // Calculate maximum usage allowed based on subscriptions
       const maxUsage =
         user.subscriptions.reduce((acc, curr) => {
-          if (curr.plan.type === "one-time") {
-            return acc + (curr.maxUsage || 0);
-          } else if (
-            curr.plan.type === "recurring" &&
-            curr.endDate &&
-            curr.endDate > new Date()
-          ) {
-            return acc + (curr.maxUsage || 0);
-          }
-          return acc;
-        }, 0) + freeTimes;
-
-      const usages = user.projects.reduce(
-        (acc, project) =>
-          acc +
-          project.chapters.reduce(
-            (acc, chapter) => acc + chapter.pages.length,
-            0
-          ),
-        0
-      );
-
-      restTimes = maxUsage - usages;
+          return acc + (curr.maxQuantity - curr.usedQuantity);
+        }, 0) +
+        user.transaction.reduce((acc, curr) => {
+          return acc + (curr.maxQuantity - curr.usedQuantity);
+        }, 0) +
+        freeTimes;
+      restTimes = maxUsage;
     }
   }
-  const s = await db.subscription.findMany();
-  console.log(s);
 
   return <Demo supportedLanguages={supportedLanguages} times={restTimes} />;
 }

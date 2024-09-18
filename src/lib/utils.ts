@@ -216,7 +216,7 @@ export async function withMiddleware(
   const parsedBody = await parseRequestBody(req);
 
   // Create a modified request object with parsed body
-  const modifiedReq = new Request(req.url, {
+  const modifiedReq = new NextRequest(req.url, {
     method: req.method,
     headers: req.headers,
     body: req.method === "GET" || req.method === "HEAD" ? null : parsedBody,
@@ -277,8 +277,6 @@ export const getDefaultFontFamilyFromCode = (code: string) => {
   }
   return font.fontName;
 };
-
-
 
 export function calculateEndDate(periodEnd: string): Date {
   const currentDate = new Date(); // Get the current date

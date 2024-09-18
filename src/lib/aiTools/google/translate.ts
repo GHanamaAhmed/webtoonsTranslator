@@ -1,7 +1,7 @@
 import { google as googleTranslate } from "@google-cloud/translate/build/protos/protos";
-import { translationClient } from "../apiClients";
+import { v2Client, v3Client } from "../apiClients";
 import { cache } from "react";
-export async function googleTranslateText(
+export async function googleTranslateTextAdvanced(
   contents: string[],
   targetLanguageCode: string
 ) {
@@ -13,8 +13,15 @@ export async function googleTranslateText(
     targetLanguageCode,
   };
   // Run request
-  const [response] = await translationClient.translateText(request);
+  const [response] = await v3Client.translateText(request);
   return response;
+}
+export async function googleTranslateTextBasic(
+  contents: string[],
+  targetLanguageCode: string
+) {
+  const [translation] = await v2Client.translate(contents, targetLanguageCode);
+  return translation;
 }
 
 export const listGoogleSupportedLanguages = cache(

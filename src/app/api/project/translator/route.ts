@@ -7,7 +7,10 @@ import { combineBlocks } from "@/lib/utilsServer";
 import { imageAnnotatorClient } from "@/lib/aiTools/apiClients";
 import { createMaskImage } from "@/lib/aiTools/delteObjects";
 import sharp from "sharp";
-import { googleTranslateText } from "@/lib/aiTools/google/translate";
+import {
+  googleTranslateTextAdvanced,
+  googleTranslateTextBasic,
+} from "@/lib/aiTools/google/translate";
 import {
   detectTextColorAndOutline,
   mergeDetectTextColorAndOutline,
@@ -28,6 +31,8 @@ import { db } from "@/lib/db";
 import { defaultFonts } from "@/constants";
 import { InputJsonValue } from "@prisma/client/runtime/library";
 import { Image, loadImage } from "canvas";
+import { getServerSession } from "next-auth";
+import { options } from "../../auth/[...nextauth]/options";
 cloudinary.v2.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
   api_key: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
@@ -60,6 +65,7 @@ async function handlePost(req: NextRequest) {
       targerLanguageCode: string;
       chapterId: string;
     } = await req?.json();
+    const session = await getServerSession(options);
     const ids = body.ids;
     const targerLanguageCode = body.targerLanguageCode;
     const urls = ids.map((id) => cloudinary.v2.url(id));
@@ -191,8 +197,7 @@ async function handlePost(req: NextRequest) {
       )
     );
 
-    const translatedBlocksText: googleTranslate.cloud.translation.v3.ITranslateTextResponse[] =
-      [];
+    const translatedBlocksText: string[][] = [];
     const characterLimit = 5000;
     let currentTextBatch: string[] = [];
     let currentIndexesBatch: number[][] = [];
@@ -213,7 +218,7 @@ async function handlePost(req: NextRequest) {
         // If it does, translate the accumulated blocks
         await characterLimiter.schedule(() => Promise.resolve());
         requestLimiter.schedule(async () => {
-          const response = await googleTranslateText(
+          const response = await googleTranslateTextBasic(
             currentTextBatch,
             targerLanguageCode
           );
@@ -238,7 +243,7 @@ async function handlePost(req: NextRequest) {
     // Translate any remaining blocks
     if (currentTextBatch.length > 0) {
       await characterLimiter.schedule(async () => {
-        const response = await googleTranslateText(
+        const response = await googleTranslateTextBasic(
           currentTextBatch,
           targerLanguageCode
         );
@@ -269,9 +274,9 @@ async function handlePost(req: NextRequest) {
         return await overlayTranslatedText(
           image,
           getDefaultFontFamilyFromCode(targerLanguageCode.toLowerCase()) || "",
-          translatedBlocksText[index].translations?.map((translation, i) => {
+          translatedBlocksText[index].map((translatedText, i) => {
             return {
-              text: translation.translatedText || "",
+              text: translatedText || "",
               boundingBox: blocksText[index][i].boundingBox,
               fillColor: `rgb(${textColorAndOutline[index][i].avgColor.r},${textColorAndOutline[index][i].avgColor.g},${textColorAndOutline[index][i].avgColor.b})`,
               outlineColor: `rgb(${
@@ -361,6 +366,33 @@ async function handlePost(req: NextRequest) {
         });
       })
     );
+    if (req.subscriptionId) {
+      await db.subscription.update({
+        where: {
+          id: req.subscriptionId,
+        },
+        data: {
+          usedQuantity: {
+            increment: ids.length,
+          },
+        },
+      });
+    } else {
+      if (req.transactionId) {
+        await db.transaction.update({
+          where: {
+            id: req.transactionId,
+          },
+          data: {
+            usedQuantity: {
+              increment: ids.length,
+            },
+          },
+        });
+      } else {
+        return new NextResponse(null, { status: 401 }); // Unauthorized if user
+      }
+    }
     return new NextResponse(JSON.stringify(translatedBuffersUploaded), {
       status: 200,
       headers: {
