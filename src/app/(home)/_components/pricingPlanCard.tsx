@@ -41,7 +41,7 @@ export default function Pricing({ plans, pricing }: PricingProps) {
             !isRecurring ? "" : "opacity-70"
           }`}
         >
-          Unlimited
+          One-Time
         </p>
         <Switch
           defaultChecked={true}
@@ -53,7 +53,7 @@ export default function Pricing({ plans, pricing }: PricingProps) {
             isRecurring ? "" : "opacity-70"
           }`}
         >
-          Recursion
+          Reccuring
         </p>
       </span>
 
@@ -117,8 +117,8 @@ const PricingCard: React.FC<
       <>
         {/* Plan Info */}
         <div className="flex flex-col gap-2 md:gap-3 xl:gap-4">
-          <p className="flex items-center gap-1 font-medium text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl">
-            {}
+          <p className="flex items-center gap-1 font-medium text-subheader md:text-subheader-md lg:text-subheader-lg xl:text-subheader-lg 2xl:text-subheader-2xl">
+            {(maxQuantity * pricePerUnit).toFixed(2)}$ /{"One-Time"}
           </p>
           <p className="font-medium text-paragraph md:text-subheader-md lg:text-subheader-lg xl:text-subheader-lg 2xl:text-subheader-2xl">
             {name} - {maxQuantity} Translations
@@ -231,7 +231,8 @@ const PlanCard: React.FC<
       <>
         {/* Plan Info */}
         <div className="flex flex-col gap-2 md:gap-3 xl:gap-4">
-          <p className="capitalize flex items-center gap-1 font-medium text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl">
+          <p className="capitalize flex items-center gap-1 font-medium text-subheader md:text-subheader-md lg:text-subheader-lg xl:text-subheader-lg 2xl:text-subheader-2xl">
+            {pricing.maxQuantity * pricing.pricePerUnit}$ /
             {interval.toLocaleLowerCase()}
           </p>
           <p className="font-medium text-paragraph md:text-subheader-md lg:text-subheader-lg xl:text-subheader-lg 2xl:text-subheader-2xl">
