@@ -178,7 +178,7 @@ enum BillingInterval {
     DAILY
     WEEKLY
     MONTHLY
-    THREE_MONTHLY
+    QUARTERLY
     YEARLY
 }
 

@@ -108,66 +108,6 @@ const PricingCard: React.FC<
       setLoading(false);
     }
   };
-
-  // const cancelSubscription = () => {
-  //   dialog.open({
-  //     message:
-  //       "After unsubscribing, you can continue using the service until the current billing period ends.",
-  //     title: "Canceling Your Subscription",
-  //     async onOK() {
-  //       setLoading(true);
-  //       try {
-  //         await axios.delete("/api/payments/stripe/subscription", {
-  //           data: {
-  //             ,
-  //           },
-  //         });
-  //         setnewSubscription((prev) => {
-  //           return prev.map((sub) => {
-  //             if (
-  //               sub.priceId === allPricings[currentPricingIndex].id &&
-  //               sub.planId === id
-  //             ) {
-  //               return { ...sub, autoRenew: false };
-  //             }
-  //             return sub;
-  //           });
-  //         });
-  //       } catch (error) {
-  //         console.error("Error cancelling subscription:", error);
-  //       } finally {
-  //         setLoading(false);
-  //       }
-  //     },
-  //   });
-  // };
-  // const reSubscription = async () => {
-  //   setLoading(true);
-  //   try {
-  //     await axios.put("/api/payments/stripe/subscription", {
-  //       stripeSubId: newSubscription.find(
-  //         (sub) =>
-  //           allPricings[currentPricingIndex].id === sub.priceId &&
-  //           id === sub.planId
-  //       )?.stripeSubId,
-  //     });
-  //     setnewSubscription((prev) => {
-  //       return prev.map((sub) => {
-  //         if (
-  //           sub.priceId === allPricings[currentPricingIndex].id &&
-  //           sub.planId === id
-  //         ) {
-  //           return { ...sub, autoRenew: true };
-  //         }
-  //         return sub;
-  //       });
-  //     });
-  //   } catch (error) {
-  //     console.error("Error cancelling subscription:", error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
   return (
     <div
       className={`relative flex flex-col justify-between gap-2 md:gap-3 xl:gap-4 py-5 md:py-9 text-Text lg:py-12 xl:py-14 px-3 md:px-5 xl:px-7 rounded-2xl ${
@@ -178,7 +118,7 @@ const PricingCard: React.FC<
         {/* Plan Info */}
         <div className="flex flex-col gap-2 md:gap-3 xl:gap-4">
           <p className="flex items-center gap-1 font-medium text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl">
-            {"one-time"}
+            {}
           </p>
           <p className="font-medium text-paragraph md:text-subheader-md lg:text-subheader-lg xl:text-subheader-lg 2xl:text-subheader-2xl">
             {name} - {maxQuantity} Translations
@@ -291,8 +231,8 @@ const PlanCard: React.FC<
       <>
         {/* Plan Info */}
         <div className="flex flex-col gap-2 md:gap-3 xl:gap-4">
-          <p className="flex items-center gap-1 font-medium text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl">
-            {"one-time"}
+          <p className="capitalize flex items-center gap-1 font-medium text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl">
+            {interval.toLocaleLowerCase()}
           </p>
           <p className="font-medium text-paragraph md:text-subheader-md lg:text-subheader-lg xl:text-subheader-lg 2xl:text-subheader-2xl">
             {pricing.name} - {pricing.maxQuantity} Translations
