@@ -10,7 +10,7 @@ export default async function PricingSection() {
 
   // await db.pricing.deleteMany({});
   // await db.subscription.deleteMany({});
-  // await db.transaction.deleteMany({});
+  // await db.payment.deleteMany({});
   // await db.plan.create({
   //   data: {
   //     interval: "MONTHLY", // Recurring monthly plan
@@ -186,7 +186,10 @@ export default async function PricingSection() {
           us improve.
         </p>
         <div className="">
-          <Pricing plans={plans} pricing={pricing} />
+          <Pricing
+            plans={plans.sort((a, b) => a.index - b.index)}
+            pricing={pricing.sort((a, b) => a.index - b.index)}
+          />
         </div>
       </div>
     </section>

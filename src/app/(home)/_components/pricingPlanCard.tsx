@@ -1,12 +1,12 @@
 "use client";
 import { FaCheck } from "react-icons/fa";
 import { loadStripe } from "@stripe/stripe-js";
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, use } from "react";
 import axios from "axios";
 import { Prisma } from "@prisma/client";
 import { Switch } from "@/components/ui/switch";
 import { DialogContext } from "@/components/alertDialog";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 // Initialize Stripe with the API key
 const stripePromise = loadStripe(process.env.STRIPE_API_KEY!);
@@ -23,9 +23,35 @@ interface PricingProps {
   }>[];
   pricing: Prisma.PricingGetPayload<Prisma.PricingFindManyArgs>[];
 }
-
 export default function Pricing({ plans, pricing }: PricingProps) {
-  const [isRecurring, setIsRecurring] = useState(true);
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+
+  // Initialize state based on searchParams on first render
+  const initialIsRecurring = searchParams.get("subscription") !== "false";
+  const [isRecurring, setIsRecurring] = useState(initialIsRecurring);
+  const [planSubscription, setPlanSubscription] = useState(
+    plans.find((plan) => plan.pricing.subscription.length > 0)
+  );
+  useEffect(() => {
+    // Sync isRecurring state with URL whenever it changes
+    const subscription = searchParams.get("subscription");
+    if (subscription !== null) {
+      setIsRecurring(subscription === "true");
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    // Update the URL whenever 'isRecurring' changes
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("subscription", isRecurring.toString());
+
+    const newUrl = pathname + "?" + params.toString();
+
+    // Replace the URL without triggering a page reload
+    window.history.replaceState(null, "", newUrl);
+  }, [isRecurring, searchParams, pathname]);
+
   const handlePlanToggle = (isChecked: boolean) => {
     setIsRecurring(isChecked);
   };
@@ -42,7 +68,7 @@ export default function Pricing({ plans, pricing }: PricingProps) {
           One-Time
         </p>
         <Switch
-          defaultChecked={true}
+          checked={isRecurring}
           onCheckedChange={handlePlanToggle}
           id="recursion-toggle"
         />
@@ -51,7 +77,7 @@ export default function Pricing({ plans, pricing }: PricingProps) {
             isRecurring ? "" : "opacity-70"
           }`}
         >
-          Reccuring
+          Subscription
         </p>
       </span>
 
@@ -62,7 +88,25 @@ export default function Pricing({ plans, pricing }: PricingProps) {
             <PricingCard key={pricing.id} {...pricing} />
           ))}
         {isRecurring &&
-          plans.map((plan, index) => <PlanCard key={plan.id} {...plan} />)}
+          plans.map((plan, index) => {
+            console.log(planSubscription);
+
+            return (
+              <PlanCard
+                key={plan.id}
+                {...plan}
+                action={
+                  !planSubscription
+                    ? undefined
+                    : planSubscription.pricing.index == plan.pricing.index
+                    ? undefined
+                    : planSubscription.pricing.price > plan.pricing.price
+                    ? "Donwgrade"
+                    : "Upgrade"
+                }
+              />
+            );
+          })}
       </div>
     </div>
   );
@@ -82,7 +126,6 @@ const PricingCard: React.FC<
   price,
 }) => {
   const [loading, setLoading] = useState(false);
-  const dialog = useContext(DialogContext);
   const handleCheckout = async () => {
     setLoading(true);
     const stripe = await stripePromise;
@@ -153,9 +196,8 @@ const PricingCard: React.FC<
     </div>
   );
 };
-
-const PlanCard: React.FC<
-  Prisma.PlanGetPayload<{
+interface PlanCardProps
+  extends Prisma.PlanGetPayload<{
     include: {
       pricing: {
         include: {
@@ -163,8 +205,18 @@ const PlanCard: React.FC<
         };
       };
     };
-  }>
-> = ({ id, interval, isBest, index, pricing, pricingId }) => {
+  }> {
+  action?: "Upgrade" | "Donwgrade";
+}
+const PlanCard: React.FC<PlanCardProps> = ({
+  id,
+  interval,
+  isBest,
+  index,
+  pricing,
+  pricingId,
+  action,
+}) => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const handleCheckout = async () => {
@@ -241,7 +293,9 @@ const PlanCard: React.FC<
         <div className="w-full">
           <button
             onClick={
-              loading
+              action
+                ? manageSubscription
+                : loading
                 ? undefined
                 : pricing.subscription.length > 0
                 ? manageSubscription
@@ -249,7 +303,9 @@ const PlanCard: React.FC<
             }
             className="w-full py-2 px-5 text-Text bg-Primary rounded-full text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl"
           >
-            {loading
+            {action
+              ? action
+              : loading
               ? "Loading..."
               : pricing.subscription.length > 0
               ? "Manage Subscription"
