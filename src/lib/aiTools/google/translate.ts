@@ -1,6 +1,7 @@
 import { google as googleTranslate } from "@google-cloud/translate/build/protos/protos";
 import { v2Client, v3Client } from "../apiClients";
 import { cache } from "react";
+import { translationClient } from "@/lib/utilsServer";
 export async function googleTranslateTextAdvanced(
   contents: string[],
   targetLanguageCode: string

@@ -19,9 +19,9 @@ export default async function Page() {
         subscriptions: {
           where: {
             status: "ACTIVE",
-            currentPeriodEnd: {
-              gte: new Date(),
-            },
+            // currentPeriodEnd: {
+            //   gte: new Date(),
+            // },
             usedQuantity: {
               lt: db.subscription.fields.maxQuantity,
             },
@@ -35,7 +35,7 @@ export default async function Page() {
           where: {
             status: "SUCCESS",
             usedQuantity: {
-              lt: db.transaction.fields.maxQuantity,
+              lt: db.payment.fields.maxQuantity,
             },
           },
           select: {
@@ -45,8 +45,9 @@ export default async function Page() {
         },
       },
     });
-
     if (user) {
+      console.log(user.subscriptions);
+
       // Calculate maximum usage allowed based on subscriptions
       const maxUsage =
         user.subscriptions.reduce((acc, curr) => {

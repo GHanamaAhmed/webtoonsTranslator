@@ -3,11 +3,10 @@ import { FaCheck } from "react-icons/fa";
 import { loadStripe } from "@stripe/stripe-js";
 import { useState, useEffect, useContext } from "react";
 import axios from "axios";
-import { Slider } from "@/components/ui/slider";
 import { Prisma } from "@prisma/client";
-import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
 import { Switch } from "@/components/ui/switch";
 import { DialogContext } from "@/components/alertDialog";
+import { useRouter } from "next/navigation";
 
 // Initialize Stripe with the API key
 const stripePromise = loadStripe(process.env.STRIPE_API_KEY!);
@@ -27,7 +26,6 @@ interface PricingProps {
 
 export default function Pricing({ plans, pricing }: PricingProps) {
   const [isRecurring, setIsRecurring] = useState(true);
-
   const handlePlanToggle = (isChecked: boolean) => {
     setIsRecurring(isChecked);
   };
@@ -81,8 +79,7 @@ const PricingCard: React.FC<
   isBest,
   maxQuantity,
   name,
-  planId,
-  pricePerUnit,
+  price,
 }) => {
   const [loading, setLoading] = useState(false);
   const dialog = useContext(DialogContext);
@@ -118,7 +115,7 @@ const PricingCard: React.FC<
         {/* Plan Info */}
         <div className="flex flex-col gap-2 md:gap-3 xl:gap-4">
           <p className="flex items-center gap-1 font-medium text-subheader md:text-subheader-md lg:text-subheader-lg xl:text-subheader-lg 2xl:text-subheader-2xl">
-            {(maxQuantity * pricePerUnit).toFixed(2)}$ /{"One-Time"}
+            {price}$ /{"One-Time"}
           </p>
           <p className="font-medium text-paragraph md:text-subheader-md lg:text-subheader-lg xl:text-subheader-lg 2xl:text-subheader-2xl">
             {name} - {maxQuantity} Translations
@@ -169,14 +166,14 @@ const PlanCard: React.FC<
   }>
 > = ({ id, interval, isBest, index, pricing, pricingId }) => {
   const [loading, setLoading] = useState(false);
-  const dialog = useContext(DialogContext);
+  const router = useRouter();
   const handleCheckout = async () => {
     setLoading(true);
     const stripe = await stripePromise;
 
     try {
       const { data } = await axios.post("/api/payments/stripe", {
-        pricingId: id,
+        pricingId: pricing.id,
       });
 
       const result = await stripe?.redirectToCheckout({
@@ -193,31 +190,14 @@ const PlanCard: React.FC<
     }
   };
 
-  const cancelSubscription = () => {
-    dialog.open({
-      message:
-        "After unsubscribing, you can continue using the service until the current billing period ends.",
-      title: "Canceling Your Subscription",
-      async onOK() {
-        setLoading(true);
-        try {
-          await axios.delete("/api/payments/stripe/subscription", {
-            data: {},
-          });
-        } catch (error) {
-          console.error("Error cancelling subscription:", error);
-        } finally {
-          setLoading(false);
-        }
-      },
-    });
-  };
-  const reSubscription = async () => {
+  const manageSubscription = async () => {
     setLoading(true);
     try {
-      await axios.put("/api/payments/stripe/subscription", {});
+      const res = await axios.get("/api/payments/stripe/subscription");
+      const portalSessionUrl = res.data.url as string;
+      router.push(portalSessionUrl);
     } catch (error) {
-      console.error("Error cancelling subscription:", error);
+      console.error("Error opening billing portal:", error);
     } finally {
       setLoading(false);
     }
@@ -232,8 +212,7 @@ const PlanCard: React.FC<
         {/* Plan Info */}
         <div className="flex flex-col gap-2 md:gap-3 xl:gap-4">
           <p className="capitalize flex items-center gap-1 font-medium text-subheader md:text-subheader-md lg:text-subheader-lg xl:text-subheader-lg 2xl:text-subheader-2xl">
-            {pricing.maxQuantity * pricing.pricePerUnit}$ /
-            {interval.toLocaleLowerCase()}
+            {pricing.price}$ /{interval.toLocaleLowerCase()}
           </p>
           <p className="font-medium text-paragraph md:text-subheader-md lg:text-subheader-lg xl:text-subheader-lg 2xl:text-subheader-2xl">
             {pricing.name} - {pricing.maxQuantity} Translations
@@ -261,10 +240,20 @@ const PlanCard: React.FC<
 
         <div className="w-full">
           <button
-            onClick={handleCheckout}
+            onClick={
+              loading
+                ? undefined
+                : pricing.subscription.length > 0
+                ? manageSubscription
+                : handleCheckout
+            }
             className="w-full py-2 px-5 text-Text bg-Primary rounded-full text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl"
           >
-            {loading ? "Loading..." : "Subscribe"}
+            {loading
+              ? "Loading..."
+              : pricing.subscription.length > 0
+              ? "Manage Subscription"
+              : "Subscribe"}
           </button>
         </div>
       </>

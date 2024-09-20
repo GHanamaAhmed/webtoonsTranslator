@@ -22,7 +22,7 @@ model User {
     updatedAt DateTime @updatedAt
 
     authenticator Authenticator[]
-    transaction   Transaction[]
+    transaction   Payment[]
 }
 
 model Account {
@@ -84,41 +84,37 @@ model Authenticator {
 
 model Pricing {
     id           String         @id @default(auto()) @map("_id") @db.ObjectId
-    planId       String?        @db.ObjectId
     name         String // Name of the plan
     description  String // Description of the plan
     features     String[] // List of features included in the plan
     active       Boolean        @default(true)
     isBest       Boolean        @default(false)
     index        Int            @default(0)
-    pricePerUnit Float // Price per credit
+    price        Float // Price per credit
     discount     Float? // Discount percentage
     maxQuantity  Int // Maximum number of translations
     subscription Subscription[]
-    transaction  Transaction[]
-    Plan         Plan[]
+    payment      Payment[]
+    plan         Plan?
 }
 
 model Plan {
     id        String          @id @default(auto()) @map("_id") @db.ObjectId
-    interval  BillingInterval // Billing interval (monthly, yearly, etc.)
+    pricingId String          @unique @db.ObjectId
     active    Boolean         @default(true)
     isBest    Boolean         @default(false)
     index     Int             @default(0)
     createdAt DateTime        @default(now())
     updatedAt DateTime        @updatedAt
-    pricing   Pricing         @relation(fields: [pricingId], references: [id], onDelete: NoAction)
-    pricingId String          @db.ObjectId
+    interval  BillingInterval // Billing interval (monthly, yearly, etc.)
+    pricing   Pricing         @relation(fields: [pricingId], references: [id], onDelete: Cascade)
 }
 
 model Subscription {
     id                    String             @id @default(auto()) @map("_id") @db.ObjectId
     userId                String             @db.ObjectId
-    user                  User               @relation(fields: [userId], references: [id], onDelete: NoAction)
-    gateway               PaymentGateway // Enum field for different payment gateways
     gatewaySubscriptionId String // Subscription ID from the payment gateway (Stripe/PayPal)
-    status                SubscriptionStatus // Enum for tracking subscription status
-    priceId               String             @db.ObjectId // ID of the pricing for this subscription
+    pricingId             String             @db.ObjectId // ID of the pricing for this subscription
     currentPeriodStart    DateTime
     currentPeriodEnd      DateTime
     createdAt             DateTime           @default(now())
@@ -126,28 +122,32 @@ model Subscription {
     usedQuantity          Int                @default(0) // Track the used quantity for one-time payments
     maxQuantity           Int // Track the maximum quantity for one-time payments
     // Relations for pricing and plans
-    pricing               Pricing            @relation(fields: [priceId], references: [id])
-    Transaction           Transaction[]
+    gateway               PaymentGateway // Enum field for different payment gateways
+    status                SubscriptionStatus // Enum for tracking subscription status
+    user                  User               @relation(fields: [userId], references: [id])
+    pricing               Pricing            @relation(fields: [pricingId], references: [id])
+
+    @@unique([gatewaySubscriptionId, gateway])
 }
 
-model Transaction {
-    id                   String            @id @default(auto()) @map("_id") @db.ObjectId
-    userId               String            @db.ObjectId
-    user                 User              @relation(fields: [userId], references: [id], onDelete: NoAction)
-    gateway              PaymentGateway // Enum field for different payment gateways
-    gatewayTransactionId String // Transaction ID from the gateway (e.g., Stripe/PayPal)
-    type                 PaymentType // Enum for "one-time" or "subscription"
-    amount               Float
-    currency             String
-    status               TransactionStatus // Enum for transaction success/failure
-    subscriptionId       String?           @db.ObjectId // Optional, linked to the subscription if recurring payment
-    subscription         Subscription?     @relation(fields: [subscriptionId], references: [id])
-    createdAt            DateTime          @default(now())
-    updatedAt            DateTime          @updatedAt
-    usedQuantity         Int               @default(0) // Track the used quantity for one-time payments
-    maxQuantity          Int // Track the maximum quantity for one-time payments
-    Pricing              Pricing?          @relation(fields: [pricingId], references: [id])
-    pricingId            String?           @db.ObjectId
+model Payment {
+    id               String         @id @default(auto()) @map("_id") @db.ObjectId
+    userId           String         @db.ObjectId
+    gatewayPaymentId String // Transaction ID from the gateway (e.g., Stripe/PayPal)
+    amount           Float
+    currency         String
+    createdAt        DateTime       @default(now())
+    updatedAt        DateTime       @updatedAt
+    usedQuantity     Int            @default(0) // Track the used quantity for one-time payments
+    maxQuantity      Int // Track the maximum quantity for one-time payments
+    pricingId        String         @db.ObjectId
+    gateway          PaymentGateway // Enum field for different payment gateways
+    type             PaymentType // Enum for "one-time" or "subscription"
+    status           PaymentStatus // Enum for payment success/failure
+    pricing          Pricing        @relation(fields: [pricingId], references: [id])
+    user             User           @relation(fields: [userId], references: [id])
+
+    @@unique([gatewayPaymentId, gateway])
 }
 
 enum PaymentGateway {
@@ -160,7 +160,7 @@ enum PaymentType {
     SUBSCRIPTION
 }
 
-enum TransactionStatus {
+enum PaymentStatus {
     SUCCESS
     FAILED
     PENDING
@@ -168,10 +168,9 @@ enum TransactionStatus {
 
 enum SubscriptionStatus {
     ACTIVE
-    PENDING
-    PAST_DUE
+    PAUSED
     CANCELED
-    TRIALING
+    INCOMPLETE
 }
 
 enum BillingInterval {

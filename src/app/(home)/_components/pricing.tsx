@@ -10,7 +10,7 @@ export default async function PricingSection() {
 
   // await db.pricing.deleteMany({});
   // await db.subscription.deleteMany({});
-
+  // await db.transaction.deleteMany({});
   // await db.plan.create({
   //   data: {
   //     interval: "MONTHLY", // Recurring monthly plan
@@ -25,8 +25,8 @@ export default async function PricingSection() {
   //           "Improved Translations",
   //           "Monthly credits package",
   //         ],
-  //         pricePerUnit: 0.009,
-  //         maxQuantity: 2000,
+  //         price: 9.99,
+  //         maxQuantity: 1100,
   //         active: true,
   //         index: 0,
   //       },
@@ -38,7 +38,7 @@ export default async function PricingSection() {
   // await db.plan.create({
   //   data: {
   //     interval: "MONTHLY", // Recurring monthly plan
-    //         isBest: true, // Highlighting as the best plan
+  //     isBest: true, // Highlighting as the best plan
 
   //     pricing: {
   //       create: {
@@ -51,9 +51,9 @@ export default async function PricingSection() {
   //           "Enhanced Translations",
   //           "Larger Monthly credits package",
   //         ],
-  //         pricePerUnit: 0.007,
+  //         price: 42,
   //         maxQuantity: 6000,
-  //      active: true,
+  //         active: true,
   //         index: 1,
   //       },
   //     },
@@ -76,7 +76,7 @@ export default async function PricingSection() {
   //           "Monthly credits package",
   //         ],
 
-  //         pricePerUnit: 0.008,
+  //         price: 32,
   //         maxQuantity: 4000,
   //         active: true,
   //         index: 2,
@@ -98,7 +98,7 @@ export default async function PricingSection() {
   //       "Improved Translations",
   //       "One-time purchase",
   //     ],
-  //     pricePerUnit: 0.0198,
+  //     price: 0.99,
   //     maxQuantity: 50,
   //     active: true,
   //     index: 0,
@@ -118,7 +118,7 @@ export default async function PricingSection() {
   //       "Enhanced Translations",
   //       "One-time purchase",
   //     ],
-  //     pricePerUnit: 0.008,
+  //     price: 30,
   //     maxQuantity: 4000,
   //     active: true,
   //     index: 1,
@@ -139,7 +139,7 @@ export default async function PricingSection() {
   //       "Enhanced Translations",
   //       "One-time purchase",
   //     ],
-  //     pricePerUnit: 0.009,
+  //     price: 9.99,
   //     maxQuantity: 1110,
   //     active: true,
   //     index: 2,
@@ -167,8 +167,8 @@ export default async function PricingSection() {
   const pricing = await db.pricing.findMany({
     where: {
       active: true,
-      Plan: {
-        none: {},
+      plan: {
+        is: null,
       },
     },
   });

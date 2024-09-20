@@ -26,9 +26,9 @@ export async function translationMiddleware(
       subscriptions: {
         where: {
           status: "ACTIVE",
-          currentPeriodEnd: {
-            gte: new Date(),
-          },
+          // currentPeriodEnd: {
+          //   gte: new Date(),
+          // },
           usedQuantity: {
             lt: db.subscription.fields.maxQuantity,
           },
@@ -43,7 +43,7 @@ export async function translationMiddleware(
         where: {
           status: "SUCCESS",
           usedQuantity: {
-            lt: db.transaction.fields.maxQuantity,
+            lt: db.payment.fields.maxQuantity,
           },
         },
         select: {
@@ -73,8 +73,9 @@ export async function translationMiddleware(
   if (restTimes < 1) {
     return new NextResponse(null, { status: 403 });
   }
-  req.subscriptionId = user.subscriptions[0].id;
-  req.transactionId = user.transaction[0].id;
+
+  req.subscriptionId = user.subscriptions?.[0]?.id;
+  req.transactionId = user.transaction?.[0]?.id;
   // Proceed if enough translation slots are available
   return next();
 }
