@@ -30,9 +30,10 @@ export default function Pricing({ plans, pricing }: PricingProps) {
   // Initialize state based on searchParams on first render
   const initialIsRecurring = searchParams.get("subscription") !== "false";
   const [isRecurring, setIsRecurring] = useState(initialIsRecurring);
-  const [planSubscription, setPlanSubscription] = useState(
-    plans.find((plan) => plan.pricing.subscription.length > 0)
+  const planSubscription = plans.find(
+    (plan) => plan.pricing.subscription.length > 0
   );
+
   useEffect(() => {
     // Sync isRecurring state with URL whenever it changes
     const subscription = searchParams.get("subscription");
