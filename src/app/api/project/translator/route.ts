@@ -379,7 +379,7 @@ async function handlePost(req: NextRequest) {
       });
     } else {
       if (req.transactionId) {
-        await db.transaction.update({
+        await db.payment.update({
           where: {
             id: req.transactionId,
           },
