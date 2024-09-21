@@ -30,7 +30,7 @@ function getOptimalFontSize(
   padding: number = 1
 ): number {
   // Larger range of font sizes
-  const fontSizes = [64, 58, 52, 48, 40, 32, 28, 24, 20, 16, 12, 8, 6]; // Start from larger font sizes
+  const fontSizes = [64, 58, 52, 48, 40, 32, 28, 24, 20, 16, 12]; // Start from larger font sizes
 
   for (let i = 0; i < fontSizes.length; i++) {
     const fontSize = fontSizes[i];
@@ -472,11 +472,15 @@ function calculateDistance(
   const [topLeft2, , bottomRight2] = vertices2;
 
   const centerX1 =
-    (topLeft1.x || 0) + ((bottomRight1.x || 0) - (topLeft1.x || 0)) / 2;
+    (topLeft1.x || 0) +
+    ((bottomRight1.x || 0) - (topLeft1.x || 0)) / 2 -
+    ((bottomRight1.x || 0) - (topLeft1.x || 0)) / 2;
   const centerY1 =
     (topLeft1.y || 0) + ((bottomRight1.y || 0) - (topLeft1.y || 0)) / 2;
   const centerX2 =
-    (topLeft2.x || 0) + ((bottomRight2.x || 0) - (topLeft2.x || 0)) / 2;
+    (topLeft2.x || 0) +
+    ((bottomRight2.x || 0) - (topLeft2.x || 0)) / 2 +
+    ((bottomRight2.x || 0) - (topLeft2.x || 0)) / 2;
   const centerY2 =
     (topLeft2.y || 0) + ((bottomRight2.y || 0) - (topLeft2.y || 0)) / 2;
 
@@ -484,7 +488,6 @@ function calculateDistance(
     Math.pow(centerX1 - centerX2, 2) + Math.pow(centerY1 - centerY2, 2)
   );
 }
-
 const mergeBoundingBoxes = (
   box1: google.cloud.vision.v1.IBoundingPoly,
   box2: google.cloud.vision.v1.IBoundingPoly
@@ -549,7 +552,6 @@ const mergeBoundingBoxes = (
   };
 };
 
-// Function to merge nearby Japanese blocks with font size adjustment
 export async function mergeNearbyBlocksForJapanese(
   blocks: Array<{
     text: string;
@@ -585,67 +587,151 @@ export async function mergeNearbyBlocksForJapanese(
     const threshold = getScaledThreshold(fontSize);
     return distance < threshold;
   };
+  const isOverlapping = (
+    box1: google.cloud.vision.v1.IBoundingPoly,
+    box2: google.cloud.vision.v1.IBoundingPoly
+  ): boolean => {
+    const [topLeft1, , bottomRight1] = box1.vertices || [];
+    const [topLeft2, , bottomRight2] = box2.vertices || [];
+
+    const isPointInside = (
+      point: { x: number; y: number },
+      box: google.cloud.vision.v1.IBoundingPoly
+    ): boolean => {
+      const [topLeft, , bottomRight] = box.vertices || [];
+      if (!topLeft || !bottomRight) return false; // Ensure vertices are defined
+      return (
+        typeof point.x === "number" &&
+        typeof point.y === "number" &&
+        point.x >= topLeft.x! && // Using non-null assertion
+        point.x <= bottomRight.x! &&
+        point.y >= topLeft.y! &&
+        point.y <= bottomRight.y!
+      );
+    };
+
+    // Ensure all vertices are defined and valid
+    if (topLeft1 && bottomRight1 && topLeft2 && bottomRight2) {
+      return (
+        isPointInside({ x: topLeft1.x!, y: topLeft1.y! }, box2) || // Top left
+        isPointInside({ x: bottomRight1.x!, y: bottomRight1.y! }, box2) || // Bottom right
+        isPointInside({ x: topLeft1.x!, y: bottomRight1.y! }, box2) || // Bottom left
+        isPointInside({ x: bottomRight1.x!, y: topLeft1.y! }, box2) || // Top right
+        isPointInside({ x: topLeft2.x!, y: topLeft2.y! }, box1) || // Top left
+        isPointInside({ x: bottomRight2.x!, y: bottomRight2.y! }, box1) || // Bottom right
+        isPointInside({ x: topLeft2.x!, y: bottomRight2.y! }, box1) || // Bottom left
+        isPointInside({ x: bottomRight2.x!, y: topLeft2.y! }, box1) // Top right
+      );
+    }
+    return false; // Return false if any vertices are undefined
+  };
 
   const usedIndices: Set<number> = new Set();
 
-  for (let i = 0; i < blocks.length; i++) {
-    if (usedIndices.has(i)) continue;
+  let mergeOccurred = true;
+  let maxLoop = 5;
+  while (mergeOccurred && maxLoop > 0) {
+    maxLoop--;
+    mergeOccurred = false; // Reset merge occurrence flag
 
-    const currentBlock = blocks[i];
-    if (!currentBlock.boundingBox) continue;
+    for (let i = 0; i < blocks.length; i++) {
+      if (usedIndices.has(i)) continue;
 
-    let mergedText = currentBlock.text;
-    let mergedBlocksIndex = [i];
-    let mergedBoundingBox = { ...currentBlock.boundingBox };
+      const currentBlock = blocks[i];
+      if (!currentBlock.boundingBox) continue;
 
-    for (let j = i + 1; j < blocks.length; j++) {
-      if (usedIndices.has(j)) continue;
+      let mergedText = currentBlock.text;
+      let mergedBlocksIndex = [i];
+      let mergedBoundingBox = { ...currentBlock.boundingBox };
 
-      const otherBlock = blocks[j];
-      const [topLeft, , bottomRight] = blocks[i].boundingBox?.vertices || [];
-      if (topLeft && bottomRight) {
-        const x = topLeft.x || 0;
-        const y = topLeft.y || 0;
-        const boxWidth = (bottomRight.x || 0) - x;
-        const boxHeight = (bottomRight.y || 0) - y;
-        const canvas = createCanvas(
-          blocks[i].image.width,
-          blocks[i].image.height
-        );
-        const ctx = canvas.getContext("2d") as CanvasCtx;
-        const fontSize = getOptimalFontSize(
-          ctx,
-          blocks[i].text,
-          fontName,
-          boxWidth,
-          boxHeight,
-          1.5
-        );
-        if (
-          !otherBlock.boundingBox ||
-          !isNearby(currentBlock.boundingBox, otherBlock.boundingBox, fontSize)
-        )
-          continue;
+      for (let j = i + 1; j < blocks.length; j++) {
+        if (usedIndices.has(j)) continue;
 
-        console.log(mergedText + " near to " + otherBlock.text);
+        const otherBlock = blocks[j];
+        const [topLeft, , bottomRight] = blocks[i].boundingBox?.vertices || [];
+        const [topLeft2, , bottomRight2] =
+          otherBlock.boundingBox?.vertices || [];
+        if (topLeft && bottomRight) {
+          const x = topLeft.x || 0;
+          const y = topLeft.y || 0;
+          const boxWidth = (bottomRight.x || 0) - x;
+          const boxHeight = (bottomRight.y || 0) - y;
+          const x2 = topLeft2.x || 0;
+          const y2 = topLeft2.y || 0;
+          const boxWidth2 = (bottomRight2.x || 0) - x2;
+          const boxHeight2 = (bottomRight2.y || 0) - y2;
+          const canvas = createCanvas(
+            blocks[i].image.width,
+            blocks[i].image.height
+          );
+          const ctx = canvas.getContext("2d") as CanvasCtx;
+          const fontSize = getOptimalFontSize(
+            ctx,
+            blocks[i].text,
+            fontName,
+            boxWidth,
+            boxHeight,
+            1.5
+          );
+          const otherFontSize = getOptimalFontSize(
+            ctx,
+            blocks[j].text,
+            fontName,
+            boxWidth2,
+            boxHeight2,
+            1.5
+          );
+          const moyen = (fontSize + otherFontSize) / 2;
+          if (
+            !otherBlock.boundingBox ||
+            (!isNearby(
+              otherBlock.boundingBox,
+              currentBlock.boundingBox,
+              moyen
+            ) &&
+              !isOverlapping(currentBlock.boundingBox, otherBlock.boundingBox))
+          )
+            continue;
 
-        mergedText += " " + otherBlock.text;
-        mergedBlocksIndex.push(j);
-        mergedBoundingBox = mergeBoundingBoxes(
-          mergedBoundingBox,
-          otherBlock.boundingBox
-        );
+          console.log(mergedText + " near to " + otherBlock.text);
 
-        usedIndices.add(j); // Mark this block as used
+          mergedText += " " + otherBlock.text;
+          mergedBlocksIndex.push(j);
+          mergedBoundingBox = mergeBoundingBoxes(
+            mergedBoundingBox,
+            otherBlock.boundingBox
+          );
+
+          usedIndices.add(j); // Mark this block as used
+          mergeOccurred = true; // A merge occurred, so the loop will run again
+        }
       }
+
+      mergedBlocks.push({
+        blocksIndex: mergedBlocksIndex,
+        text: mergedText,
+        boundingBox: mergedBoundingBox,
+      });
+
+      // Mark the current block as used
+      usedIndices.add(i);
     }
 
-    mergedBlocks.push({
-      blocksIndex: mergedBlocksIndex,
-      text: mergedText,
-      boundingBox: mergedBoundingBox,
-    });
+    // After completing one loop, reset blocks to the new mergedBlocks
+    blocks = mergedBlocks.map(({ text, boundingBox }, index) => ({
+      text,
+      image: blocks[0].image, // Assuming all blocks share the same image
+      boundingBox,
+    }));
+
+    // Reset mergedBlocks for the next loop
+    mergedBlocks.length = 0;
+    usedIndices.clear();
   }
 
-  return mergedBlocks;
+  return blocks.map(({ text, boundingBox }, index) => ({
+    blocksIndex: [index],
+    text,
+    boundingBox,
+  }));
 }

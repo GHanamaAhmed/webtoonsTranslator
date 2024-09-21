@@ -118,7 +118,7 @@ async function handlePost(req: NextRequest) {
         if (iAnnotateImageResponse[index].textAnnotations?.[0].locale == "ja")
           return mergeNearbyBlocksForJapanese(
             blocks.map((e, i) => ({ ...e, image: canvasImages[index] })),
-            100,
+            95,
             defaultFonts.find(
               (font) =>
                 font.lngCode ==
