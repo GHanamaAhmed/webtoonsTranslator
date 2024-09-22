@@ -91,7 +91,7 @@ export default function PowerdByAI() {
             <div className="relative inset-0 flex">
               <Image
                 className=""
-                src={"/images/tr1_ko.webp"}
+                src={"/images/tr3_en.webp"}
                 alt="Japanese"
                 objectFit="cover"
                 width={2000}
@@ -104,7 +104,8 @@ export default function PowerdByAI() {
               />
               <Image
                 className="absolute"
-                src={"/images/tr1_en.webp"}
+                src={"/images/tr3_pr.webp"}
+
                 alt="English"
                 width={2000}
                 height={2000}
@@ -124,7 +125,7 @@ export default function PowerdByAI() {
           <div className="flex flex-col items-center gap-7 md:gap-10 xl:gap-12">
             <div className="w-8/12 flex flex-col gap-1 md:gap-2 xl:gap-3">
               <div className="flex gap-1 md:gap-2 xl:gap-3">
-                <FaRobot className="fill-Secondary w-8 h-8" />
+                <FaRobot className="fill-Tertiary w-8 h-8" />
                 <p className="font-medium text-Text text-subheader xl:text-subheader-lg 2xl:text-subheader-2xl">
                   Precision Tailored for Webtoons and Manga{" "}
                 </p>
@@ -137,7 +138,7 @@ export default function PowerdByAI() {
             </div>
             <div className="w-8/12 flex flex-col gap-1 md:gap-2 xl:gap-3">
               <div className="flex gap-1 md:gap-2 xl:gap-3">
-                <FaRocket className="fill-Secondary w-8 h-8" />
+                <FaRocket className="fill-Tertiary w-8 h-8" />
                 <p className="font-medium text-Text text-subheader xl:text-subheader-lg 2xl:text-subheader-2xl">
                   Speed and Efficiency:{" "}
                 </p>
@@ -149,7 +150,7 @@ export default function PowerdByAI() {
             </div>
             <div className="w-8/12 flex flex-col gap-1 md:gap-2 xl:gap-3">
               <div className="flex gap-1 md:gap-2 xl:gap-3">
-                <MdTouchApp className="fill-Secondary w-8 h-8" />
+                <MdTouchApp className="fill-Tertiary w-8 h-8" />
                 <p className="font-medium text-Text text-subheader xl:text-subheader-lg 2xl:text-subheader-2xl">
                   User-Friendly Interface{" "}
                 </p>

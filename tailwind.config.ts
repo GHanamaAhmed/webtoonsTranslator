@@ -46,7 +46,7 @@ const config = {
       colors: {
         Primary: "#2562BD",
         Secondary: "#112D57",
-        Tertiary: "#112D57",
+        Tertiary: "#00dc64",
         Quaternary: "#000000",
         Text: "#ffffff",
         SecondText: "#5C5C5C",

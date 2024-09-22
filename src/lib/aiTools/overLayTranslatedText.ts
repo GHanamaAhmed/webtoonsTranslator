@@ -45,7 +45,7 @@ function getOptimalFontSize(
     // Calculate total height of all lines and compare with maxHeight
     if (
       lines.length * lineHeight <= maxHeight &&
-      longLineWidth <= maxWidth * 1.4
+      longLineWidth <= maxWidth * 2
     ) {
       return i == fontSizes.length - 1 ? fontSize : fontSizes[i + 1];
     }

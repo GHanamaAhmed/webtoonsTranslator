@@ -85,13 +85,11 @@ export default function Pricing({ plans, pricing }: PricingProps) {
       {/* Pricing Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2 md:gap-4 xl:gap-6">
         {!isRecurring &&
-          pricing.map((pricing, index) => (
+          pricing.map((pricing) => (
             <PricingCard key={pricing.id} {...pricing} />
           ))}
         {isRecurring &&
-          plans.map((plan, index) => {
-            console.log(planSubscription);
-
+          plans.map((plan) => {
             return (
               <PlanCard
                 key={plan.id}

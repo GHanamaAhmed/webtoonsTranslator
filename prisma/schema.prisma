@@ -122,7 +122,7 @@ model Subscription {
     usedQuantity          Int                @default(0) // Track the used quantity for one-time payments
     maxQuantity           Int // Track the maximum quantity for one-time payments
     // Relations for pricing and plans
-    gateway               PaymentGateway // Enum field for different payment gateways
+    gateway               PaymentGateway? // Enum field for different payment gateways
     status                SubscriptionStatus // Enum for tracking subscription status
     user                  User               @relation(fields: [userId], references: [id])
     pricing               Pricing            @relation(fields: [pricingId], references: [id])

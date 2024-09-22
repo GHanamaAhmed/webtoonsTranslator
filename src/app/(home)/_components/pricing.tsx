@@ -16,6 +16,29 @@ export default async function PricingSection() {
   //     interval: "MONTHLY", // Recurring monthly plan
   //     pricing: {
   //       create: {
+  //         name: "Free",
+  //         description:
+  //           "A Free monthly subscription with normal support and essential features.",
+  //         features: [
+  //           "Normal Support", // Basic level of support
+  //           "Basic Model Access",
+  //           "Improved Translations",
+  //           "Monthly credits package",
+  //         ],
+  //         price: 0,
+  //         maxQuantity: 15,
+  //         active: true,
+  //         index: 0,
+  //       },
+  //     },
+  //   },
+  // });
+
+  // await db.plan.create({
+  //   data: {
+  //     interval: "MONTHLY", // Recurring monthly plan
+  //     pricing: {
+  //       create: {
   //         name: "Basic",
   //         description:
   //           "A basic monthly subscription with normal support and essential features.",
@@ -150,6 +173,11 @@ export default async function PricingSection() {
   const plans = await db.plan.findMany({
     where: {
       active: true,
+      pricing: {
+        price: {
+          not: 0,
+        },
+      },
     },
     include: {
       pricing: {

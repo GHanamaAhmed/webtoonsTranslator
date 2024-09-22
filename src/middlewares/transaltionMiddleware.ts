@@ -1,4 +1,4 @@
-import { NextFetchEvent, NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { options } from "@/app/api/auth/[...nextauth]/options";
 import { db } from "@/lib/db";
@@ -8,17 +8,10 @@ export async function translationMiddleware(
   next: () => Promise<NextResponse | undefined>
 ): Promise<NextResponse | undefined> {
   const session = await getServerSession(options);
-
-  // Parse the request body
-  const { ids }: { ids: string[] } = await req.json();
-
-  const freeTimes = 15; // Free translations for all users
-  let restTimes = 0;
-
   if (!session?.user) {
     return new NextResponse(null, { status: 401 }); // Unauthorized if no session
   }
-
+  let restTimes = 0;
   // Fetch user data including subscriptions and projects
   const user = await db.user.findUnique({
     where: { id: session.user.id },
@@ -66,13 +59,14 @@ export async function translationMiddleware(
     }, 0) +
     user.transaction.reduce((acc, curr) => {
       return acc + (curr.maxQuantity - curr.usedQuantity);
-    }, 0) +
-    freeTimes;
+    }, 0);
   restTimes = maxUsage;
   // If the user doesn't have enough remaining translations, return 403 Forbidden
   if (restTimes < 1) {
     return new NextResponse(null, { status: 403 });
   }
+  if (!user.subscriptions?.[0]?.id && !user.transaction?.[0]?.id)
+    return new NextResponse(null, { status: 400 });
 
   req.subscriptionId = user.subscriptions?.[0]?.id;
   req.transactionId = user.transaction?.[0]?.id;

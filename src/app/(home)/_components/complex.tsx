@@ -42,8 +42,8 @@ export default function Complex() {
             with Our AI-Powered Translator
           </p>
           <p className="md:w-10/12 text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl">
-            Our MangaVision AI delivers fast, precise translations for all
-            types of comics, including webtoons, manga, manhwa, and more. Using
+            Our MangaVision AI delivers fast, precise translations for all types
+            of comics, including webtoons, manga, manhwa, and more. Using
             cutting-edge AI technology, it effortlessly handles complex images
             and text, ensuring every nuance is captured. Whether you're
             translating entire series or individual chapters, experience the
@@ -74,7 +74,7 @@ export default function Complex() {
           <div className="relative inset-0 flex">
             <Image
               className=""
-              src={"/images/tr2_ko.webp"}
+              src={"/images/tr1_ko.webp"}
               alt="Japanese"
               objectFit="cover"
               width={2000}
@@ -87,7 +87,7 @@ export default function Complex() {
             />
             <Image
               className="absolute"
-              src={"/images/tr2_pr.webp"}
+              src={"/images/tr1_en.webp"}
               alt="English"
               width={2000}
               height={2000}
