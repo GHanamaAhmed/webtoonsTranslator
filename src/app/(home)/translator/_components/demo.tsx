@@ -44,15 +44,20 @@ const fetchChapterData = async (projectId: string) => {
   );
   return data;
 };
+const fetchRestTimes = async () => {
+  const { data }: { data: { restTimes: number } } = await axios.get(
+    "/api/project/translator/times"
+  );
+  return data.restTimes;
+};
+
 export default function Demo({
   supportedLanguages,
-  times,
 }: {
   supportedLanguages:
     | google.cloud.translation.v3.ISupportedLanguage[]
     | null
     | undefined;
-  times: number;
 }) {
   const [images, setImages] = useState<
     {
@@ -69,11 +74,36 @@ export default function Demo({
   const [index, setIndex] = useState(0);
   const { data: session, status } = useSession();
   const dialog = useContext(DialogContext);
-  const [restTimes, setResTimes] = useState(times);
+  const [restTimes, setResTimes] = useState(0);
   const [projectId, setProjectId] = useState<string | null>(null);
   const [chapterId, setChapterId] = useState<string | null>(null);
+  const [downloadings, setDownloadings] = useState<string[]>([]);
   const { toast } = useToast();
   const router = useRouter();
+  const {
+    data: restTimesData,
+    error: restTimesError,
+    isLoading: restTimesLoading,
+  } = useQuery({
+    queryKey: ["restTimes"],
+    queryFn: fetchRestTimes,
+    refetchOnWindowFocus: false,
+    staleTime: Infinity,
+  });
+  useEffect(() => {
+    if (restTimesData) {
+      setResTimes(restTimesData);
+    }
+  }, [restTimesData]);
+  useEffect(() => {
+    if (restTimesError) {
+      toast({
+        title: "Failed to fetch translation points",
+        description: "Please try again later.",
+      });
+    }
+  }, [restTimesError]);
+
   // Mutation to fetch project data
   const {
     mutate: getProjectData,
@@ -284,6 +314,59 @@ export default function Demo({
       },
     });
   };
+  const donwloadImages = async (ids: string[]) => {
+    try {
+      setDownloadings(ids);
+      const response = await fetch("/api/project/images/download", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ids,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to download images");
+      }
+
+      // Detect if the response is an image or zip file
+      const contentType = response.headers.get("Content-Type");
+      const blob = await response.blob();
+
+      let fileExtension = "";
+      let fileName = "download";
+
+      if (contentType === "image/png") {
+        fileExtension = "png";
+      } else if (contentType === "application/zip") {
+        fileExtension = "zip";
+      }
+
+      // Create a file name with extension based on the response type
+      const fullFileName = `${fileName}.${fileExtension}`;
+
+      // Create a link to download the file
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = fullFileName;
+
+      // Programmatically trigger the download
+      link.click();
+      setDownloadings(
+        downloadings.filter((downloading) => !ids.includes(downloading))
+      );
+      // Clean up the URL object after download
+      URL.revokeObjectURL(link.href);
+    } catch (err) {
+      console.error(err);
+      toast({
+        title: "Failed to download images",
+        description: "Please try again later.",
+      });
+    }
+  };
   return (
     <main className="relative">
       {" "}
@@ -324,7 +407,15 @@ export default function Demo({
             <div className="relative flex items-center justify-center w-full min-h-64 border-2 border-Primary border-dashed rounded-lg cursor-pointer hover:bg-Primary hover:bg-opacity-45">
               {session?.user ? (
                 <span className="absolute font-bold -top-5 right-0 text-Text text-paragraph-md">
-                  Times: {restTimes}
+                  Times:{" "}
+                  {!restTimesLoading ? (
+                    restTimes
+                  ) : (
+                    <svg
+                      className="animate-spin h-5 w-5 mr-3 z-20"
+                      viewBox="0 0 24 24"
+                    ></svg>
+                  )}
                 </span>
               ) : (
                 <></>
@@ -369,12 +460,15 @@ export default function Demo({
                           image.isPending ? "row-span-6" : "row-span-5"
                         }`}
                       >
-                        {image.translated && (
-                          <MdFileDownload className="absolute right-2 top-2" />
-                        )}
-
-                        {image.isPending ? (
-                          <div className="flex justify-center items-center h-full">
+                        {image.isPending ||
+                        downloadings.find((e) => e == image.tsrc) ? (
+                          <div className="relative flex justify-center items-center h-full">
+                            <CldImage
+                              className="object-cover -z-10 opacity-20"
+                              src={image.translated ? image.tsrc : image.src}
+                              fill
+                              alt={"image-" + index}
+                            />
                             <svg
                               className="animate-spin bg-white h-5 w-5"
                               viewBox="0 0 24 24"
@@ -427,6 +521,12 @@ export default function Demo({
                               className="w-5 h-5"
                             />
                           )}
+                          {image.tsrc != "" && (
+                            <MdFileDownload
+                              onClick={() => donwloadImages([image.tsrc])}
+                              className="w-5 h-5"
+                            />
+                          )}
                         </div>
                       )}
                     </div>
@@ -461,32 +561,44 @@ export default function Demo({
                 className="hidden"
               />
             </div>
-            <div className="flex items-center gap-2 md:gap-3 xl:gap-4">
-              <AuthButton>
-                {" "}
-                <button
-                  onClick={() => translate(images.map((image) => image.src))}
-                  className={
-                    "bg-Primary py-3 px-5 text-Text shadow-sm rounded-lg " +
-                    (images.length == 0 ? "" : "hover:bg-opacity-70")
-                  }
-                  disabled={images.length == 0 && session != null}
-                >
-                  Translate
-                </button>
-              </AuthButton>
+            <div className="flex w-full items-center justify-between gap-2 md:gap-3 xl:gap-4">
+              <div className="flex items-center gap-2 md:gap-3 xl:gap-4">
+                <AuthButton>
+                  {" "}
+                  <button
+                    onClick={() => translate(images.map((image) => image.src))}
+                    className={
+                      "bg-Primary py-3 px-5 text-Text shadow-sm rounded-lg " +
+                      (images.length == 0 ? "" : "hover:bg-opacity-70")
+                    }
+                    disabled={images.length == 0 && session != null}
+                  >
+                    Translate
+                  </button>
+                </AuthButton>
 
+                <button
+                  onClick={handleRest}
+                  disabled={images.length == 0}
+                  className={
+                    "border border-red-500 py-3 px-5 text-Text rounded-lg " +
+                    (images.length == 0 ? "" : "hover:bg-red-500")
+                  }
+                >
+                  Reset
+                </button>
+              </div>
               <button
-                onClick={handleRest}
-                disabled={images.length == 0}
+                onClick={() =>
+                  donwloadImages(images.map((image) => image.tsrc))
+                }
+                disabled={images.every((image) => !image.tsrc)}
                 className={
-                  "border border-LightBackground py-3 px-5 text-Text rounded-lg " +
-                  (images.length == 0
-                    ? ""
-                    : "hover:bg-LightBackground hover:text-DarkBackground")
+                  " border border-Primary py-3 px-5 text-Text rounded-lg " +
+                  (images.length == 0 ? "" : "hover:bg-Primary")
                 }
               >
-                Reset
+                Download
               </button>
             </div>
           </div>

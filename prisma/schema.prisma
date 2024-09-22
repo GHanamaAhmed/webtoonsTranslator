@@ -208,10 +208,10 @@ model Chapter {
 model Page {
     id                  String        @id @default(auto()) @map("_id") @db.ObjectId
     chapterId           String        @db.ObjectId
-    originalImageUrl    String // URL or path to the original image
-    maskImageUrl        String? // URL or path to the mask image if used
-    deletedTextImageUrl String? // URL or path to the text-deleted image
-    userEditedImageUrl  String? // URL or path to the final user-edited image
+    originalImageUrl    String        @unique // URL or path to the original image
+    maskImageUrl        String?       @unique // URL or path to the mask image if used
+    deletedTextImageUrl String?       @unique // URL or path to the text-deleted image
+    userEditedImageUrl  String?       @unique // URL or path to the final user-edited image
     textBlocks          TextBlock[] // Relation to text blocks detected in the image
     editedBlocks        EditedBlock[] // Relation to edited text blocks created by the user
 
@@ -221,6 +221,15 @@ model Page {
     chapter Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
 
     translatedBlock TranslatedBlock[]
+    translatedImage TranslatedImage[]
+}
+
+model TranslatedImage {
+    id           String @id @default(auto()) @map("_id") @db.ObjectId
+    pageId       String @db.ObjectId
+    imageUrl     String @unique // URL or path to the translated image
+    languageCode String
+    page         Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
 }
 
 model TextBlock {
@@ -231,12 +240,12 @@ model TextBlock {
     textColor    String // Detected text color
     outlineColor String // Detected outline color
     boundingPoly Json[] // Array of bounding polygons 
-    language     String
+    languageCode String
 
     page Page @relation(fields: [pageId], references: [id], onDelete: Cascade)
 
-    translatedBlock TranslatedBlock?
-    EditedBlock     EditedBlock?
+    translatedBlock TranslatedBlock[]
+    EditedBlock     EditedBlock[]
 }
 
 model TranslatedBlock {
@@ -247,7 +256,7 @@ model TranslatedBlock {
     textColor    String // Detected text color
     outlineColor String // Detected outline color
     boundingPoly Json[] // Array of bounding polygons 
-    language     String
+    languageCode String
     textBlockId  String    @unique @db.ObjectId // Reference to the original text block
     page         Page      @relation(fields: [pageId], references: [id], onDelete: Cascade)
     textBlock    TextBlock @relation(fields: [textBlockId], references: [id], onDelete: Cascade)
@@ -261,7 +270,7 @@ model EditedBlock {
     textColor    String // Edited text color
     outlineColor String // Edited outline color
     boundingPoly Json[] // Array of bounding polygons 
-    language     String
+    languageCode String
     textBlockId  String    @unique @db.ObjectId // Reference to the original text block
     page         Page      @relation(fields: [pageId], references: [id], onDelete: Cascade)
     textBlock    TextBlock @relation(fields: [textBlockId], references: [id], onDelete: Cascade)

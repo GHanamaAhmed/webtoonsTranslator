@@ -8,7 +8,10 @@ import { TranslationServiceClient } from "@google-cloud/translate";
 import fs from "fs";
 import { exec } from "child_process";
 import axios from "axios";
-
+import cloudinary, {
+  UploadApiErrorResponse,
+  UploadApiResponse,
+} from "cloudinary";
 // Creates a client
 export const imageAnnotatorClient = new ImageAnnotatorClient({
   keyFilename: path.join(
@@ -167,3 +170,11 @@ async function checkStatus(request_id: string): Promise<string | undefined> {
     throw new Error(`Error processing request: ${message || "Unknown error"}`);
   }
 }
+
+cloudinary.v2.config({
+  cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+export { cloudinary };
+

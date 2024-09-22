@@ -1,9 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import cloudinary, {
-  UploadApiErrorResponse,
-  UploadApiResponse,
-} from "cloudinary";
-import { combineBlocks } from "@/lib/utilsServer";
+import { UploadApiErrorResponse, UploadApiResponse } from "cloudinary";
+import { cloudinary, combineBlocks } from "@/lib/utilsServer";
 import { imageAnnotatorClient } from "@/lib/aiTools/apiClients";
 import { createMaskImage } from "@/lib/aiTools/delteObjects";
 import sharp from "sharp";
@@ -33,11 +30,6 @@ import { InputJsonValue } from "@prisma/client/runtime/library";
 import { Image, loadImage } from "canvas";
 import { getServerSession } from "next-auth";
 import { options } from "../../auth/[...nextauth]/options";
-cloudinary.v2.config({
-  cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
 // Rate limiter configuration based on free tier limits
 
 // Limiter for character processing
@@ -335,13 +327,19 @@ async function handlePost(req: NextRequest) {
             chapterId: body.chapterId,
             originalImageUrl: urls[index],
             deletedTextImageUrl: deletedText[index],
+            translatedImage: {
+              create: {
+                imageUrl: translatedBuffersUploaded[index].secure_url,
+                languageCode: targerLanguageCode,
+              },
+            },
             textBlocks: {
               createMany: {
                 data:
                   blocksText[index]?.map((block, i) => {
                     return {
                       text: block.text || "",
-                      language:
+                      languageCode:
                         iAnnotateImageResponse[index].textAnnotations?.[0]
                           .locale || "",
                       boundingPoly:

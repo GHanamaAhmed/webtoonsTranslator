@@ -48,6 +48,7 @@
     "fabricjs-react": "^1.2.2",
     "jimp": "^0.22.12",
     "jspdf": "^2.5.1",
+    "jszip": "^3.10.1",
     "lucide-react": "^0.427.0",
     "next": "14.2.5",
     "next-auth": "^4.24.7",

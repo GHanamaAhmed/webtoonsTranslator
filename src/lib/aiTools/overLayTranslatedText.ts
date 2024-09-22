@@ -105,10 +105,13 @@ function drawText(
   const lines = wrapText(ctx, text, fontName, maxWidth, fontSize);
 
   ctx.fillStyle = fillColor;
-  ctx.strokeStyle = outlineColor;
-  const scaledOutlineWidth = Math.max(1, fontSize * 0.05);
-  ctx.lineWidth = 0;
-
+  if (outlineWidth) {
+    ctx.strokeStyle = outlineColor;
+    const scaledOutlineWidth = Math.max(1, fontSize * 0.1);
+    ctx.lineWidth = outlineWidth ? scaledOutlineWidth : 0;
+  } else {
+    ctx.strokeStyle = fillColor;
+  }
   ctx.textAlign = textAlign;
   ctx.font = `${fontSize}px "${fontName}"`;
 
@@ -232,9 +235,12 @@ export async function detectTextColorAndOutline(
 
   fullTextAnnotation.pages?.forEach((page) => {
     page.blocks?.map((block) => {
-      const firstParagraph = block.paragraphs?.[0];
-      const firstWord = firstParagraph?.words?.[0];
-      const firstSymbol = firstWord?.symbols?.[0];
+      const firstParagraph =
+        block.paragraphs?.[Math.floor(block.paragraphs.length / 2)];
+      const firstWord =
+        firstParagraph?.words?.[Math.floor(firstParagraph.words.length / 2)];
+      const firstSymbol =
+        firstWord?.symbols?.[Math.floor(firstWord.symbols.length / 2)];
 
       if (firstSymbol) {
         const vertices = firstSymbol.boundingBox?.vertices;
@@ -255,8 +261,9 @@ export async function detectTextColorAndOutline(
             ctx,
             x1,
             y1,
-            letterWidth,
-            letterHeight
+            letterWidth + 1,
+            letterHeight + 1,
+            avgColor
           );
 
           res.push({ avgColor, hasOutline, outlineColor });
@@ -405,39 +412,72 @@ function calculateAverageColor(imageData: any) {
 }
 
 function detectOutlineWithColor(
-  ctx: any,
+  ctx: CanvasCtx,
   x: number,
   y: number,
   width: number,
-  height: number
+  height: number,
+  textColor: {
+    r: number;
+    g: number;
+    b: number;
+  }
 ): {
   hasOutline: boolean;
   outlineColor: { r: number; g: number; b: number } | null;
 } {
-  const edgeThreshold = 20;
+  const colorDifferenceThreshold = 300; // Adjust for how close the colors should be considered similar
   const edgeImageData = ctx.getImageData(x, y, width, height);
   const edgeData = edgeImageData.data;
 
+  let outlinePixelCount = 0;
+  let hasOutline = false;
   let r = 0,
     g = 0,
     b = 0;
-  let outlinePixelCount = 0;
-  let hasOutline = false;
 
-  // Simple edge detection by checking contrast
+  // Function to calculate the Euclidean distance between two colors
+  function colorDifference(
+    r1: number,
+    g1: number,
+    b1: number,
+    r2: number,
+    g2: number,
+    b2: number
+  ) {
+    return Math.sqrt(
+      Math.pow(r2 - r1, 2) + Math.pow(g2 - g1, 2) + Math.pow(b2 - b1, 2)
+    );
+  }
+
+  // Detect the primary color in the center (assumed to be the letter color)
+  const centerX = Math.floor(width / 2);
+  const centerY = Math.floor(height / 2);
+  const centerIndex = (centerY * width + centerX) * 4;
+
+  // Loop through the pixels and compare with the primary color
   for (let i = 0; i < edgeData.length; i += 4) {
     const red = edgeData[i];
     const green = edgeData[i + 1];
     const blue = edgeData[i + 2];
     const alpha = edgeData[i + 3];
 
-    const gray = 0.3 * red + 0.59 * green + 0.11 * blue;
+    // Skip transparent pixels
+    if (alpha === 0) continue;
 
-    if (
-      Math.abs(red - gray) > edgeThreshold ||
-      Math.abs(green - gray) > edgeThreshold ||
-      Math.abs(blue - gray) > edgeThreshold
-    ) {
+    // Calculate the difference between the current pixel color and the primary color
+    const difference = colorDifference(
+      red,
+      green,
+      blue,
+      textColor.r,
+      textColor.g,
+      textColor.b
+    );
+    console.log(difference, colorDifferenceThreshold);
+
+    // If the difference is greater than the threshold, mark as an outline
+    if (difference > colorDifferenceThreshold) {
       r += red;
       g += green;
       b += blue;
