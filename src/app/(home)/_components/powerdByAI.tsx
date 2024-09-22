@@ -9,11 +9,19 @@ export default function PowerdByAI() {
   const [lineX, setLineX] = useState<number>(0); // Initially 0, will be set to the middle of the container
   const [cursorVisible, setCursorVisible] = useState<boolean>(true);
   const containerRef = useRef<HTMLDivElement | null>(null);
-
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (containerRef.current) {
       const rect = containerRef.current.getBoundingClientRect();
       const x = e.clientX - rect.left;
+      setLineX(x);
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (containerRef.current) {
+      const rect = containerRef.current.getBoundingClientRect();
+      const touch = e.touches[0];
+      const x = touch.clientX - rect.left;
       setLineX(x);
     }
   };
@@ -24,6 +32,15 @@ export default function PowerdByAI() {
 
   const handleMouseLeave = () => {
     setCursorVisible(true); // Show cursor when outside the container
+  };
+
+  // For touch events on mobile
+  const handleTouchStart = () => {
+    setCursorVisible(false); // Hide cursor when touch starts
+  };
+
+  const handleTouchEnd = () => {
+    setCursorVisible(true); // Show cursor when touch ends
   };
 
   useEffect(() => {
@@ -40,8 +57,8 @@ export default function PowerdByAI() {
           Powered by AI, Seamless and Efficient
         </p>
         <p className="text-center md:w-10/12 text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl">
-          Webtoon Translator offers fast and accurate translations for webtoons
-          and manga with our AI-driven tool. Whether youre translating entire
+          MangaVision AI offers fast and accurate translations for manga
+          and webtoons with our AI-driven tool. Whether youre translating entire
           series or individual chapters, it captures every nuance with
           precision. Start translating effortlessly today and experience our
           superior technology.
@@ -51,8 +68,11 @@ export default function PowerdByAI() {
             ref={containerRef}
             className="relative rounded-2xl overflow-hidden w-full mx-auto max-w-[269px] xl:max-w-[400px] 2xl:max-w-[500px]"
             onMouseMove={handleMouseMove}
+            onTouchMove={handleTouchMove} // Handle mobile touch movement
             onMouseEnter={handleMouseEnter}
+            onTouchStart={handleTouchStart} // Handle touch start
             onMouseLeave={handleMouseLeave}
+            onTouchEnd={handleTouchEnd} // Handle touch end
             style={{
               cursor: cursorVisible ? "auto" : "none", // Hide cursor if cursorVisible is false
               position: "relative",
@@ -71,7 +91,7 @@ export default function PowerdByAI() {
             <div className="relative inset-0 flex">
               <Image
                 className=""
-                src={"/images/x_ja.png"}
+                src={"/images/tr1_ko.webp"}
                 alt="Japanese"
                 objectFit="cover"
                 width={2000}
@@ -84,7 +104,7 @@ export default function PowerdByAI() {
               />
               <Image
                 className="absolute"
-                src={"/images/x_er.png"}
+                src={"/images/tr1_en.webp"}
                 alt="English"
                 width={2000}
                 height={2000}

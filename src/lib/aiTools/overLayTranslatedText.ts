@@ -30,7 +30,7 @@ function getOptimalFontSize(
   padding: number = 1
 ): number {
   // Larger range of font sizes
-  const fontSizes = [64, 58, 52, 48, 40, 32, 28, 24, 20, 16, 12]; // Start from larger font sizes
+  const fontSizes = [64, 60, 56, 52, 48, 44, 40, 36, 32, 28, 24, 20, 16, 12]; // Start from larger font sizes
 
   for (let i = 0; i < fontSizes.length; i++) {
     const fontSize = fontSizes[i];
@@ -47,7 +47,7 @@ function getOptimalFontSize(
       lines.length * lineHeight <= maxHeight &&
       longLineWidth <= maxWidth * 1.4
     ) {
-      return fontSize; // Return the largest size that fits
+      return i == fontSizes.length - 1 ? fontSize : fontSizes[i + 1];
     }
   }
 
@@ -86,7 +86,6 @@ function wrapText(
   return lines;
 }
 
-// Function to draw text with wrapping and dynamic font size
 function drawText(
   ctx: CanvasCtx,
   text: string,
@@ -108,7 +107,7 @@ function drawText(
   if (outlineWidth) {
     ctx.strokeStyle = outlineColor;
     const scaledOutlineWidth = Math.max(1, fontSize * 0.1);
-    ctx.lineWidth = outlineWidth ? scaledOutlineWidth : 0;
+    ctx.lineWidth = scaledOutlineWidth;
   } else {
     ctx.strokeStyle = fillColor;
   }
@@ -119,7 +118,7 @@ function drawText(
   const totalTextHeight = lines.length * lineHeight;
 
   // Adjust y position to center vertically
-  let drawY = y + (maxHeight - totalTextHeight) / 2;
+  let drawY = y + (maxHeight - totalTextHeight) / 2 + lineHeight * 0.5; // Adjust this value for centering
 
   lines.forEach((line, index) => {
     let drawX = x;
@@ -197,6 +196,7 @@ export async function overlayTranslatedText(
     console.error("Error overlaying translated text:", error);
   }
 }
+const getRandomIndex = (length: number) => Math.floor(Math.random() * length);
 
 export async function detectTextColorAndOutline(
   image: Image,
@@ -236,11 +236,11 @@ export async function detectTextColorAndOutline(
   fullTextAnnotation.pages?.forEach((page) => {
     page.blocks?.map((block) => {
       const firstParagraph =
-        block.paragraphs?.[Math.floor(block.paragraphs.length / 2)];
+        block.paragraphs?.[getRandomIndex(block.paragraphs.length)];
       const firstWord =
-        firstParagraph?.words?.[Math.floor(firstParagraph.words.length / 2)];
+        firstParagraph?.words?.[getRandomIndex(firstParagraph.words.length)];
       const firstSymbol =
-        firstWord?.symbols?.[Math.floor(firstWord.symbols.length / 2)];
+        firstWord?.symbols?.[getRandomIndex(firstWord.symbols.length)];
 
       if (firstSymbol) {
         const vertices = firstSymbol.boundingBox?.vertices;
@@ -474,7 +474,6 @@ function detectOutlineWithColor(
       textColor.g,
       textColor.b
     );
-    console.log(difference, colorDifferenceThreshold);
 
     // If the difference is greater than the threshold, mark as an outline
     if (difference > colorDifferenceThreshold) {
@@ -732,9 +731,6 @@ export async function mergeNearbyBlocksForJapanese(
               !isOverlapping(currentBlock.boundingBox, otherBlock.boundingBox))
           )
             continue;
-
-          console.log(mergedText + " near to " + otherBlock.text);
-
           mergedText += " " + otherBlock.text;
           mergedBlocksIndex.push(j);
           mergedBoundingBox = mergeBoundingBoxes(

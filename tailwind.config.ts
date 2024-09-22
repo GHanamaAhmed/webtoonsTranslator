@@ -44,8 +44,8 @@ const config = {
         "paragraph-2xl": ["20px", { lineHeight: "28px" }],
       },
       colors: {
-        Primary: "#00dc64",
-        Secondary: "#00dc64",
+        Primary: "#2562BD",
+        Secondary: "#112D57",
         Tertiary: "#112D57",
         Quaternary: "#000000",
         Text: "#ffffff",

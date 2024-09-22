@@ -5,13 +5,13 @@ export default function TermsAndConditions() {
     <section className="flex justify-center items-center bg-DarkBackground2">
       <div className="w-full md:w-10/12 flex flex-col gap-2 md:gap-4 xl:gap-6 text-Text py-20 md:py-24 lg:py-32 xl:py-36 2xl:py-40 px-5">
         <h1 className="text-title md:text-title-md lg:text-title-lg xl:text-title-xl 2xl:text-title-2xl mb-4 font-extrabold">
-          Terms and Conditions for Webtoon Translator
+          Terms and Conditions for MangaVision AI
         </h1>
         <p className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-xl 2xl:text-paragraph-2xl mb-4">
           Last Updated: [Insert Date]
         </p>
         <p className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-xl 2xl:text-paragraph-2xl mb-6">
-          Welcome to Webtoon Translator. These Terms and Conditions govern your
+          Welcome to MangaVision AI. These Terms and Conditions govern your
           use of our website and services. By accessing or using Webtoon
           Translator, you agree to these Terms and Conditions. If you do not
           agree with any part of these terms, please do not use our website or
@@ -45,8 +45,8 @@ export default function TermsAndConditions() {
           3. Intellectual Property
         </h2>
         <p className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-xl 2xl:text-paragraph-2xl mb-4">
-          All content on Webtoon Translator, including text, images, graphics,
-          logos, and software, is the property of Webtoon Translator or its
+          All content on MangaVision AI, including text, images, graphics,
+          logos, and software, is the property of MangaVision AI or its
           licensors and is protected by copyright, trademark, and other
           intellectual property laws. You may not use, reproduce, distribute, or
           create derivative works from any content on our website without our
@@ -60,7 +60,7 @@ export default function TermsAndConditions() {
           You may be able to submit, post, or upload content to our website,
           including translations, comments, and reviews (&quot;User-Generated
           Content&quot;). By submitting User-Generated Content, you grant
-          Webtoon Translator a non-exclusive, worldwide, royalty-free, and
+          MangaVision AI a non-exclusive, worldwide, royalty-free, and
           transferable license to use, reproduce, distribute, display, and
           perform your User-Generated Content in connection with our services.
           You represent and warrant that you have all rights necessary to grant
@@ -107,7 +107,7 @@ export default function TermsAndConditions() {
           6. Disclaimer of Warranties
         </h2>
         <p className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-xl 2xl:text-paragraph-2xl mb-4">
-          Webtoon Translator provides its services &quot;as is&quot; and
+          MangaVision AI provides its services &quot;as is&quot; and
           &quot;as available&quot; without any warranties, express or implied.
           We do not guarantee that our services will be uninterrupted,
           error-free, or free of viruses or other harmful components. We
@@ -120,7 +120,7 @@ export default function TermsAndConditions() {
           7. Limitation of Liability
         </h2>
         <p className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-xl 2xl:text-paragraph-2xl mb-4">
-          In no event shall Webtoon Translator or its affiliates be liable for
+          In no event shall MangaVision AI or its affiliates be liable for
           any indirect, incidental, special, consequential, or punitive damages,
           or any loss of profits or revenues, whether incurred directly or
           indirectly, or any loss of data, use, goodwill, or other intangible
@@ -134,7 +134,7 @@ export default function TermsAndConditions() {
           incurred as a result of your use of any content posted, emailed,
           transmitted, or otherwise made available via the services, whether
           based on warranty, contract, tort (including negligence), or any other
-          legal theory, and whether or not Webtoon Translator has been advised
+          legal theory, and whether or not MangaVision AI has been advised
           of the possibility of such damages.
         </p>
 

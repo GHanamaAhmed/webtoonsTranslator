@@ -14,7 +14,7 @@ export default function Footer() {
             <Image src={"/logo-no-background.svg"} alt="" fill />
           </Link>
           <p className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl">
-            © 2021 Webtoon Translator. All rights reserved.
+            © 2021 MangaVision AI. All rights reserved.
           </p>
         </div>
         <div className=" flex flex-col gap-4 md:gap-6 xl:gap-8">

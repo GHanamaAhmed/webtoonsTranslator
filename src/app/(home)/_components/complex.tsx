@@ -38,16 +38,16 @@ export default function Complex() {
       <div className="w-full md:w-10/12 grid grid-cols-1 md:grid-cols-2  gap-4 md:gap-6 xl:gap-8 py-10 md:py-14 lg:py-16 xl:py-20 2xl:py-24 px-5">
         <div className="text-center md:text-start text-Text flex flex-col gap-3 md:gap-5 xl:gap-7">
           <p className="text-header  md:text-header-md lg:text-header-lg xl:text-header-lg 2xl:text-header-2xl font-extrabold">
-            Elevate Your Manga Experience with Our Advanced AI-Powered Webtoon
-            Translator{" "}
+            Unlock Seamless Translations for Webtoons, Manga, Manhwa, and More
+            with Our AI-Powered Translator
           </p>
           <p className="md:w-10/12 text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl">
-            Webtoon Translator provides swift and precise translations for
-            webtoons and manga, utilizing our sophisticated AI-driven tool.
-            Whether you're translating intricate series or individual chapters,
-            our technology adeptly captures every nuance, ensuring accuracy even
-            in complex images. Start translating seamlessly today and discover
-            the excellence of our advanced translation capabilities.
+            Our MangaVision AI delivers fast, precise translations for all
+            types of comics, including webtoons, manga, manhwa, and more. Using
+            cutting-edge AI technology, it effortlessly handles complex images
+            and text, ensuring every nuance is captured. Whether you're
+            translating entire series or individual chapters, experience the
+            ultimate in accuracy and convenience today.
           </p>
         </div>
         <div
@@ -74,7 +74,7 @@ export default function Complex() {
           <div className="relative inset-0 flex">
             <Image
               className=""
-              src={"/images/x_ja.png"}
+              src={"/images/tr2_ko.webp"}
               alt="Japanese"
               objectFit="cover"
               width={2000}
@@ -87,7 +87,7 @@ export default function Complex() {
             />
             <Image
               className="absolute"
-              src={"/images/x_er.png"}
+              src={"/images/tr2_pr.webp"}
               alt="English"
               width={2000}
               height={2000}

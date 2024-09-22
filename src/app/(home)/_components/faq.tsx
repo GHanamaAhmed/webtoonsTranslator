@@ -20,11 +20,11 @@ export default function FAQ() {
         >
           <AccordionItem value="item-1">
             <AccordionTrigger className="text-subheader md:text-subheader-md lg:text-subheader-lg xl:text-subheader-lg 2xl:text-subheader-2xl">
-              What is Webtoon Translator?
+              What is MangaVision AI?
             </AccordionTrigger>
             <AccordionContent className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl">
-              Webtoon Translator is an innovative platform that enables users to
-              translate webtoons and manga into multiple languages. Our advanced
+              MangaVision AI is an innovative platform that enables users to
+              translate  manga and webtoons into multiple languages. Our advanced
               text recognition and translation tools allow you to read your
               favorite comics in your preferred language or translate them for
               others to enjoy.
@@ -36,7 +36,7 @@ export default function FAQ() {
               What languages are supported for translation?
             </AccordionTrigger>
             <AccordionContent className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl">
-              Webtoon Translator supports a wide range of languages, including
+              MangaVision AI supports a wide range of languages, including
               but not limited to English, Korean, Japanese, Chinese, Spanish,
               French, and Arabic. We are continuously working to add more
               languages to ensure a comprehensive translation service.
@@ -45,7 +45,7 @@ export default function FAQ() {
 
           <AccordionItem value="item-3">
             <AccordionTrigger className="text-subheader md:text-subheader-md lg:text-subheader-lg xl:text-subheader-lg 2xl:text-subheader-2xl">
-              Is Webtoon Translator free to use?
+              Is MangaVision AI free to use?
             </AccordionTrigger>
             <AccordionContent className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl">
               We offer both free and premium plans. Our free plan allows users
@@ -93,7 +93,7 @@ export default function FAQ() {
             <AccordionContent className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl">
               If you have any questions or need assistance, you can reach our
               customer support team through the contact form on our website or
-              by emailing support@webtoontranslator.com. We are here to help and
+              by emailing support@MangaFusion.com. We are here to help and
               will respond to your inquiry as soon as possible.
             </AccordionContent>
           </AccordionItem>
