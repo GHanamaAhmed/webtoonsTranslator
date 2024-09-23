@@ -1,21 +1,39 @@
 version: '3.8'
 
 services:
-  nextjs-app:
+  prod:
+    container_name: ManhwaVision-prod
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ./
+      dockerfile: Dockerfile # Assuming the Dockerfile is named dev.Dockerfile
+      target: production
+    env_file:
+      - .env.production # Loads environment variables from the .env file
     ports:
-      - '3000:3000'
-    environment:
-      - NODE_ENV=production
-    volumes:
-      - .:/app
-    command: npm run start
-    depends_on:
-      - node_modules_volume
+      - '3000:3000' # Expose port 3000 for the Next.js app
+    restart: always # Auto-restart if the container fails
+  dev:
+    container_name: ManhwaVision-dev
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      target: development
+    env_file:
+      - .env.development
+    ports:
+      - '3000:3000' # Expose port 3000 for the Next.js app
+    restart: always # Auto-restart if the container fails
+  local:
+    container_name: ManhwaVision-local
+    build:
+      context: ./
+      target: local
+      dockerfile: Dockerfile
+    env_file:
+      - .env.local
+    ports:
+      - "3000:3000"
 
-  node_modules_volume:
-    image: busybox
-    volumes:
-      - /app/node_modules
+networks:
+  my_network:
+    external: true

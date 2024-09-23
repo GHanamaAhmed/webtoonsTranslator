@@ -45,7 +45,7 @@ export default function Complex() {
             Our MangaVision AI delivers fast, precise translations for all types
             of comics, including webtoons, manga, manhwa, and more. Using
             cutting-edge AI technology, it effortlessly handles complex images
-            and text, ensuring every nuance is captured. Whether you're
+            and text, ensuring every nuance is captured. Whether you&apos;re
             translating entire series or individual chapters, experience the
             ultimate in accuracy and convenience today.
           </p>

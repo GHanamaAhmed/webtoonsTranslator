@@ -1,58 +1,49 @@
-# Step 1: Build Stage
-FROM node:18-bullseye AS builder
+# Use the latest Node.js LTS version
+FROM node:18-alpine as base
 
-# Install system dependencies for Canvas
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    libcairo2-dev \
-    libpango1.0-dev \
-    libjpeg-dev \
-    libgif-dev \
-    librsvg2-dev \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+# Install system dependencies required for Canvas
+RUN apk add --no-cache \
+    build-base \
+    cairo-dev \
+    pango-dev \
+    jpeg-dev \
+    giflib-dev \
+    librsvg-dev
 
 # Set working directory inside the container
 WORKDIR /app
 
-# Copy package.json and package-lock.json to the container
-COPY package*.json ./
+COPY ["package.json", "package-lock.json", "./"]
 
-# Install Node.js dependencies
 RUN npm install
+RUN npm i -g prisma
 
-# Copy the rest of the application code
+COPY prisma ./prisma/
+
+FROM base as development
+COPY .env.development ./.env.development
 COPY . .
 
-# Build the Next.js app
-RUN npm run build
+EXPOSE 3000
+CMD ["npm", "run", "dev"]
 
-# Step 2: Production Stage
-FROM node:18-bullseye
+FROM base as production
+COPY .env.production ./.env.production
+COPY . .
 
-# Install the system dependencies for Canvas in production
-RUN apt-get update && apt-get install -y \
-    libcairo2-dev \
-    libpango1.0-dev \
-    libjpeg-dev \
-    libgif-dev \
-    librsvg2-dev \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+RUN npx next build
 
-# Set working directory
-WORKDIR /app
-
-# Copy necessary files from the build stage
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/next.config.js ./
-
-# Set environment variables
-ENV NODE_ENV=production
 EXPOSE 3000
 
-# Start the Next.js app
-CMD ["npm", "start"]
+CMD ["npm", "run", "start"]
+
+FROM base as local
+
+COPY .env.local ./.env.local
+COPY . .
+
+RUN npx next dev
+
+EXPOSE 3000
+
+CMD ["npm", "run", "dev"]
