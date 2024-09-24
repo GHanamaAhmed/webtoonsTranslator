@@ -6,7 +6,7 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile # Assuming the Dockerfile is named dev.Dockerfile
-      target: production
+      target: prod
     env_file:
       - .env.production # Loads environment variables from the .env file
     ports:
@@ -17,7 +17,7 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
-      target: development
+      target: dev
     env_file:
       - .env.development
     ports:
