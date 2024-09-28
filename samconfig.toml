@@ -1,0 +1,10 @@
+version = 0.1
+[default.deploy.parameters]
+stack_name = "manhwavision"
+resolve_s3 = true
+s3_prefix = "manhwavision"
+region = "us-east-1"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
+disable_rollback = true
+image_repositories = ["NextAppStackFunction=975050382792.dkr.ecr.us-east-1.amazonaws.com/manhwavisiond0a46f31/nextappstackfunctione45a3c19repo"]

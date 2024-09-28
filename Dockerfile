@@ -1,76 +1,68 @@
-# Base image using the latest Node.js LTS version
-FROM node:20.10-alpine AS base
+# Base builder image for compiling the application
+FROM public.ecr.aws/docker/library/node:20.9.0-slim AS builder
 
-# Install system dependencies required for Canvas and other native modules
-RUN apk add --no-cache \
-    build-base \
-    cairo-dev \
-    pango-dev \
-    jpeg-dev \
-    giflib-dev \
-    librsvg-dev \
-    libc6-compat
+# Install system dependencies required for native modules
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libcairo2-dev \
+    libpango1.0-dev \
+    libjpeg-dev \
+    libgif-dev \
+    librsvg2-dev \
+    openssl \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Set working directory
 WORKDIR /app
 
-# Stage: Install dependencies
-FROM base AS deps
+# Set environment variable for Sharp path
+ENV NEXT_SHARP_PATH=/tmp/node_modules/sharp
 
-# Install latest npm to prevent dependency issues
-RUN npm install -g npm@latest
-
-# Copy package.json and package-lock.json
+# Copy only the package.json and lock files first to leverage Docker cache
 COPY package.json package-lock.json* prisma ./
 
-# Install node modules using npm ci for cleaner builds
+# Install only the production dependencies
 RUN npm ci
 
-# Optionally install Prisma globally if required
+# Copy the rest of the application code
+COPY . .
+
+# Install Prisma globally for database access
 RUN npm install -g prisma
-
-# Stage: Development environment
-FROM base AS dev
-
-# Set working directory
-WORKDIR /app
-
-# Copy node_modules from deps stage
-COPY --from=deps /app/node_modules ./node_modules
-
-# Copy environment variables for development
-COPY .env.development ./.env.development
-
-# Copy the rest of the application source code
-COPY . .
-
-# Enable hot reloading
-ENV CHOKIDAR_USEPOLLING=true
-ENV WATCHPACK_POLLING=true
-
-# Expose the development port
-EXPOSE 3000
-
-# Command to run the development server
-CMD ["npm", "run", "dev"]
-
-# Stage: Builder for production
-FROM base AS prod
-
-# Set working directory
-WORKDIR /app
-
-# Copy node_modules and npm cache from deps stage
-COPY --from=deps /app/node_modules ./node_modules
-COPY --from=deps /root/.npm /root/.npm
-
-# Copy the entire application source code
-COPY . .
-
-# Disable Prisma postinstall binary download
-ENV PRISMA_SKIP_POSTINSTALL_GENERATE=true
 
 # Build the Next.js application
 RUN npm run build
 
-CMD [ "npm","run","start" ]
+# --- Runner Image for production ---
+FROM public.ecr.aws/docker/library/node:20.9.0-slim AS runner
+
+# Install OpenSSL in the runner image as well
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    openssl \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+    
+# Install aws-lambda-adapter
+COPY --from=public.ecr.aws/awsguru/aws-lambda-adapter:0.7.2 /lambda-adapter /opt/extensions/lambda-adapter
+
+# Expose necessary port and set environment variables
+ENV PORT=3000
+ENV NODE_ENV=production
+ENV AWS_LWA_ENABLE_COMPRESSION=true
+
+# Set up the working directory
+WORKDIR /app
+
+# Copy only the essential files for production
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/run.sh ./run.sh
+
+# Symlink for caching to optimize performance
+RUN ln -s /tmp/cache ./.next/cache
+
+# Ensure the run script is executable
+RUN chmod +x ./run.sh
+
+# Configure the container to execute the server run command
+CMD ["./run.sh"]
