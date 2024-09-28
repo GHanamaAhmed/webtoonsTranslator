@@ -23,17 +23,6 @@ services:
     ports:
       - '3000:3000' # Expose port 3000 for the Next.js app
     restart: always # Auto-restart if the container fails
-  local:
-    container_name: ManhwaVision-local
-    build:
-      context: ./
-      target: local
-      dockerfile: Dockerfile
-    env_file:
-      - .env.local
-    ports:
-      - "3000:3000"
-
 networks:
   my_network:
     external: true

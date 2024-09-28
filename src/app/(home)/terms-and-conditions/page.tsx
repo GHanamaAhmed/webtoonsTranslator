@@ -12,8 +12,7 @@ export default function TermsAndConditions() {
         </p>
         <p className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-xl 2xl:text-paragraph-2xl mb-6">
           Welcome to MangaVision AI. These Terms and Conditions govern your
-          use of our website and services. By accessing or using Webtoon
-          Translator, you agree to these Terms and Conditions. If you do not
+          use of our website and services. By accessing or using Manhwa Vision, you agree to these Terms and Conditions. If you do not
           agree with any part of these terms, please do not use our website or
           services.
         </p>
@@ -23,8 +22,7 @@ export default function TermsAndConditions() {
         </h2>
         <p className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-xl 2xl:text-paragraph-2xl mb-4">
           You must use our services in compliance with all applicable laws and
-          regulations. You are responsible for ensuring that your use of Webtoon
-          Translator does not violate any local, state, national, or
+          regulations. You are responsible for ensuring that your use of Manhwa Vision does not violate any local, state, national, or
           international laws. You agree not to engage in any activity that may
           harm or interfere with the operation of our website or services.
         </p>

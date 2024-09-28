@@ -93,7 +93,7 @@ export default function FAQ() {
             <AccordionContent className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl">
               If you have any questions or need assistance, you can reach our
               customer support team through the contact form on our website or
-              by emailing support@MangaFusion.com. We are here to help and
+              by emailing support@manhwavision.com. We are here to help and
               will respond to your inquiry as soon as possible.
             </AccordionContent>
           </AccordionItem>

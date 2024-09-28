@@ -21,7 +21,7 @@ FROM base AS deps
 RUN npm install -g npm@latest
 
 # Copy package.json and package-lock.json
-COPY package.json package-lock.json* ./
+COPY package.json package-lock.json* prisma ./
 
 # Install node modules using npm ci for cleaner builds
 RUN npm ci
@@ -73,51 +73,4 @@ ENV PRISMA_SKIP_POSTINSTALL_GENERATE=true
 # Build the Next.js application
 RUN npm run build
 
-# Uncomment the following line to generate Prisma client in production
-# RUN npx prisma generate
-
-# Stage: Production runner
-FROM node:20.10-alpine AS runner
-
-# Install only runtime dependencies for a slimmer image
-RUN apk add --no-cache \
-    libc6-compat \
-    cairo-dev \
-    pango-dev \
-    jpeg-dev \
-    giflib-dev \
-    librsvg-dev
-
-# Create a non-root user for running the application
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
-
-# Set working directory
-WORKDIR /app
-
-# Disable Next.js telemetry
-ENV NEXT_TELEMETRY_DISABLED 1
-
-# Copy built assets and necessary files from builder stage
-COPY --from=prod /app/public ./public
-COPY --from=prod --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=prod --chown=nextjs:nodejs /app/.next/static ./.next/static
-
-# Uncomment the following line if using Prisma
-# COPY --from=prod --chown=nextjs:nodejs /app/prisma ./prisma
-
-# Set permissions for prerender cache
-RUN mkdir .next && chown nextjs:nodejs .next
-
-# Switch to non-root user
-USER nextjs
-
-# Expose the production port
-EXPOSE 3000
-
-# Set environment variables for the application
-ENV PORT=3000
-ENV HOSTNAME="0.0.0.0"
-
-# Command to start the production server with migrations
-CMD ["npm", "run", "start:migrate:prod"]
+CMD [ "npm","run","start" ]

@@ -30,6 +30,12 @@ import { InputJsonValue } from "@prisma/client/runtime/library";
 import { Image, loadImage } from "canvas";
 import { getServerSession } from "next-auth";
 import { options } from "../../auth/[...nextauth]/options";
+const { RUNPOD_API_KEY, ENDPOINT_ID } = process.env;
+import runpodSdk from "runpod-sdk";
+
+const runpod = runpodSdk(RUNPOD_API_KEY as string);
+const endpoint = runpod.endpoint(ENDPOINT_ID as string);
+
 // Rate limiter configuration based on free tier limits
 
 // Limiter for character processing
@@ -166,17 +172,17 @@ async function handlePost(req: NextRequest) {
     const modelType = req.headers.get("model-type") || "lama";
     let deletedText: string[];
     if (modelType === "lama") {
-      const { data }: { data: string[] } = await axios.post(
-        "http://localhost:5000/predict",
+      const res= await endpoint?.runSync(
         {
-          model_path: "big-lama",
-          urls: ids.map((id, i) => ({
-            image: cloudinary.v2.url(id),
-            mask: uploadedMasks[i].secure_url,
-          })),
+          input: {
+            urls: ids.map((id, i) => ({
+              image: cloudinary.v2.url(id),
+              mask: uploadedMasks[i].secure_url,
+            })),
+          }
         }
       );
-      deletedText = data;
+      deletedText = res?.output.results
     } else {
       throw new Error("Unsupported model type");
     }
@@ -271,16 +277,13 @@ async function handlePost(req: NextRequest) {
               text: translatedText || "",
               boundingBox: blocksText[index][i].boundingBox,
               fillColor: `rgb(${textColorAndOutline[index][i].avgColor.r},${textColorAndOutline[index][i].avgColor.g},${textColorAndOutline[index][i].avgColor.b})`,
-              outlineColor: `rgb(${
-                textColorAndOutline[index][i].outlineColor?.r ||
+              outlineColor: `rgb(${textColorAndOutline[index][i].outlineColor?.r ||
                 textColorAndOutline[index][i].avgColor.r
-              },${
-                textColorAndOutline[index][i].outlineColor?.g ||
+                },${textColorAndOutline[index][i].outlineColor?.g ||
                 textColorAndOutline[index][i].avgColor.g
-              },${
-                textColorAndOutline[index][i].outlineColor?.b ||
+                },${textColorAndOutline[index][i].outlineColor?.b ||
                 textColorAndOutline[index][i].avgColor.b
-              })`,
+                })`,
               outline: textColorAndOutline[index][i].hasOutline,
             };
           }) || []
