@@ -55,9 +55,9 @@ export default function Demo({
   supportedLanguages,
 }: {
   supportedLanguages:
-    | google.cloud.translation.v3.ISupportedLanguage[]
-    | null
-    | undefined;
+  | google.cloud.translation.v3.ISupportedLanguage[]
+  | null
+  | undefined;
 }) {
   const [images, setImages] = useState<
     {
@@ -85,10 +85,12 @@ export default function Demo({
     error: restTimesError,
     isLoading: restTimesLoading,
   } = useQuery({
+    enabled: status == "authenticated",
     queryKey: ["restTimes"],
     queryFn: fetchRestTimes,
     refetchOnWindowFocus: false,
     staleTime: Infinity,
+
   });
   useEffect(() => {
     if (restTimesData) {
@@ -117,7 +119,8 @@ export default function Demo({
     },
   });
   useEffect(() => {
-    getProjectData();
+    if (status == "authenticated")
+      getProjectData();
   }, [getProjectData]);
   const handleOpenModal = (i: number) => {
     setOpenModal(openModal + 1);
@@ -456,12 +459,11 @@ export default function Demo({
                       className="min-h-[236px] rounded-lg overflow-hidden grid grid-rows-6"
                     >
                       <div
-                        className={`relative row-span-5 ${
-                          image.isPending ? "row-span-6" : "row-span-5"
-                        }`}
+                        className={`relative row-span-5 ${image.isPending ? "row-span-6" : "row-span-5"
+                          }`}
                       >
                         {image.isPending ||
-                        downloadings.find((e) => e == image.tsrc) ? (
+                          downloadings.find((e) => e == image.tsrc) ? (
                           <div className="relative flex justify-center items-center h-full">
                             <CldImage
                               className="object-cover -z-10 opacity-20"
