@@ -411,7 +411,8 @@ export default function Demo({
               {session?.user ? (
                 <span className="absolute font-bold -top-5 right-0 text-Text text-paragraph-md">
                   Times:{" "}
-                  {!restTimesLoading ? (
+
+                  {status == "authenticated" ? 15 : !restTimesLoading ? (
                     restTimes
                   ) : (
                     <svg
