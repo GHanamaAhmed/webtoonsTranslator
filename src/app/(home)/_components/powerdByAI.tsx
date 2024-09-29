@@ -57,69 +57,66 @@ export default function PowerdByAI() {
           Powered by AI, Seamless and Efficient
         </p>
         <p className="text-center md:w-10/12 text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl">
-          MangaVision AI offers fast and accurate translations for manga
-          and webtoons with our AI-driven tool. Whether youre translating entire
+          MangaVision AI offers fast and accurate translations for manga and
+          webtoons with our AI-driven tool. Whether youre translating entire
           series or individual chapters, it captures every nuance with
           precision. Start translating effortlessly today and experience our
           superior technology.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-5 md:gap-7 xl:gap-9">
-          <div
-            ref={containerRef}
-            className="relative rounded-2xl overflow-hidden w-full mx-auto max-w-[269px] xl:max-w-[400px] 2xl:max-w-[500px]"
-            onMouseMove={handleMouseMove}
-            onTouchMove={handleTouchMove} // Handle mobile touch movement
-            onMouseEnter={handleMouseEnter}
-            onTouchStart={handleTouchStart} // Handle touch start
-            onMouseLeave={handleMouseLeave}
-            onTouchEnd={handleTouchEnd} // Handle touch end
-            style={{
-              cursor: cursorVisible ? "auto" : "none", // Hide cursor if cursorVisible is false
-              position: "relative",
-            }}
-          >
+          <div className="flex justify-center h-full">
             <div
-              className="bg-LightBackground p-2 absolute top-1/2 z-20 rounded-full"
-              style={{ left: `calc(${lineX}px - 14px)` }}
+              ref={containerRef}
+              className="relative rounded-2xl overflow-hidden w-10/12"
+              onMouseMove={handleMouseMove}
+              onTouchMove={handleTouchMove} // Handle mobile touch movement
+              onMouseEnter={handleMouseEnter}
+              onTouchStart={handleTouchStart} // Handle touch start
+              onMouseLeave={handleMouseLeave}
+              onTouchEnd={handleTouchEnd} // Handle touch end
+              style={{
+                cursor: cursorVisible ? "auto" : "none", // Hide cursor if cursorVisible is false
+                position: "relative",
+              }}
             >
-              <RiExpandLeftRightLine color="black" className="w-5 h-5" />
-            </div>
-            <div
-              className="absolute h-full w-1.5 bg-LightBackground shadow-md z-10"
-              style={{ left: `${lineX}px` }}
-            />
-            <div className="relative inset-0 flex">
-              <Image
-                className=""
-                src={"/images/tr3_en.webp"}
-                alt="Japanese"
-                objectFit="cover"
-                width={2000}
-                height={2000}
-                style={{
-                  width: "100%",
-                  height: "auto",
-                  clipPath: `inset(0 0 0 ${lineX}px)`,
-                }}
+              <div
+                className="bg-LightBackground p-2 absolute top-1/2 z-20 rounded-full"
+                style={{ left: `calc(${lineX}px - 14px)` }}
+              >
+                <RiExpandLeftRightLine color="black" className="w-5 h-5" />
+              </div>
+              <div
+                className="absolute h-full w-1.5 bg-LightBackground shadow-md z-10"
+                style={{ left: `${lineX}px` }}
               />
-              <Image
-                className="absolute"
-                src={"/images/tr3_pr.webp"}
-
-                alt="English"
-                width={2000}
-                height={2000}
-                objectFit="cover"
-                style={{
-                  width: "100%",
-                  height: "auto",
-                  clipPath: `inset(0 ${
-                    containerRef.current
-                      ? containerRef.current.offsetWidth - lineX
-                      : 0
-                  }px 0 0)`,
-                }}
-              />
+              <div className="relative inset-0 md:h-full md:w-full flex aspect-[3/4]">
+                <Image
+                  className=""
+                  src={"/images/tr3_en.webp"}
+                  sizes="(min-width: 780px) calc(34.55vw - 26px), calc(83.26vw - 33px)"
+                  alt="Japanese"
+                  objectFit="cover"
+                  fill
+                  style={{
+                    clipPath: `inset(0 0 0 ${lineX}px)`,
+                  }}
+                />
+                <Image
+                  className="absolute"
+                  src={"/images/tr3_pr.webp"}
+                  sizes="(min-width: 780px) calc(34.55vw - 26px), calc(83.26vw - 33px)"
+                  alt="English"
+                  fill
+                  objectFit="cover"
+                  style={{
+                    clipPath: `inset(0 ${
+                      containerRef.current
+                        ? containerRef.current.offsetWidth - lineX
+                        : 0
+                    }px 0 0)`,
+                  }}
+                />
+              </div>
             </div>
           </div>
           <div className="flex flex-col items-center gap-7 md:gap-10 xl:gap-12">

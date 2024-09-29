@@ -1,8 +1,6 @@
 "use client";
 import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
-import { FaRobot, FaRocket } from "react-icons/fa";
-import { MdTouchApp } from "react-icons/md";
 import { RiExpandLeftRightLine } from "react-icons/ri";
 
 export default function Complex() {
@@ -50,58 +48,55 @@ export default function Complex() {
             ultimate in accuracy and convenience today.
           </p>
         </div>
-        <div
-          ref={containerRef}
-          className="relative rounded-2xl overflow-hidden w-full mx-auto max-w-[269px] xl:max-w-[400px] 2xl:max-w-[500px]"
-          onMouseMove={handleMouseMove}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-          style={{
-            cursor: cursorVisible ? "auto" : "none", // Hide cursor if cursorVisible is false
-            position: "relative",
-          }}
-        >
+        <div className="w-full flex justify-center">
           <div
-            className="bg-LightBackground p-2 absolute top-1/2 z-20 rounded-full"
-            style={{ left: `calc(${lineX}px - 14px)` }}
+            ref={containerRef}
+            className="relative rounded-2xl overflow-hidden w-10/12"
+            onMouseMove={handleMouseMove}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+            style={{
+              cursor: cursorVisible ? "auto" : "none", // Hide cursor if cursorVisible is false
+            }}
           >
-            <RiExpandLeftRightLine color="black" className="w-5 h-5" />
-          </div>
-          <div
-            className="absolute h-full w-1.5 bg-LightBackground shadow-md z-10"
-            style={{ left: `${lineX}px` }}
-          />
-          <div className="relative inset-0 flex">
-            <Image
-              className=""
-              src={"/images/tr1_ko.webp"}
-              alt="Japanese"
-              objectFit="cover"
-              width={2000}
-              height={2000}
-              style={{
-                width: "100%",
-                height: "auto",
-                clipPath: `inset(0 0 0 ${lineX}px)`,
-              }}
+            <div
+              className="bg-LightBackground p-2 absolute top-1/2 z-20 rounded-full"
+              style={{ left: `calc(${lineX}px - 14px)` }}
+            >
+              <RiExpandLeftRightLine color="black" className="w-5 h-5" />
+            </div>
+            <div
+              className="absolute h-full w-1.5 bg-LightBackground shadow-md z-10"
+              style={{ left: `${lineX}px` }}
             />
-            <Image
-              className="absolute"
-              src={"/images/tr1_en.webp"}
-              alt="English"
-              width={2000}
-              height={2000}
-              objectFit="cover"
-              style={{
-                width: "100%",
-                height: "auto",
-                clipPath: `inset(0 ${
-                  containerRef.current
-                    ? containerRef.current.offsetWidth - lineX
-                    : 0
-                }px 0 0)`,
-              }}
-            />
+            <div className="relative inset-0 md:h-full flex aspect-[3/4]">
+              <Image
+                className=""
+                src={"/images/tr1_ko.webp"}
+                sizes="(min-width: 1120px) calc(34.57vw - 25px), (min-width: 1040px) calc(-3.33vw + 392px), (min-width: 940px) calc(33.75vw - 17px), (min-width: 780px) calc(-21.43vw + 509px), calc(83.26vw - 33px)"
+                alt="Japanese"
+                objectFit="cover"
+                fill
+                style={{
+                  clipPath: `inset(0 0 0 ${lineX}px)`,
+                }}
+              />
+              <Image
+                className="absolute"
+                src={"/images/tr1_en.webp"}
+                sizes="(min-width: 1120px) calc(34.57vw - 25px), (min-width: 1040px) calc(-3.33vw + 392px), (min-width: 940px) calc(33.75vw - 17px), (min-width: 780px) calc(-21.43vw + 509px), calc(83.26vw - 33px)"
+                alt="English"
+                fill
+                objectFit="cover"
+                style={{
+                  clipPath: `inset(0 ${
+                    containerRef.current
+                      ? containerRef.current.offsetWidth - lineX
+                      : 0
+                  }px 0 0)`,
+                }}
+              />
+            </div>
           </div>
         </div>
       </div>

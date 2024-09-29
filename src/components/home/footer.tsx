@@ -54,7 +54,7 @@ export default function Footer() {
               Policies
             </Link>
             <Link
-              href={"/terms-and-condtions"}
+              href={"/terms-and-conditions"}
               className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl"
             >
               Terms and condtions
