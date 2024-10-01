@@ -27,7 +27,7 @@ export default async function RootLayout({
   return (
     <html lang="en" className="dark">
       <body>
-       <NProgressBar/>
+        <NProgressBar />
         <SessionProvider session={session}>
           <QueryProvider>
             <AlertDialogProvider>
