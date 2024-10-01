@@ -38,3 +38,10 @@ export const v2Client = new v2.Translate({
 export const translator = new deepl.Translator(
   `${process.env.DEEPL_SECRET_KEY}`
 );
+
+
+import Replicate from "replicate";
+
+export const replicate = new Replicate({
+  auth: process.env.REPLICATE_API_TOKEN,
+});

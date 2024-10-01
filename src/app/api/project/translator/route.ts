@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { UploadApiErrorResponse, UploadApiResponse } from "cloudinary";
 import { cloudinary, combineBlocks } from "@/lib/utilsServer";
-import { imageAnnotatorClient } from "@/lib/aiTools/apiClients";
+import { imageAnnotatorClient, replicate } from "@/lib/aiTools/apiClients";
 import { createMaskImage } from "@/lib/aiTools/delteObjects";
 import sharp from "sharp";
 import {
@@ -32,6 +32,7 @@ import { getServerSession } from "next-auth";
 import { options } from "../../auth/[...nextauth]/options";
 const { RUNPOD_API_KEY, ENDPOINT_ID } = process.env;
 import runpodSdk from "runpod-sdk";
+import { PredictionReplicateResponse } from "@/types/type";
 
 const runpod = runpodSdk(RUNPOD_API_KEY as string);
 const endpoint = runpod.endpoint(ENDPOINT_ID as string);
@@ -172,17 +173,44 @@ async function handlePost(req: NextRequest) {
     const modelType = req.headers.get("model-type") || "lama";
     let deletedText: string[];
     if (modelType === "lama") {
-      const res= await endpoint?.runSync(
-        {
+      let res;
+      try {
+        const output = (await Promise.all(
+          ids.map((id, i) =>
+            replicate.run(
+              "zylim0702/remove-object:0e3a841c913f597c1e4c321560aa69e2bc1f15c65f8c366caafc379240efd8ba",
+              {
+                input: {
+                  image: cloudinary.v2.url(id),
+                  mask: uploadedMasks[i].secure_url,
+                },
+              }
+            )
+          )
+        )) as PredictionReplicateResponse[];
+        deletedText = await Promise.all(
+          output.map(async (res) =>
+            cloudinary.v2.uploader
+              .upload(res.output, {
+                folder: process.env.CLOUDINARY_DELETED_TEXT_FOLDER,
+                use_filename: true,
+                timestamp: Date.now(),
+                unique_filename: true,
+              })
+              .then((res) => res.secure_url)
+          )
+        );
+      } catch (error) {
+        const res = await endpoint?.runSync({
           input: {
             urls: ids.map((id, i) => ({
               image: cloudinary.v2.url(id),
               mask: uploadedMasks[i].secure_url,
             })),
-          }
-        }
-      );
-      deletedText = res?.output.results
+          },
+        });
+        deletedText = res?.output.results;
+      }
     } else {
       throw new Error("Unsupported model type");
     }
@@ -277,13 +305,16 @@ async function handlePost(req: NextRequest) {
               text: translatedText || "",
               boundingBox: blocksText[index][i].boundingBox,
               fillColor: `rgb(${textColorAndOutline[index][i].avgColor.r},${textColorAndOutline[index][i].avgColor.g},${textColorAndOutline[index][i].avgColor.b})`,
-              outlineColor: `rgb(${textColorAndOutline[index][i].outlineColor?.r ||
+              outlineColor: `rgb(${
+                textColorAndOutline[index][i].outlineColor?.r ||
                 textColorAndOutline[index][i].avgColor.r
-                },${textColorAndOutline[index][i].outlineColor?.g ||
+              },${
+                textColorAndOutline[index][i].outlineColor?.g ||
                 textColorAndOutline[index][i].avgColor.g
-                },${textColorAndOutline[index][i].outlineColor?.b ||
+              },${
+                textColorAndOutline[index][i].outlineColor?.b ||
                 textColorAndOutline[index][i].avgColor.b
-                })`,
+              })`,
               outline: textColorAndOutline[index][i].hasOutline,
             };
           }) || []

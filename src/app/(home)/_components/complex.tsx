@@ -7,11 +7,19 @@ export default function Complex() {
   const [lineX, setLineX] = useState<number>(0); // Initially 0, will be set to the middle of the container
   const [cursorVisible, setCursorVisible] = useState<boolean>(true);
   const containerRef = useRef<HTMLDivElement | null>(null);
-
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (containerRef.current) {
       const rect = containerRef.current.getBoundingClientRect();
       const x = e.clientX - rect.left;
+      setLineX(x);
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (containerRef.current) {
+      const rect = containerRef.current.getBoundingClientRect();
+      const touch = e.touches[0];
+      const x = touch.clientX - rect.left;
       setLineX(x);
     }
   };
@@ -22,6 +30,15 @@ export default function Complex() {
 
   const handleMouseLeave = () => {
     setCursorVisible(true); // Show cursor when outside the container
+  };
+
+  // For touch events on mobile
+  const handleTouchStart = () => {
+    setCursorVisible(false); // Hide cursor when touch starts
+  };
+
+  const handleTouchEnd = () => {
+    setCursorVisible(true); // Show cursor when touch ends
   };
 
   useEffect(() => {
@@ -53,8 +70,11 @@ export default function Complex() {
             ref={containerRef}
             className="relative rounded-2xl overflow-hidden w-10/12"
             onMouseMove={handleMouseMove}
+            onTouchMove={handleTouchMove} // Handle mobile touch movement
             onMouseEnter={handleMouseEnter}
+            onTouchStart={handleTouchStart} // Handle touch start
             onMouseLeave={handleMouseLeave}
+            onTouchEnd={handleTouchEnd} // Handle touch end
             style={{
               cursor: cursorVisible ? "auto" : "none", // Hide cursor if cursorVisible is false
             }}

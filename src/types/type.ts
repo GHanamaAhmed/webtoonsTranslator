@@ -182,3 +182,40 @@ export type CursorChatProps = {
     }>
   ) => void;
 };
+
+
+
+
+
+type PredictionStatus = 'succeeded' | 'failed' | 'pending' | 'processing';
+
+interface PredictionInput {
+  mask: string;
+  image: string;
+}
+
+interface PredictionUrls {
+  get: string;
+  cancel: string;
+}
+
+interface PredictionMetrics {
+  predict_time: number;
+  total_time: number;
+}
+
+export interface PredictionReplicateResponse {
+  completed_at: string;
+  created_at: string;
+  data_removed: boolean;
+  error: string | null;
+  id: string;
+  input: PredictionInput;
+  logs: string | null;
+  metrics: PredictionMetrics;
+  output: string;
+  started_at: string;
+  status: PredictionStatus;
+  urls: PredictionUrls;
+  version: string;
+}

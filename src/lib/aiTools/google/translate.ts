@@ -25,17 +25,17 @@ export async function googleTranslateTextBasic(
   return translation;
 }
 
-export const listGoogleSupportedLanguages = cache(
-  async (displayLanguageCode: string = "en") => {
-    try {
-      const [response] = await translationClient.getSupportedLanguages({
-        parent: `projects/intense-climber-374014/locations/global`,
-        displayLanguageCode: displayLanguageCode,
-      });
-      const languages = response.languages;
-      return languages;
-    } catch (error) {
-      console.error("Error listing supported languages:", error);
-    }
+export const listGoogleSupportedLanguages = await (async (
+  displayLanguageCode: string = "en"
+) => {
+  try {
+    const [response] = await translationClient.getSupportedLanguages({
+      parent: `projects/intense-climber-374014/locations/global`,
+      displayLanguageCode: displayLanguageCode,
+    });
+    const languages = response.languages;
+    return languages;
+  } catch (error) {
+    console.error("Error listing supported languages:", error);
   }
-);
+})();

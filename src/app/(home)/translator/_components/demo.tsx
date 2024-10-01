@@ -412,7 +412,7 @@ export default function Demo({
                 <span className="absolute font-bold -top-5 right-0 text-Text text-paragraph-md">
                   Times:{" "}
 
-                  {status == "authenticated" ? 15 : !restTimesLoading ? (
+                  {status != "authenticated" ? 15 : !restTimesLoading ? (
                     restTimes
                   ) : (
                     <svg

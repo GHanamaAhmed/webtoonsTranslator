@@ -1,21 +1,21 @@
-"use client";
+"use client"
 import Image from "next/image";
 import React from "react";
 import { UserMenu } from "../translator/userMenu";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import Link from "next/link";
-import { useSession } from "next-auth/react";
 import {
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuItem,
   NavigationMenuLink,
-  NavigationMenuList,
   NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
 import { AuthThemeProvider } from "@/app/(auth)/_components/authThemeProvider";
+import { getServerSession } from "next-auth";
+import { options } from "@/app/api/auth/[...nextauth]/options";
+import { useSession } from "next-auth/react";
 
 const components: { title: string; href: string; description: string }[] = [
   {
@@ -47,7 +47,7 @@ const components: { title: string; href: string; description: string }[] = [
   },
 ];
 
-export default function Header() {
+export default async function Header() {
   const { data: session } = useSession();
   return (
     <AuthThemeProvider
