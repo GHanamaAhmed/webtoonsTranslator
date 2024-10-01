@@ -57,7 +57,7 @@ export default function Complex() {
             with Our AI-Powered Translator
           </p>
           <p className="md:w-10/12 text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl">
-            Our MangaVision AI delivers fast, precise translations for all types
+            Our Manhwa Vision AI delivers fast, precise translations for all types
             of comics, including webtoons, manga, manhwa, and more. Using
             cutting-edge AI technology, it effortlessly handles complex images
             and text, ensuring every nuance is captured. Whether you&apos;re
@@ -91,23 +91,21 @@ export default function Complex() {
             />
             <div className="relative inset-0 md:h-full flex aspect-[3/4]">
               <Image
-                className=""
+                className="object-fill"
                 src={"/images/tr1_ko.webp"}
                 sizes="(min-width: 1120px) calc(34.57vw - 25px), (min-width: 1040px) calc(-3.33vw + 392px), (min-width: 940px) calc(33.75vw - 17px), (min-width: 780px) calc(-21.43vw + 509px), calc(83.26vw - 33px)"
                 alt="Japanese"
-                objectFit="cover"
                 fill
                 style={{
                   clipPath: `inset(0 0 0 ${lineX}px)`,
                 }}
               />
               <Image
-                className="absolute"
+                className="absolute object-fill"
                 src={"/images/tr1_en.webp"}
                 sizes="(min-width: 1120px) calc(34.57vw - 25px), (min-width: 1040px) calc(-3.33vw + 392px), (min-width: 940px) calc(33.75vw - 17px), (min-width: 780px) calc(-21.43vw + 509px), calc(83.26vw - 33px)"
                 alt="English"
                 fill
-                objectFit="cover"
                 style={{
                   clipPath: `inset(0 ${
                     containerRef.current

@@ -37,17 +37,29 @@ export default function Pricing({ plans, pricing }: PricingProps) {
   useEffect(() => {
     // Sync isRecurring state with URL whenever it changes
     const subscription = searchParams.get("subscription");
-    if (subscription !== null) {
-      setIsRecurring(subscription === "true");
+    if (plans.length > 0 && pricing.length > 0) {
+      if (subscription !== null) {
+        setIsRecurring(subscription === "true");
+      }
+    } else if (plans.length > 0) {
+      setIsRecurring(true);
+    } else {
+      setIsRecurring(false);
     }
   }, [searchParams]);
 
   useEffect(() => {
-    // Update the URL whenever 'isRecurring' changes
-    const params = new URLSearchParams(searchParams.toString());
+    // Create a copy of the current searchParams
+    const params = new URLSearchParams(searchParams);
+
+    // Set or update the 'subscription' parameter
     params.set("subscription", isRecurring.toString());
 
-    const newUrl = pathname + "?" + params.toString();
+    // Get the current hash portion of the URL
+    const currentHash = window.location.hash;
+
+    // Construct the new URL with updated params, while retaining the hash
+    const newUrl = `${pathname}?${params.toString()}${currentHash}`;
 
     // Replace the URL without triggering a page reload
     window.history.replaceState(null, "", newUrl);
@@ -60,27 +72,29 @@ export default function Pricing({ plans, pricing }: PricingProps) {
   return (
     <div className="flex flex-col items-center gap-2 md:gap-4 xl:gap-6">
       {/* Recursion Switch */}
-      <span className="flex items-center gap-1 md:gap-2 xl:gap-3 my-3 md:my-6 xl:my-10">
-        <p
-          className={`uppercase text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl font-extrabold ${
-            !isRecurring ? "" : "opacity-70"
-          }`}
-        >
-          One-Time
-        </p>
-        <Switch
-          checked={isRecurring}
-          onCheckedChange={handlePlanToggle}
-          id="recursion-toggle"
-        />
-        <p
-          className={`uppercase text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl font-extrabold ${
-            isRecurring ? "" : "opacity-70"
-          }`}
-        >
-          Subscription
-        </p>
-      </span>
+      {plans.length > 0 && pricing.length > 0 && (
+        <span className="flex items-center gap-1 md:gap-2 xl:gap-3 my-3 md:my-6 xl:my-10">
+          <p
+            className={`uppercase text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl font-extrabold ${
+              !isRecurring ? "" : "opacity-70"
+            }`}
+          >
+            One-Time
+          </p>
+          <Switch
+            checked={isRecurring}
+            onCheckedChange={handlePlanToggle}
+            id="recursion-toggle"
+          />
+          <p
+            className={`uppercase text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl font-extrabold ${
+              isRecurring ? "" : "opacity-70"
+            }`}
+          >
+            Subscription
+          </p>
+        </span>
+      )}
 
       {/* Pricing Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2 md:gap-4 xl:gap-6">

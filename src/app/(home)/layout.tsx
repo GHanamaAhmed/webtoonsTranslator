@@ -11,10 +11,8 @@ export default function RootLayout({
   return (
     <div className="bg-DarkBackground relative dark">
       <QueryProvider>
-        <Suspense fallback={<></>}>
-          {" "}
-          <Header />
-        </Suspense>
+         
+        <Header />
         {children}
         <Footer />
       </QueryProvider>

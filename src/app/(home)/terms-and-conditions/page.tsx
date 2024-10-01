@@ -5,16 +5,16 @@ export default function TermsAndConditions() {
     <section className="flex justify-center items-center bg-DarkBackground2">
       <div className="w-full md:w-10/12 flex flex-col gap-2 md:gap-4 xl:gap-6 text-Text py-20 md:py-24 lg:py-32 xl:py-36 2xl:py-40 px-5">
         <h1 className="text-title md:text-title-md lg:text-title-lg xl:text-title-xl 2xl:text-title-2xl mb-4 font-extrabold">
-          Terms and Conditions for MangaVision AI
+          Terms and Conditions for Manhwa Vision AI
         </h1>
         <p className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-xl 2xl:text-paragraph-2xl mb-4">
           Last Updated: [Insert Date]
         </p>
         <p className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-xl 2xl:text-paragraph-2xl mb-6">
-          Welcome to MangaVision AI. These Terms and Conditions govern your
-          use of our website and services. By accessing or using Manhwa Vision, you agree to these Terms and Conditions. If you do not
-          agree with any part of these terms, please do not use our website or
-          services.
+          Welcome to Manhwa Vision AI. These Terms and Conditions govern your
+          use of our website and services. By accessing or using Manhwa Vision,
+          you agree to these Terms and Conditions. If you do not agree with any
+          part of these terms, please do not use our website or services.
         </p>
 
         <h2 className="text-header md:text-header-md lg:text-header-lg xl:text-header-xl 2xl:text-header-2xl mb-4 font-bold">
@@ -22,9 +22,10 @@ export default function TermsAndConditions() {
         </h2>
         <p className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-xl 2xl:text-paragraph-2xl mb-4">
           You must use our services in compliance with all applicable laws and
-          regulations. You are responsible for ensuring that your use of Manhwa Vision does not violate any local, state, national, or
-          international laws. You agree not to engage in any activity that may
-          harm or interfere with the operation of our website or services.
+          regulations. You are responsible for ensuring that your use of Manhwa
+          Vision does not violate any local, state, national, or international
+          laws. You agree not to engage in any activity that may harm or
+          interfere with the operation of our website or services.
         </p>
 
         <h2 className="text-header md:text-header-md lg:text-header-lg xl:text-header-xl 2xl:text-header-2xl mb-4 font-bold">
@@ -43,8 +44,8 @@ export default function TermsAndConditions() {
           3. Intellectual Property
         </h2>
         <p className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-xl 2xl:text-paragraph-2xl mb-4">
-          All content on MangaVision AI, including text, images, graphics,
-          logos, and software, is the property of MangaVision AI or its
+          All content on Manhwa Vision AI, including text, images, graphics,
+          logos, and software, is the property of Manhwa Vision AI or its
           licensors and is protected by copyright, trademark, and other
           intellectual property laws. You may not use, reproduce, distribute, or
           create derivative works from any content on our website without our
@@ -57,13 +58,13 @@ export default function TermsAndConditions() {
         <p className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-xl 2xl:text-paragraph-2xl mb-4">
           You may be able to submit, post, or upload content to our website,
           including translations, comments, and reviews (&quot;User-Generated
-          Content&quot;). By submitting User-Generated Content, you grant
-          MangaVision AI a non-exclusive, worldwide, royalty-free, and
-          transferable license to use, reproduce, distribute, display, and
-          perform your User-Generated Content in connection with our services.
-          You represent and warrant that you have all rights necessary to grant
-          this license and that your User-Generated Content does not infringe on
-          any third-party rights.
+          Content&quot;). By submitting User-Generated Content, you grant Manhwa
+          Vision AI a non-exclusive, worldwide, royalty-free, and transferable
+          license to use, reproduce, distribute, display, and perform your
+          User-Generated Content in connection with our services. You represent
+          and warrant that you have all rights necessary to grant this license
+          and that your User-Generated Content does not infringe on any
+          third-party rights.
         </p>
 
         <h2 className="text-header md:text-header-md lg:text-header-lg xl:text-header-xl 2xl:text-header-2xl mb-4 font-bold">
@@ -105,22 +106,21 @@ export default function TermsAndConditions() {
           6. Disclaimer of Warranties
         </h2>
         <p className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-xl 2xl:text-paragraph-2xl mb-4">
-          MangaVision AI provides its services &quot;as is&quot; and
-          &quot;as available&quot; without any warranties, express or implied.
-          We do not guarantee that our services will be uninterrupted,
-          error-free, or free of viruses or other harmful components. We
-          disclaim all warranties, including warranties of merchantability,
-          fitness for a particular purpose, and non-infringement, to the fullest
-          extent permitted by law.
+          Manhwa Vision AI provides its services &quot;as is&quot; and &quot;as
+          available&quot; without any warranties, express or implied. We do not
+          guarantee that our services will be uninterrupted, error-free, or free
+          of viruses or other harmful components. We disclaim all warranties,
+          including warranties of merchantability, fitness for a particular
+          purpose, and non-infringement, to the fullest extent permitted by law.
         </p>
 
         <h2 className="text-header md:text-header-md lg:text-header-lg xl:text-header-xl 2xl:text-header-2xl mb-4 font-bold">
           7. Limitation of Liability
         </h2>
         <p className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-xl 2xl:text-paragraph-2xl mb-4">
-          In no event shall MangaVision AI or its affiliates be liable for
-          any indirect, incidental, special, consequential, or punitive damages,
-          or any loss of profits or revenues, whether incurred directly or
+          In no event shall Manhwa Vision AI or its affiliates be liable for any
+          indirect, incidental, special, consequential, or punitive damages, or
+          any loss of profits or revenues, whether incurred directly or
           indirectly, or any loss of data, use, goodwill, or other intangible
           losses, resulting from (i) your use of or inability to use our
           services; (ii) any unauthorized access to or use of our servers and/or
@@ -132,8 +132,8 @@ export default function TermsAndConditions() {
           incurred as a result of your use of any content posted, emailed,
           transmitted, or otherwise made available via the services, whether
           based on warranty, contract, tort (including negligence), or any other
-          legal theory, and whether or not MangaVision AI has been advised
-          of the possibility of such damages.
+          legal theory, and whether or not Manhwa Vision AI has been advised of
+          the possibility of such damages.
         </p>
 
         <h2 className="text-header md:text-header-md lg:text-header-lg xl:text-header-xl 2xl:text-header-2xl mb-4 font-bold">
@@ -164,7 +164,7 @@ export default function TermsAndConditions() {
         </h2>
         <p className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-xl 2xl:text-paragraph-2xl">
           If you have any questions or concerns about these Terms and
-          Conditions, please contact us at [Insert Contact Information].
+          Conditions, please contact us at support@manhwavision.com.
         </p>
       </div>
     </section>

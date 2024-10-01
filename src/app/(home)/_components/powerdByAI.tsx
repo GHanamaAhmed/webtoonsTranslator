@@ -57,7 +57,7 @@ export default function PowerdByAI() {
           Powered by AI, Seamless and Efficient
         </p>
         <p className="text-center md:w-10/12 text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl">
-          MangaVision AI offers fast and accurate translations for manga and
+          Manhwa Vision AI offers fast and accurate translations for manga and
           webtoons with our AI-driven tool. Whether youre translating entire
           series or individual chapters, it captures every nuance with
           precision. Start translating effortlessly today and experience our
@@ -91,23 +91,21 @@ export default function PowerdByAI() {
               />
               <div className="relative inset-0 md:h-full md:w-full flex aspect-[3/4]">
                 <Image
-                  className=""
+                  className="object-fill"
                   src={"/images/tr3_en.webp"}
                   sizes="(min-width: 780px) calc(34.55vw - 26px), calc(83.26vw - 33px)"
                   alt="Japanese"
-                  objectFit="cover"
                   fill
                   style={{
                     clipPath: `inset(0 0 0 ${lineX}px)`,
                   }}
                 />
                 <Image
-                  className="absolute"
+                  className="absolute object-fill"
                   src={"/images/tr3_pr.webp"}
                   sizes="(min-width: 780px) calc(34.55vw - 26px), calc(83.26vw - 33px)"
                   alt="English"
                   fill
-                  objectFit="cover"
                   style={{
                     clipPath: `inset(0 ${
                       containerRef.current

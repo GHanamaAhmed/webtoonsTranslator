@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { AlertDialogProvider } from "@/components/alertDialog";
 import { Toaster } from "@/components/ui/toaster";
@@ -26,17 +26,7 @@ export const metadata: Metadata = {
     "read webtoons",
   ],
   referrer: "origin",
-  themeColor: "#000000",
-  viewport: "width=device-width, initial-scale=1",
   robots: "index, follow",
-  alternates: {
-    canonical: "https://manhwavision.com",
-    types: {
-      "application/rss+xml": [
-        { url: "https://manhwavision.com/rss", title: "RSS Feed" },
-      ],
-    },
-  },
   icons: [
     { rel: "icon", url: "/icon.ico" },
     { rel: "apple-touch-icon", url: "/icon.png" },
@@ -49,13 +39,25 @@ export const metadata: Metadata = {
       "Easily translate your favorite manga, manhwa, and comics with MangaVision AI. Our tool provides precise, fast, and accurate translations while preserving the original artwork and layout for an authentic reading experience in any language.",
 
     siteName: "Webtoon Translator",
-    images: [{ url: "https://manhwavision.com/logo-no-background.svg" }],
+    images: [
+      { url: "https://manhwavision.com/logo-no-background.svg" },
+      { url: "https://manhwavision.com/logo-background.webp" },
+    ],
   },
   appleWebApp: {
     capable: true,
     title: "Webtoon Translator",
     statusBarStyle: "black-translucent",
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: "black",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  colorScheme: "dark",
 };
 
 export default async function RootLayout({
