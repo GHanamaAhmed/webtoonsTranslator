@@ -3,17 +3,59 @@ import "./globals.css";
 import { AlertDialogProvider } from "@/components/alertDialog";
 import { Toaster } from "@/components/ui/toaster";
 import QueryProvider from "@/components/queryProvider";
-import icon from "@/app/logo.svg";
 import { SessionProvider } from "@/components/sessionPrvider";
 import { getServerSession } from "next-auth";
 import { options } from "@/app/api/auth/[...nextauth]/options";
 import NProgressBar from "@/components/Nbar";
 
 export const metadata: Metadata = {
-  title: "Manhwa Vision Ai",
+  metadataBase: new URL("https://manhwavision.com"),
+  title: "MangaVision AI – Fast & Accurate Manga, Manhwa, Comics Translation",
   description:
-    "Translate your favorite manga, manhwa, and comics effortlessly with MangaVision AI. Our tool provides fast, accurate translations while preserving the original artwork and format, delivering an authentic reading experience in any language.",
-  icons: icon,
+    "Easily translate your favorite manga, manhwa, and comics with MangaVision AI. Our tool provides precise, fast, and accurate translations while preserving the original artwork and layout for an authentic reading experience in any language.",
+  applicationName: "Webtoon Translator",
+  generator: "Next.js",
+  keywords: [
+    "webtoon translator",
+    "manga translator",
+    "translate webtoons",
+    "comics translation",
+    "webtoon translation",
+    "manga translation",
+    "read manga online",
+    "read webtoons",
+  ],
+  referrer: "origin",
+  themeColor: "#000000",
+  viewport: "width=device-width, initial-scale=1",
+  robots: "index, follow",
+  alternates: {
+    canonical: "https://manhwavision.com",
+    types: {
+      "application/rss+xml": [
+        { url: "https://manhwavision.com/rss", title: "RSS Feed" },
+      ],
+    },
+  },
+  icons: [
+    { rel: "icon", url: "/icon.ico" },
+    { rel: "apple-touch-icon", url: "/icon.png" },
+  ],
+  openGraph: {
+    type: "website",
+    url: "https://manhwavision.com",
+    title: "MangaVision AI – Fast & Accurate Manga, Manhwa, Comics Translation",
+    description:
+      "Easily translate your favorite manga, manhwa, and comics with MangaVision AI. Our tool provides precise, fast, and accurate translations while preserving the original artwork and layout for an authentic reading experience in any language.",
+
+    siteName: "Webtoon Translator",
+    images: [{ url: "https://manhwavision.com/logo-no-background.svg" }],
+  },
+  appleWebApp: {
+    capable: true,
+    title: "Webtoon Translator",
+    statusBarStyle: "black-translucent",
+  },
 };
 
 export default async function RootLayout({
