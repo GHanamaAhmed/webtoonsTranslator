@@ -10,6 +10,7 @@ export async function GET() {
       return new NextResponse(null, {
         status: 401,
       });
+
     const freePlan = await db.subscription.findFirst({
       where: {
         userId: session.user.id,
@@ -18,6 +19,28 @@ export async function GET() {
         },
       },
     });
+    if (!freePlan) {
+      const pricing = await db.pricing.findFirst({
+        where: {
+          price: 0,
+        },
+      });
+
+      if (pricing) {
+        const s = await db.subscription.create({
+          data: {
+            userId: session.user.id,
+            currentPeriodStart: new Date(Date.now()),
+            currentPeriodEnd: new Date(1000 * 60 * 60 * 24 * 7),
+            maxQuantity: 15,
+            pricingId: pricing.id,
+            gatewaySubscriptionId: "",
+            status: "ACTIVE",
+          },
+        });
+      }
+    }
+
     if (freePlan) {
       if (freePlan?.currentPeriodEnd < new Date(Date.now())) {
         db.subscription.update({
@@ -80,6 +103,7 @@ export async function GET() {
         return acc + (curr.maxQuantity - curr.usedQuantity);
       }, 0);
     restTimes = maxUsage;
+
     return new NextResponse(JSON.stringify({ restTimes }), {
       status: 200,
     });

@@ -58,41 +58,6 @@ export const options: NextAuthOptions = {
     // }),
   ],
   callbacks: {
-    async signIn({ email, account, user }) {
-      try {
-        const sub = db.subscription.findFirst({
-          where: {
-            userId: user.id,
-            pricing: {
-              price: 0,
-            },
-          },
-        });
-        if (!sub) {
-          const pricing = await db.pricing.findFirst({
-            where: {
-              price: 0,
-            },
-          });
-          if (pricing) {
-            db.subscription.create({
-              data: {
-                userId: user.id,
-                currentPeriodStart: new Date(Date.now()),
-                currentPeriodEnd: new Date(1000 * 60 * 60 * 24 * 7),
-                maxQuantity: 15,
-                pricingId: pricing.id,
-                gatewaySubscriptionId: "",
-                status: "ACTIVE",
-              },
-            });
-          }
-        }
-        return true;
-      } catch (e) {
-        return true;
-      }
-    },
     async session({ session, user }) {
       session.user.id = (user as User).id;
       session.user.name = (user as User).name!;
