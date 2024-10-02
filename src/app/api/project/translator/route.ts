@@ -56,9 +56,12 @@ const visionLimiter = new Bottleneck({
   minTime: (60 * 1000) / 1800, // Correctly aligns with 1,800 requests per minute as 30 requests per second
   maxConcurrent: 10, // Number of concurrent requests
 });
-
+const memortIntensivLimiter = new Bottleneck({
+  maxConcurrent: 10,
+});
 async function handlePost(req: NextRequest) {
   try {
+    await memortIntensivLimiter.schedule(() => Promise.resolve());
     const body: {
       ids: string[];
       targerLanguageCode: string;
@@ -176,7 +179,7 @@ async function handlePost(req: NextRequest) {
     if (modelType === "lama") {
       let res;
       // try {
-      const output = (await Promise.all(
+      const outputs = (await Promise.all(
         ids.map((id, i) =>
           replicate.run(
             "zylim0702/remove-object:0e3a841c913f597c1e4c321560aa69e2bc1f15c65f8c366caafc379240efd8ba",
@@ -190,8 +193,8 @@ async function handlePost(req: NextRequest) {
         )
       )) as PredictionReplicateResponse[];
       removedTextBufferPngWebP = await Promise.all(
-        output.map(async (res) =>
-          fetch(res.output)
+        outputs.map(async (output) =>
+          fetch(typeof output == "string" ? output : output.output)
             .then(async (res) => await res.arrayBuffer())
             .then(async (buffer) => {
               const sharpPng = sharp(buffer);
@@ -327,16 +330,13 @@ async function handlePost(req: NextRequest) {
               text: translatedText || "",
               boundingBox: blocksText[index][i].boundingBox,
               fillColor: `rgb(${textColorAndOutline[index][i].avgColor.r},${textColorAndOutline[index][i].avgColor.g},${textColorAndOutline[index][i].avgColor.b})`,
-              outlineColor: `rgb(${
-                textColorAndOutline[index][i].outlineColor?.r ||
+              outlineColor: `rgb(${textColorAndOutline[index][i].outlineColor?.r ||
                 textColorAndOutline[index][i].avgColor.r
-              },${
-                textColorAndOutline[index][i].outlineColor?.g ||
+                },${textColorAndOutline[index][i].outlineColor?.g ||
                 textColorAndOutline[index][i].avgColor.g
-              },${
-                textColorAndOutline[index][i].outlineColor?.b ||
+                },${textColorAndOutline[index][i].outlineColor?.b ||
                 textColorAndOutline[index][i].avgColor.b
-              })`,
+                })`,
               outline: textColorAndOutline[index][i].hasOutline,
             };
           }) || []

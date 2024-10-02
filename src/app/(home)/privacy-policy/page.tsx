@@ -5,16 +5,16 @@ export default function page() {
     <section className="flex justify-center items-center bg-DarkBackground2">
       <div className=" w-full md:w-10/12 flex flex-col gap-2 md:gap-4 xl:gap-6 text-Text py-20 md:py-24 lg:py-32 xl:py-36 2xl:py-40 px-5">
         <h1 className="text-title md:text-title-md lg:text-title-lg xl:text-title-xl 2xl:text-title-2xl mb-4 font-extrabold">
-          Privacy Policy for Manhwa Vision AI
+          Privacy Policy for ManhwaVision AI
         </h1>
         <p className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-xl 2xl:text-paragraph-2xl mb-4">
           Last Updated: [Insert Date]
         </p>
         <p className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-xl 2xl:text-paragraph-2xl mb-6">
-          Welcome to Manhwa Vision AI. Your privacy is important to us. This
+          Welcome to ManhwaVision AI. Your privacy is important to us. This
           Privacy Policy explains how we collect, use, disclose, and safeguard
           your information when you visit our website and use our services. By
-          accessing or using Manhwa Vision AI, you agree to this Privacy Policy.
+          accessing or using ManhwaVision AI, you agree to this Privacy Policy.
         </p>
         <h2 className="text-header md:text-header-md lg:text-header-lg xl:text-header-xl 2xl:text-header-2xl mb-4 font-bold">
           1. Information We Collect
@@ -88,7 +88,7 @@ export default function page() {
           <li className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-xl 2xl:text-paragraph-2xl mb-2">
             <strong>For Legal Compliance:</strong> We may disclose your
             information if required by law, regulation, or legal request, or to
-            protect the rights, property, or safety of Manhwa Vision AI, our
+            protect the rights, property, or safety of ManhwaVision AI, our
             users, or others.
           </li>
           <li className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-xl 2xl:text-paragraph-2xl mb-2">

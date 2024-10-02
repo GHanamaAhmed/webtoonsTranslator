@@ -57,7 +57,7 @@ export default function Complex() {
             with Our AI-Powered Translator
           </p>
           <p className="md:w-10/12 text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl">
-            Our Manhwa Vision AI delivers fast, precise translations for all types
+            Our ManhwaVision AI delivers fast, precise translations for all types
             of comics, including webtoons, manga, manhwa, and more. Using
             cutting-edge AI technology, it effortlessly handles complex images
             and text, ensuring every nuance is captured. Whether you&apos;re

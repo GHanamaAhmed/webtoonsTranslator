@@ -380,11 +380,11 @@ export default function Demo({
         <div className="relative z-20 w-full md:w-10/12 flex flex-col items-center gap-7 md:gap-10 xl:gap-14 text-Text py-20 md:py-24 lg:py-32 xl:py-36 2xl:py-40 px-5">
           <div className="text-center">
             <p className="text-title md:text-title-md lg:text-title-lg xl:text-title-lg 2xl:text-title-2xl font-extrabold">
-              MangaVision AI
+              ManhwaVision AI
             </p>
             <p className="text-center text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl">
               Translate your favorite webtoons and comic scans into various
-              languages with ease using MangaVision AI. Our tool preserves
+              languages with ease using ManhwaVision AI. Our tool preserves
               the original format, delivering a smooth and accurate translation
               that stays true to the original artwork.
             </p>

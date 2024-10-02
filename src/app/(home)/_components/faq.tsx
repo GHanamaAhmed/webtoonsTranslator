@@ -20,10 +20,10 @@ export default function FAQ() {
         >
           <AccordionItem value="item-1">
             <AccordionTrigger className="text-subheader md:text-subheader-md lg:text-subheader-lg xl:text-subheader-lg 2xl:text-subheader-2xl">
-              What is Manhwa Vision AI?
+              What is ManhwaVision AI?
             </AccordionTrigger>
             <AccordionContent className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl">
-              Manhwa Vision AI is an innovative platform that enables users to
+              ManhwaVision AI is an innovative platform that enables users to
               translate  manga and webtoons into multiple languages. Our advanced
               text recognition and translation tools allow you to read your
               favorite comics in your preferred language or translate them for
@@ -36,7 +36,7 @@ export default function FAQ() {
               What languages are supported for translation?
             </AccordionTrigger>
             <AccordionContent className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl">
-              Manhwa Vision AI supports a wide range of languages, including
+              ManhwaVision AI supports a wide range of languages, including
               but not limited to English, Korean, Japanese, Chinese, Spanish,
               French, and Arabic. We are continuously working to add more
               languages to ensure a comprehensive translation service.
@@ -45,7 +45,7 @@ export default function FAQ() {
 
           <AccordionItem value="item-3">
             <AccordionTrigger className="text-subheader md:text-subheader-md lg:text-subheader-lg xl:text-subheader-lg 2xl:text-subheader-2xl">
-              Is Manhwa Vision AI free to use?
+              Is ManhwaVision AI free to use?
             </AccordionTrigger>
             <AccordionContent className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl">
               We offer both free and premium plans. Our free plan allows users

@@ -57,7 +57,7 @@ export default function PowerdByAI() {
           Powered by AI, Seamless and Efficient
         </p>
         <p className="text-center md:w-10/12 text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-lg 2xl:text-paragraph-2xl">
-          Manhwa Vision AI offers fast and accurate translations for manga and
+          ManhwaVision AI offers fast and accurate translations for manga and
           webtoons with our AI-driven tool. Whether youre translating entire
           series or individual chapters, it captures every nuance with
           precision. Start translating effortlessly today and experience our
