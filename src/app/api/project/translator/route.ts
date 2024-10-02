@@ -172,55 +172,77 @@ async function handlePost(req: NextRequest) {
 
     const modelType = req.headers.get("model-type") || "lama";
     let deletedText: string[];
+    let removedTextBufferPngWebP;
     if (modelType === "lama") {
       let res;
-      try {
-        const output = (await Promise.all(
-          ids.map((id, i) =>
-            replicate.run(
-              "zylim0702/remove-object:0e3a841c913f597c1e4c321560aa69e2bc1f15c65f8c366caafc379240efd8ba",
-              {
-                input: {
-                  image: cloudinary.v2.url(id),
-                  mask: uploadedMasks[i].secure_url,
-                },
-              }
+      // try {
+      const output = (await Promise.all(
+        ids.map((id, i) =>
+          replicate.run(
+            "zylim0702/remove-object:0e3a841c913f597c1e4c321560aa69e2bc1f15c65f8c366caafc379240efd8ba",
+            {
+              input: {
+                image: cloudinary.v2.url(id),
+                mask: uploadedMasks[i].secure_url,
+              },
+            }
+          )
+        )
+      )) as PredictionReplicateResponse[];
+      removedTextBufferPngWebP = await Promise.all(
+        output.map(async (res) =>
+          fetch(res.output)
+            .then(async (res) => await res.arrayBuffer())
+            .then(async (buffer) => {
+              const sharpPng = sharp(buffer);
+              return {
+                pngBuffer: await sharpPng.toBuffer(),
+                webpBuffer: await sharpPng.webp().toBuffer(),
+              };
+            })
+        )
+      );
+      deletedText = await Promise.all(
+        removedTextBufferPngWebP.map(
+          async (buffer) =>
+            new Promise<string>((resolve, reject) =>
+              cloudinary.v2.uploader
+                .upload_stream(
+                  {
+                    resource_type: "image",
+                    folder: process.env.CLOUDINARY_DELETED_TEXT_FOLDER,
+                    use_filename: true,
+                    timestamp: Date.now(),
+                    unique_filename: true,
+                  },
+                  (error, result) => {
+                    if (error || !result) {
+                      console.error("Cloudinary upload error:", error);
+                    } else {
+                      resolve(result?.secure_url);
+                    }
+                  }
+                )
+                .end(buffer.webpBuffer)
             )
-          )
-        )) as PredictionReplicateResponse[];
-        deletedText = await Promise.all(
-          output.map(async (res) =>
-            cloudinary.v2.uploader
-              .upload(res.output, {
-                folder: process.env.CLOUDINARY_DELETED_TEXT_FOLDER,
-                use_filename: true,
-                timestamp: Date.now(),
-                unique_filename: true,
-              })
-              .then((res) => res.secure_url)
-          )
-        );
-      } catch (error) {
-        const res = await endpoint?.runSync({
-          input: {
-            urls: ids.map((id, i) => ({
-              image: cloudinary.v2.url(id),
-              mask: uploadedMasks[i].secure_url,
-            })),
-          },
-        });
-        deletedText = res?.output.results;
-      }
+        )
+      );
+      // } catch (error) {
+      //   const res = await endpoint?.runSync({
+      //     input: {
+      //       urls: ids.map((id, i) => ({
+      //         image: cloudinary.v2.url(id),
+      //         mask: uploadedMasks[i].secure_url,
+      //       })),
+      //     },
+      //   });
+      //   deletedText = res?.output.results;
+      // }
     } else {
       throw new Error("Unsupported model type");
     }
     let canvasDeletedTextImages = await Promise.all(
-      deletedText.map((url) =>
-        fetch(url)
-          .then(async (res) => await res.arrayBuffer())
-          .then(async (arrayBuffer) => sharp(arrayBuffer).png().toBuffer())
-          .then(async (buffer) => await loadImage(buffer))
-      )
+      removedTextBufferPngWebP.map(async (buffer) => await loadImage(buffer.pngBuffer))
     );
 
     const translatedBlocksText: string[][] = [];
