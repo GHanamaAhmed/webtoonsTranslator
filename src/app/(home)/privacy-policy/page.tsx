@@ -14,10 +14,8 @@ export default function page() {
           Welcome to Manhwa Vision AI. Your privacy is important to us. This
           Privacy Policy explains how we collect, use, disclose, and safeguard
           your information when you visit our website and use our services. By
-          accessing or using Manhwa Vision AI, you agree to this Privacy
-          Policy.
+          accessing or using Manhwa Vision AI, you agree to this Privacy Policy.
         </p>
-
         <h2 className="text-header md:text-header-md lg:text-header-lg xl:text-header-xl 2xl:text-header-2xl mb-4 font-bold">
           1. Information We Collect
         </h2>
@@ -26,26 +24,23 @@ export default function page() {
         </p>
         <ul className="list-disc pl-6 mb-6">
           <li className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-xl 2xl:text-paragraph-2xl mb-2">
-            <strong>Personal Information:</strong> Information that you
-            voluntarily provide to us when registering for an account,
-            subscribing to our newsletter, or contacting customer support. This
-            includes your name, email address, and any other information you
-            choose to provide.
+            <strong>Personal Information:</strong> We collect personal
+            information that you provide voluntarily when registering for an
+            account via Google Authentication. This may include your name and
+            email address, which are shared with us by Google during the
+            authentication process.
           </li>
           <li className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-xl 2xl:text-paragraph-2xl mb-2">
-            <strong>Usage Data:</strong> Information about your interactions
-            with our website and services, including your IP address, browser
-            type, device information, pages visited, and the dates and times of
-            your visits.
+            <strong>Usage Data:</strong> We do not collect, track, or store any
+            usage data, including IP addresses, browser types, or device
+            information.
           </li>
           <li className="text-paragraph md:text-paragraph-md lg:text-paragraph-lg xl:text-paragraph-xl 2xl:text-paragraph-2xl mb-2">
-            <strong>Cookies and Tracking Technologies:</strong> We use cookies
-            and similar tracking technologies to enhance your experience on our
-            website. Cookies are small files stored on your device that help us
-            understand how you use our services and remember your preferences.
+            <strong>Cookies and Tracking Technologies:</strong> Our platform
+            does not use cookies or any tracking technologies, except those
+            essential to the functionality of Google Authentication.
           </li>
         </ul>
-
         <h2 className="text-header md:text-header-md lg:text-header-lg xl:text-header-xl 2xl:text-header-2xl mb-4 font-bold">
           2. How We Use Your Information
         </h2>

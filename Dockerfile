@@ -1,6 +1,10 @@
 # Base builder image for compiling the application
 FROM public.ecr.aws/docker/library/node:20.9.0-slim AS builder
 
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    openssl \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
 # Set environment variable for Sharp path
@@ -37,7 +41,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     librsvg2-dev \
     openssl \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
-    
+
 # Install aws-lambda-adapter
 COPY --from=public.ecr.aws/awsguru/aws-lambda-adapter:0.7.2 /lambda-adapter /opt/extensions/lambda-adapter
 
