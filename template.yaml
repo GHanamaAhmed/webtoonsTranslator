@@ -12,6 +12,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: app/
+      MemorySize: 3004
       PackageType: Image
       Architectures:
         - x86_64
