@@ -1,7 +1,14 @@
 # Base builder image for compiling the application
 FROM public.ecr.aws/docker/library/node:20.9.0-slim AS builder
 
+# Install system dependencies required for native modules
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libcairo2-dev \
+    libpango1.0-dev \
+    libjpeg-dev \
+    libgif-dev \
+    librsvg2-dev \
     openssl \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
