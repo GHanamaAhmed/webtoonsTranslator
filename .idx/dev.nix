@@ -6,6 +6,8 @@
     pkgs.aws-sam-cli
     pkgs.docker
     pkgs.openssl # This is the package for libssl
+    pkgs.git-lfs # Add Git LFS package
+    pkgs.sudo # Add sudo if needed
   ];
   idx.extensions = [
 
