@@ -449,7 +449,7 @@ export default function Demo({
                     drag and drop
                   </p>
                   <p className="text-xs text-Text">
-                    SVG, PNG, JPG or GIF (MAX. 800x400px)
+                    SVG, PNG , WEBP, JPG or JPEG
                   </p>
                 </label>
               ) : (
@@ -560,6 +560,7 @@ export default function Demo({
                 onChange={handleAddImage}
                 multiple
                 id="dropzone-file"
+                accept=".svg, .png, .jpg, .jpeg, .webp" 
                 type="file"
                 className="hidden"
               />
