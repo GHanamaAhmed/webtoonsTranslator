@@ -71,9 +71,7 @@ async function findOrCreateProductAndPrice(
       .then((prices) =>
         prices.data.find(
           (price) =>
-            price.unit_amount === unitAmountCents &&
-            price.transform_quantity?.divide_by === quantity &&
-            (pricing?.plan?.interval === "QUARTERLY"
+            price.unit_amount === unitAmountCents && (pricing?.plan?.interval === "QUARTERLY"
               ? 3 === price.recurring?.interval_count
               : 1 === price.recurring?.interval_count)
         )
@@ -159,7 +157,7 @@ async function handleStripePayment(req: NextRequest) {
         price.maxQuantity
       );
       session = await stripe.checkout.sessions.create({
-        payment_method_types: ["card", "paypal"],
+        payment_method_types: ["card"],
         subscription_data: {
           metadata: {
             pricingId: price.id,
