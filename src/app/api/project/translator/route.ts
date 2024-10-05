@@ -67,7 +67,6 @@ async function handlePost(req: NextRequest) {
       targerLanguageCode: string;
       chapterId: string;
     } = await req?.json();
-    const session = await getServerSession(options);
     const ids = body.ids;
     const targerLanguageCode = body.targerLanguageCode;
     const urls = ids.map((id) => cloudinary.v2.url(id));

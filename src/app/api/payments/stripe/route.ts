@@ -40,7 +40,7 @@ async function findOrCreateProductAndPrice(
         name: isSubscription
           ? `Subscription ${pricing?.name} (Quantity: ${quantity})`
           : `Payment ${pricing?.name} (Quantity: ${quantity})`, // Include quantity in the product name
-        description: pricing?.description || "", // Optionally include a description
+        description: pricing?.description || undefined, // Optionally include a description
         active: true,
       });
       console.log("Created new product in Stripe:", stripeProduct);
