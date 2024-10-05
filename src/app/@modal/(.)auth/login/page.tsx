@@ -16,10 +16,10 @@ export default function DialogDemo() {
           router.back();
         }
       }}
-      
+
     >
-      <DialogContent className="mx-auto max-w-sm p-0">
-        <Siginin className="w-full h-full bg-transparent z-0" />
+      <DialogContent className="w-11/12 p-0 bg-transparent border-0">
+        <Siginin className="bg-transparent z-0 bg-LightBackground" />
       </DialogContent>
     </Dialog>
   );
