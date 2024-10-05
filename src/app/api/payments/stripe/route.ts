@@ -24,9 +24,9 @@ async function findOrCreateProductAndPrice(
         products.data.find(
           (prod) =>
             prod.name ===
-              (isSubscription
-                ? `Subscription ${pricing?.name} (Quantity: ${quantity})`
-                : `Payment ${pricing?.name} (Quantity: ${quantity})`) &&
+            (isSubscription
+              ? `Subscription ${pricing?.name} (Quantity: ${quantity})`
+              : `Payment ${pricing?.name} (Quantity: ${quantity})`) &&
             prod.active
         )
       );
@@ -55,17 +55,17 @@ async function findOrCreateProductAndPrice(
         type: pricing?.plan ? "recurring" : "one_time",
         recurring: pricing?.plan
           ? {
-              interval:
-                pricing?.plan.interval === "QUARTERLY"
-                  ? "month"
-                  : pricing?.plan.interval === "MONTHLY"
+            interval:
+              pricing?.plan.interval === "QUARTERLY"
+                ? "month"
+                : pricing?.plan.interval === "MONTHLY"
                   ? "month"
                   : pricing?.plan.interval === "WEEKLY"
-                  ? "week"
-                  : pricing?.plan.interval === "YEARLY"
-                  ? "year"
-                  : "day",
-            }
+                    ? "week"
+                    : pricing?.plan.interval === "YEARLY"
+                      ? "year"
+                      : "day",
+          }
           : undefined,
       })
       .then((prices) =>
@@ -91,18 +91,18 @@ async function findOrCreateProductAndPrice(
         currency: currency,
         recurring: pricing?.plan
           ? {
-              interval:
-                pricing?.plan.interval === "QUARTERLY"
-                  ? "month"
-                  : pricing?.plan.interval === "MONTHLY"
+            interval:
+              pricing?.plan.interval === "QUARTERLY"
+                ? "month"
+                : pricing?.plan.interval === "MONTHLY"
                   ? "month"
                   : pricing?.plan.interval === "WEEKLY"
-                  ? "week"
-                  : pricing?.plan.interval === "YEARLY"
-                  ? "year"
-                  : "day",
-              interval_count: pricing?.plan.interval === "QUARTERLY" ? 3 : 1,
-            }
+                    ? "week"
+                    : pricing?.plan.interval === "YEARLY"
+                      ? "year"
+                      : "day",
+            interval_count: pricing?.plan.interval === "QUARTERLY" ? 3 : 1,
+          }
           : undefined,
       });
       console.log("Created new price in Stripe:", stripePrice);
@@ -185,7 +185,7 @@ async function handleStripePayment(req: NextRequest) {
         price.maxQuantity
       );
       session = await stripe.checkout.sessions.create({
-        payment_method_types: ["card", "paypal"],
+        payment_method_types: ["card"],
         customer: customer?.id || undefined,
         customer_email: customer?.id
           ? undefined
