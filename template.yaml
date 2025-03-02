@@ -22,7 +22,7 @@ Resources:
     Metadata:
       DockerTag: v1
       DockerContext: ./
-      Dockerfile: Dockerfile
+      Dockerfile: Dockerfile.prod
 Outputs:
   NextAppStackUrl:
     Description: "API Gateway endpoint URL for servering the next app"
