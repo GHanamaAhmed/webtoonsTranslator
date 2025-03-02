@@ -7,6 +7,6 @@ functions = ["NextAppStackFunction"]
 [function_build_definitions.c6e2828e-dc56-4caf-bf75-7fccae26772d.metadata]
 DockerTag = "v1"
 DockerContext = "/home/user/webtoonsTranslator"
-Dockerfile = "Dockerfile"
+Dockerfile = "Dockerfile.prod"
 
 [layer_build_definitions]
