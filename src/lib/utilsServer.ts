@@ -1,10 +1,6 @@
 import path from "path";
-import credentials from "@/intense-climber-374014-04ed221a9eb2.json";
-import { VertexAI } from "@google-cloud/vertexai";
 import { google } from "@google-cloud/vision/build/protos/protos";
 import sharp from "sharp";
-import { ImageAnnotatorClient } from "@google-cloud/vision";
-import { TranslationServiceClient } from "@google-cloud/translate";
 import fs from "fs";
 import { exec } from "child_process";
 import axios from "axios";
@@ -12,27 +8,6 @@ import cloudinary, {
   UploadApiErrorResponse,
   UploadApiResponse,
 } from "cloudinary";
-// Creates a client
-export const imageAnnotatorClient = new ImageAnnotatorClient({
-  keyFilename: path.join(
-    process.cwd(),
-    "src",
-    "intense-climber-374014-04ed221a9eb2.json"
-  ),
-});
-export const vertex_ai = new VertexAI({
-  project: credentials.project_id,
-  googleAuthOptions: {
-    credentials,
-  },
-});
-export const translationClient = new TranslationServiceClient({
-  keyFilename: path.join(
-    process.cwd(),
-    "src",
-    "intense-climber-374014-04ed221a9eb2.json"
-  ),
-});
 
 // Combines blocks into an array of objects with text and bounding box
 export function combineBlocks(
@@ -142,7 +117,7 @@ export async function magicApiObjectRemover(
 async function checkStatus(request_id: string): Promise<string | undefined> {
   const response = await axios.get(
     "https://api.magicapi.dev/api/v1/magicapi/objectremover/predictions/" +
-      request_id,
+    request_id,
     {
       headers: {
         accept: "application/json",
