@@ -5,6 +5,5 @@ export declare module "next-auth" {
       id: string;
       name: string;
     } & DefaultSession["user"];
-    accessToken: string;
   }
 }

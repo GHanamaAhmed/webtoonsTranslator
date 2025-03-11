@@ -57,25 +57,21 @@ export const options: NextAuthOptions = {
     //   },
     // }),
   ],
-  session: {
-    strategy: 'jwt', // Use JWT for session management
-  },
-  jwt: {
-    // Optionally, specify a secret for JWT if needed
-    secret: process.env.JWT_SECRET,
+  cookies: {
+    sessionToken: {
+      name: `__Secure-next-auth.session-token`,
+      options: {
+        httpOnly: true,
+        sameSite: 'none',
+        path: '/',
+        secure: true
+      }
+    },
   },
   callbacks: {
-    async jwt({ token, account }) {
-      // If signing in, persist the access token from Google to the JWT
-      if (account) {
-        token.accessToken = account.access_token;
-      }
-      return token;
-    },
     async session({ session, user, token }) {
       session.user.id = (user as User).id;
       session.user.name = (user as User).name!;
-      session.accessToken = token?.accessToken as string
       return session;
     },
   },
