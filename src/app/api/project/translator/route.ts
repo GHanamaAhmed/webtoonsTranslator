@@ -33,32 +33,14 @@ import { options } from "../../auth/[...nextauth]/options";
 const { RUNPOD_API_KEY, ENDPOINT_ID } = process.env;
 import runpodSdk from "runpod-sdk";
 import { PredictionReplicateResponse } from "@/types/type";
-
+import {
+  characterLimiter,
+  requestLimiter,
+  visionLimiter,
+  memortIntensivLimiter,
+} from "@/lib/limiters";
 const runpod = runpodSdk(RUNPOD_API_KEY as string);
-const endpoint = runpod.endpoint(ENDPOINT_ID as string);
-
-// Rate limiter configuration based on free tier limits
-
-// Limiter for character processing
-const characterLimiter = new Bottleneck({
-  minTime: (60 * 1000) / 6000000, // Converts 6,000,000 characters per minute to ms per character
-  maxConcurrent: 5, // Example concurrency level for character processing
-});
-
-// Limiter for translation requests
-const requestLimiter = new Bottleneck({
-  minTime: (60 * 1000) / 6000, // Converts 6,000 requests per minute to ms per request
-  maxConcurrent: 10, // Example concurrency level for translation requests
-});
-
-// Limiter for Vision API requests
-const visionLimiter = new Bottleneck({
-  minTime: (60 * 1000) / 1800, // Correctly aligns with 1,800 requests per minute as 30 requests per second
-  maxConcurrent: 10, // Number of concurrent requests
-});
-const memortIntensivLimiter = new Bottleneck({
-  maxConcurrent: 10,
-});
+// const endpoint = runpod.endpoint(ENDPOINT_ID as string);
 async function handlePost(req: NextRequest) {
   try {
     await memortIntensivLimiter.schedule(() => Promise.resolve());
@@ -244,7 +226,9 @@ async function handlePost(req: NextRequest) {
       throw new Error("Unsupported model type");
     }
     let canvasDeletedTextImages = await Promise.all(
-      removedTextBufferPngWebP.map(async (buffer) => await loadImage(buffer.pngBuffer))
+      removedTextBufferPngWebP.map(
+        async (buffer) => await loadImage(buffer.pngBuffer)
+      )
     );
 
     const translatedBlocksText: string[][] = [];
@@ -329,13 +313,16 @@ async function handlePost(req: NextRequest) {
               text: translatedText || "",
               boundingBox: blocksText[index][i].boundingBox,
               fillColor: `rgb(${textColorAndOutline[index][i].avgColor.r},${textColorAndOutline[index][i].avgColor.g},${textColorAndOutline[index][i].avgColor.b})`,
-              outlineColor: `rgb(${textColorAndOutline[index][i].outlineColor?.r ||
+              outlineColor: `rgb(${
+                textColorAndOutline[index][i].outlineColor?.r ||
                 textColorAndOutline[index][i].avgColor.r
-                },${textColorAndOutline[index][i].outlineColor?.g ||
+              },${
+                textColorAndOutline[index][i].outlineColor?.g ||
                 textColorAndOutline[index][i].avgColor.g
-                },${textColorAndOutline[index][i].outlineColor?.b ||
+              },${
+                textColorAndOutline[index][i].outlineColor?.b ||
                 textColorAndOutline[index][i].avgColor.b
-                })`,
+              })`,
               outline: textColorAndOutline[index][i].hasOutline,
             };
           }) || []
